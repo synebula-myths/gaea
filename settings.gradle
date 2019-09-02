@@ -1,0 +1,4 @@
+rootProject.name = 'gaea'
+include 'src:gaea.data'
+findProject(':src:gaea.data')?.name = 'gaea.data'
+
