@@ -1,0 +1,6 @@
+.*
+gradlew*
+build
+gradle
+
+!.gitignore

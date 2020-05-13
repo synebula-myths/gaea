@@ -1,0 +1,14 @@
+dependencies {
+    compile project(":src:gaea")
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            group 'com.synebula'
+            artifactId 'gaea.domain'
+            version project.version
+            from components.java
+        }
+    }
+}

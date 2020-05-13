@@ -1,0 +1,10 @@
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            group 'com.synebula'
+            artifactId 'gaea.data'
+            version project.version
+            from components.java
+        }
+    }
+}
