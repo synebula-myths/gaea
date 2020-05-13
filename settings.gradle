@@ -1,4 +1,4 @@
-rootProject.name = 'gaea'
+rootProject.name = 'gaea.project'
 include 'src:gaea'
 findProject(':src:gaea')?.name = 'gaea'
 include 'src:gaea.domain'
