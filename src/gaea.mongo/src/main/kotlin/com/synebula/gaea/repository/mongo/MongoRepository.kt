@@ -1,4 +1,4 @@
-package com.synebula.gaea.repository
+package com.synebula.gaea.repository.mongo
 
 import com.synebula.gaea.domain.model.IAggregateRoot
 import com.synebula.gaea.domain.repository.ITypedRepository

@@ -1,8 +1,7 @@
-rootProject.name = 'gaea.project'
+rootProject.name = 'greek.gaea'
 include 'src:gaea'
 findProject(':src:gaea')?.name = 'gaea'
 include 'src:gaea.app'
 findProject(':src:gaea.app')?.name = 'gaea.app'
 include 'src:gaea.mongo'
 findProject(':src:gaea.mongo')?.name = 'gaea.mongo'
-

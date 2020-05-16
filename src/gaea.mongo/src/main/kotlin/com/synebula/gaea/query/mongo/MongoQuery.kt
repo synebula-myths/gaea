@@ -1,5 +1,9 @@
-package com.synebula.gaea.query
+package com.synebula.gaea.query.mongo
 
+import com.synebula.gaea.query.IQuery
+import com.synebula.gaea.query.OrderType
+import com.synebula.gaea.query.PagingData
+import com.synebula.gaea.query.PagingParam
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
