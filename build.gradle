@@ -15,31 +15,31 @@ buildscript {
 }
 
 allprojects {
+    group 'com.synebula'
+    version version
+}
+
+subprojects {
     ext {
-        version '0.2.0'
+        version '0.2.1'
+        spring_version = "2.0.0.RELEASE"
     }
 
-    group 'com.synebula'
-    version project.version
-
-    apply plugin: 'idea'
+    buildscript {
+        repositories {
+            mavenLocal()
+            maven { url 'http://maven.aliyuMongoRepositoryn.com/nexus/content/groups/public/' }
+            mavenCentral()
+        }
+    }
 
     repositories {
         mavenLocal()
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
         mavenCentral()
     }
-}
 
-subprojects {
-    buildscript {
-        repositories {
-            mavenLocal()
-            maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-            mavenCentral()
-        }
-    }
-
+    apply plugin: 'idea'
     apply plugin: 'java'
     apply plugin: 'kotlin'
     apply plugin: 'maven'
