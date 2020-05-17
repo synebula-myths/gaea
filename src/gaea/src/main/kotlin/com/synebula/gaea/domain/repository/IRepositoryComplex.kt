@@ -8,7 +8,7 @@ import com.synebula.gaea.domain.model.complex.IComplexAggregateRoot
  * @param <TAggregateRoot> this T is the parameter
  * @author alex
  */
-interface IComplexRepository<TAggregateRoot : IComplexAggregateRoot<TKey, TSecond>, TKey, TSecond> {
+interface IRepositoryComplex<TAggregateRoot : IComplexAggregateRoot<TKey, TSecond>, TKey, TSecond> {
 
     /**
      * 插入单个对象。

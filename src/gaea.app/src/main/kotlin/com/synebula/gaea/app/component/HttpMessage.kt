@@ -1,4 +1,4 @@
-package com.synebula.gaea.app.components
+package com.synebula.gaea.app.component
 
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.data.message.Message

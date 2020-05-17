@@ -9,7 +9,7 @@ import com.synebula.gaea.data.message.Message
  * @version 0.1
  * @since 2018 18-2-8
  */
-interface IComplexService<TKey, TSecond> {
+interface IServiceComplex<TKey, TSecond> {
 
     fun add(command: ICommand): Message<Pair<TKey, TSecond>>
 

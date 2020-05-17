@@ -3,7 +3,7 @@ package com.synebula.gaea.domain.service
 import com.synebula.gaea.data.IObjectConverter
 import com.synebula.gaea.data.message.Message
 import com.synebula.gaea.domain.model.IAggregateRoot
-import com.synebula.gaea.domain.repository.IRepository
+import com.synebula.gaea.domain.repository.IRepositoryTyped
 import com.synebula.gaea.log.ILogger
 
 
@@ -18,20 +18,16 @@ import com.synebula.gaea.log.ILogger
  * @version 0.1
  * @since 2018 18-2-8
  */
-open class Service<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
+open class ServiceTyped<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
         protected var rootClass: Class<TAggregateRoot>,
-        protected var repository: IRepository<TAggregateRoot, TKey>,
+        protected var repository: IRepositoryTyped,
         protected var converter: IObjectConverter,
         override var logger: ILogger) : IService<TKey> {
-
-    init {
-        this.repository.clazz = rootClass
-    }
 
     override fun add(command: ICommand): Message<TKey> {
         val msg = Message<TKey>()
         val root = this.convert(command)
-        this.repository.add(root)
+        this.repository.add(root, rootClass)
         msg.data = root.id
         return msg
     }
@@ -39,18 +35,14 @@ open class Service<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
     override fun update(key: TKey, command: ICommand) {
         val root = this.convert(command)
         root.id = key
-        this.repository.update(root)
+        this.repository.update(root, rootClass)
     }
 
     override fun remove(key: TKey) {
-        this.repository.remove(key)
+        this.repository.remove(key, rootClass)
     }
 
-    fun get(key: TKey): TAggregateRoot {
-        return this.repository.get(key)
-    }
-
-    override fun <T : IAggregateRoot<TKey>> get(key: TKey, clazz: Class<T>): T {
+    override fun <TAggregateRoot : IAggregateRoot<TKey>> get(key: TKey, clazz: Class<TAggregateRoot>): TAggregateRoot {
         return this.repository.get(key, clazz)
     }
 
@@ -66,6 +58,5 @@ open class Service<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
         } catch (ex: Exception) {
             throw RuntimeException("command not match aggregate root", ex)
         }
-
     }
 }

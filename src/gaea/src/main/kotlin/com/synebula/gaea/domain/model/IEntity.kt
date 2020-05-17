@@ -12,10 +12,6 @@ interface IEntity<TKey> {
     /**
      * 实体ID
      */
-    var id: TKey
+    var id: TKey?
 
-    /**
-     * 实体对象是否有效。
-     */
-    var alive: Boolean
 }

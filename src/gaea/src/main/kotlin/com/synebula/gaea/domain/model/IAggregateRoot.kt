@@ -5,4 +5,10 @@ package com.synebula.gaea.domain.model
  *
  * @author alex
  **/
-interface IAggregateRoot<TKey> : IEntity<TKey>
+interface IAggregateRoot<TKey> : IEntity<TKey> {
+
+    /**
+     * 实体对象是否有效。
+     */
+    var alive: Boolean
+}

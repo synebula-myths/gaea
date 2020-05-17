@@ -38,9 +38,18 @@ interface IInfoLogger {
      * 打印 INFO 等级的日志
      *
      * @param obj    输出错误对象
+     * @param format 消息模板
+     * @param args   参数
+     */
+    fun info(obj: Any, format: String, vararg args: Any)
+
+    /**
+     * 打印 INFO 等级的日志
+     *
+     * @param obj    输出错误对象
      * @param t      错误对象
      * @param format 消息模板
      * @param args   参数
      */
-    fun info(obj: Any, t: Throwable, format: String, vararg args: Any)
+    fun info(obj: Any, t: Throwable?, format: String, vararg args: Any)
 }

@@ -1,137 +1,124 @@
 package com.synebula.gaea.query.mongo
 
+import com.synebula.gaea.log.ILogger
 import com.synebula.gaea.query.IQuery
-import com.synebula.gaea.query.OrderType
 import com.synebula.gaea.query.PagingData
 import com.synebula.gaea.query.PagingParam
-import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoTemplate
-import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
-import org.springframework.data.mongodb.core.query.isEqualTo
-import java.lang.reflect.Field
-import java.lang.reflect.ParameterizedType
+import com.synebula.gaea.extension.*
 
+/**
+ * 实现IQuery的Mongo查询类
+ * @param repo MongoRepo对象
+ */
+open class MongoQuery<TView>(var repo: MongoTemplate, override var logger: ILogger? = null) : IQuery<TView, String>, IMongoQuery<TView> {
+    /**
+     * 查询的对象类
+     */
+    var clazz: Class<TView>? = null
 
-open class MongoQuery<TView>(var collection: String, var repo: MongoTemplate) : IQuery<TView, String> {
+    private var _collection = ""
+    /**
+     * 查询的集合名称
+     */
+    var collection: String = ""
+        set(value) {
+            field = value
+        }
+        get() = if (this._collection.isNotEmpty())
+            this._collection
+        else {
+            if (this.clazz != null)
+                this.clazz!!.simpleName.removeSuffix("View").firstCharLowerCase()
+            else
+                ""
+        }
 
+    /**
+     * 构造方法
+     *
+     * @param clazz 视图对象类型
+     * @param repo MongoRepo对象
+     */
+    constructor(clazz: Class<TView>, repo: MongoTemplate)
+            : this(repo) {
+        this.clazz = clazz
+    }
 
-    @Suppress("UNCHECKED_CAST")
-    protected val viewClass: Class<TView> = (javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[0] as Class<TView>
+    /**
+     * 构造方法
+     *
+     * @param collection 查询的集合名称
+     * @param repo MongoRepo对象
+     */
+    constructor(collection: String, repo: MongoTemplate)
+            : this(repo) {
+        this.collection = collection
+    }
 
-    private val _systemClass = arrayOf(
-            "String",
-            "Date",
-            "Int",
-            "Double",
-            "Float",
-            "BigDecimal",
-            "Decimal")
+    /**
+     * 构造方法
+     *
+     * @param clazz 视图对象类型
+     * @param repo MongoRepo对象
+     */
+    constructor(collection: String, clazz: Class<TView>, repo: MongoTemplate)
+            : this(clazz, repo) {
+        this.collection = collection
+    }
 
 
     override fun list(params: Map<String, Any>?): List<TView> {
-        val viewFields = this.viewFields()
-        val query = Query()
-        this.where(query, params)
-        this.select(query, viewFields.toTypedArray())
-        return this.repo.find(query, this.viewClass, this.collection)
+        this.check()
+        return if (this.clazz != null) {
+            val viewFields = this.fields(this.clazz!!)
+            val query = Query()
+            this.where(query, params, this.clazz!!)
+            this.select(query, viewFields.toTypedArray())
+            this.repo.find(query, this.clazz!!, this.collection)
+        } else listOf()
     }
 
     override fun count(params: Map<String, Any>?): Int {
-        val query = Query()
-        return this.repo.count(where(query, params), this.collection).toInt()
+        this.check()
+        return if (this.clazz != null) {
+            val query = Query()
+            this.repo.count(where(query, params, this.clazz!!), this.collection).toInt()
+        } else 0
     }
 
     override fun paging(params: PagingParam): PagingData<TView> {
-        val viewFields = this.viewFields()
-        val result = PagingData<TView>(1, 10)
-        result.size = params.size
-        result.page = params.page
-        val query = Query()
-        this.where(query, params.parameters)
-        result.total = this.repo.count(query, this.collection).toInt()
-        this.select(query, viewFields.toTypedArray())
-        query.with(order(params.orderBy))
-        query.skip(params.index).limit(params.size)
-        result.data = this.repo.find(query, this.viewClass, this.collection)
-        return result
+        this.check()
+        return if (this.clazz != null) {
+            val viewFields = this.fields(this.clazz!!)
+            val result = PagingData<TView>(1, 10)
+            result.size = params.size
+            result.page = params.page
+            val query = Query()
+            this.where(query, params.parameters, this.clazz!!)
+            result.total = this.repo.count(query, this.collection).toInt()
+            this.select(query, viewFields.toTypedArray())
+            query.with(order(params.orderBy))
+            query.skip(params.index).limit(params.size)
+            result.data = this.repo.find(query, this.clazz!!, this.collection)
+            result
+        } else PagingData(1, 10)
     }
 
     override fun get(key: String): TView? {
-        return this.repo.findOne(Query.query(Criteria.where("_id").isEqualTo(key))
-                , this.viewClass, this.collection)
+        this.check()
+        return if (this.clazz != null) {
+            val view = this.repo.findOne(idQuery(key), this.clazz!!, this.collection)
+            view
+        } else null
     }
 
-    protected fun viewFields(): List<String> {
-        return traversalFields(viewClass.declaredFields)
+    private fun check() {
+        if (this.clazz == null)
+            throw RuntimeException("[${this.javaClass.name}] 没有声明查询View的类型")
+        if (this._collection.isEmpty())
+            this.logger?.warn(this, null, "[${this.clazz!!.name}]没有声明查询集合名称, 后续尝试使用View对象名称解析集合")
     }
 
-    private fun traversalFields(fields: Array<Field>): List<String> {
-        val names = mutableListOf<String>()
-        fields.forEach { field ->
-            names.add(field.name)
-            if (!field.type.isPrimitive
-                    && !field.type.isArray
-                    && !this._systemClass.contains(field.type.simpleName))
-                names.addAll(this.traversalFields(field.type.declaredFields).map { "${field.name}.$it" })
-        }
-        return names
-    }
-
-    protected open fun where(query: Query, params: Map<String, Any>?): Query {
-        val criteria = Criteria()
-        if (params != null) {
-            for (param in params) {
-                val value = this.convertFieldValueType(param.key, param.value)
-                criteria.and(param.key).isEqualTo(value)
-            }
-        }
-        return query.addCriteria(criteria)
-    }
-
-    protected fun convertFieldValueType(key: String, value: Any): Any? {
-        val getter = this.viewClass.getMethod("get${key.substring(0, 1).toUpperCase()}${key.substring(1)}")
-        return this.convertClass(getter.returnType, value.toString())
-    }
-
-    protected open fun select(query: Query, fields: Array<String>): Query {
-        fields.forEach {
-            query.fields().include(it)
-        }
-        return query
-    }
-
-    protected open fun order(orders: MutableMap<String, OrderType>?): Sort {
-        val orderList = mutableListOf<Sort.Order>()
-        orders?.forEach() {
-            orderList.add(Sort.Order(Sort.Direction.valueOf(it.value.name), it.key))
-        }
-        return if (orderList.size == 0)
-            Sort.by("_id")
-        else
-            Sort.by(orderList)
-    }
-
-    private fun convertClass(type: Class<*>, value: String): Any? {
-
-        if (!type.isPrimitive) { // 判断基本类型
-            if (type == String::class.java) { // 如果是string则直接返回
-                return value
-            }
-            //  如果不为null 则通过反射实例一个对象返回
-            return if ("" == value) null else type.getConstructor(String::class.java).newInstance(value)
-        }
-
-        // 下面处理基本类型，返回包装类
-        return when (type.name) {
-            "int" -> Integer.parseInt(value)
-            "byte" -> java.lang.Byte.parseByte(value)
-            "boolean" -> java.lang.Boolean.parseBoolean(value)
-            "double" -> java.lang.Double.parseDouble(value)
-            "float" -> java.lang.Float.parseFloat(value)
-            "long" -> java.lang.Long.parseLong(value)
-            "short" -> java.lang.Short.parseShort(value)
-            else -> value
-        }
-    }
 }

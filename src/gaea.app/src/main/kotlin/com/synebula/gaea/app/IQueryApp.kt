@@ -1,6 +1,6 @@
 package com.synebula.gaea.app
 
-import com.synebula.gaea.app.components.HttpMessage
+import com.synebula.gaea.app.component.HttpMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.query.IQuery
 import com.synebula.gaea.query.PagingParam

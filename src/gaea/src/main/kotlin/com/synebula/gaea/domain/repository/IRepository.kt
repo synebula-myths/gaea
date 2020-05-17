@@ -11,6 +11,11 @@ import com.synebula.gaea.domain.model.IAggregateRoot
 interface IRepository<TAggregateRoot : IAggregateRoot<TKey>, TKey> {
 
     /**
+     * 仓储的对象类
+     */
+    var clazz: Class<TAggregateRoot>?
+
+    /**
      * 插入单个对象。
      *
      * @param obj 需要插入的对象。
@@ -40,5 +45,15 @@ interface IRepository<TAggregateRoot : IAggregateRoot<TKey>, TKey> {
      * @param id 对象ID。
      * @return
      */
-    operator fun get(id: TKey): TAggregateRoot
+    fun get(id: TKey): TAggregateRoot
+
+    /**
+     * 根据ID获取对象。
+     *
+     * @param id    id
+     * @param clazz 操作数据的类型
+     * @return 聚合根
+     */
+    fun <T : IAggregateRoot<TKey>, TKey> get(id: TKey, clazz: Class<T>): T
+
 }

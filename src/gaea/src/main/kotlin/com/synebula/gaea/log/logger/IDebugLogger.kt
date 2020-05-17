@@ -39,9 +39,18 @@ interface IDebugLogger {
      * 打印 DEBUG 等级的日志
      *
      * @param obj    输出错误对象
+     * @param format 消息模板
+     * @param args   参数
+     */
+    fun debug(obj: Any, format: String, vararg args: Any)
+
+    /**
+     * 打印 DEBUG 等级的日志
+     *
+     * @param obj    输出错误对象
      * @param t      错误对象
      * @param format 消息模板
      * @param args   参数
      */
-    fun debug(obj: Any, t: Throwable, format: String, vararg args: Any)
+    fun debug(obj: Any, t: Throwable?, format: String, vararg args: Any)
 }

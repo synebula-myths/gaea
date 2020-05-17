@@ -3,7 +3,7 @@ package com.synebula.gaea.domain.service
 import com.synebula.gaea.data.IObjectConverter
 import com.synebula.gaea.data.message.Message
 import com.synebula.gaea.domain.model.complex.IComplexAggregateRoot
-import com.synebula.gaea.domain.repository.IComplexRepository
+import com.synebula.gaea.domain.repository.IRepositoryComplex
 import com.synebula.gaea.log.ILogger
 
 /**
@@ -13,16 +13,16 @@ import com.synebula.gaea.log.ILogger
  * @version 0.1
  * @since 2018 18-2-8
  */
-open class ComplexService<TAggregateRoot : IComplexAggregateRoot<TKey, TSecond>, TKey, TSecond>
-(var logger: ILogger, protected var repository: IComplexRepository<TAggregateRoot, TKey, TSecond>,
+open class ServiceComplex<TAggregateRoot : IComplexAggregateRoot<TKey, TSecond>, TKey, TSecond>
+(var logger: ILogger, protected var repository: IRepositoryComplex<TAggregateRoot, TKey, TSecond>,
  protected var converter: IObjectConverter, protected var aggregateRootClass: Class<TAggregateRoot>)
-    : IComplexService<TKey, TSecond> {
+    : IServiceComplex<TKey, TSecond> {
 
     override fun add(command: ICommand): Message<Pair<TKey, TSecond>> {
         val msg = Message<Pair<TKey, TSecond>>()
         val root = this.convert(command)
         repository.add(root)
-        msg.data = Pair<TKey, TSecond>(root.id, root.secondary)
+        msg.data = Pair<TKey, TSecond>(root.id!!, root.secondary!!)
         return msg
     }
 

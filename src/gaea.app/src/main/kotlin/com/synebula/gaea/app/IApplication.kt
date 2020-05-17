@@ -1,6 +1,6 @@
 package com.synebula.gaea.app
 
-import com.synebula.gaea.app.components.HttpMessage
+import com.synebula.gaea.app.component.HttpMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.log.ILogger
 
@@ -24,12 +24,12 @@ interface IApplication {
         val msg = HttpMessage(Status.Success)
         try {
             process(msg)
-            logger.debug("$name business execute success")
+            logger.debug(this, "$name business execute success")
         } catch (ex: Exception) {
             msg.status = Status.Error
             msg.message = if (error.isEmpty()) ex.message ?: "" else error
             msg.data = ex.message
-            logger.error(ex, "$error: ${ex.message}")
+            logger.error(this, "$error: ${ex.message}")
         }
         return msg
     }
@@ -41,9 +41,9 @@ interface IApplication {
         val msg = HttpMessage(Status.Success)
         try {
             process(msg)
-            logger.debug("$name business execute success")
+            logger.debug(this, "$name business execute success")
         } catch (ex: Exception) {
-            logger.error(ex, "$error。异常消息将抛出！: ${ex.message}")
+            logger.error(this, ex, "$error。异常消息将抛出！: ${ex.message}")
             throw RuntimeException(error, ex)
         }
         return msg

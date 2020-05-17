@@ -1,6 +1,7 @@
 package com.synebula.gaea.domain.service
 
 import com.synebula.gaea.data.message.Message
+import com.synebula.gaea.domain.model.IAggregateRoot
 import com.synebula.gaea.log.ILogger
 
 
@@ -21,4 +22,6 @@ interface IService<TKey> {
     fun update(key: TKey, command: ICommand)
 
     fun remove(key: TKey)
+
+    fun <TAggregateRoot : IAggregateRoot<TKey>> get(key: TKey, clazz: Class<TAggregateRoot>): TAggregateRoot
 }
