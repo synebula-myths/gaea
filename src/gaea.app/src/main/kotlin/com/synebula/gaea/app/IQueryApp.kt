@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.RequestParam
 
 /**
  * 应用类接口，提供实现Query服务的接口
- * 依赖查询接口 @see IQuery
+ * 依赖查询接        return this.safeExecute("获取${this.name}数据失败") {
+口 @see IQuery
  *
  * @author alex
  * @version 0.1
- * @since 2018 18-2-8
+ * @since 2020-05-15
  */
 interface IQueryApp<TView, TKey> : IApplication {
     /**
@@ -24,7 +25,7 @@ interface IQueryApp<TView, TKey> : IApplication {
 
     @GetMapping("/{key:.+}")
     fun get(@PathVariable key: TKey): HttpMessage {
-        return this.safeExecute("${this.name}获取数据失败") {
+        return this.safeExecute("获取${this.name}数据失败") {
             if (this.query != null)
                 it.data = this.query!!.get(key)
             else {
@@ -36,7 +37,7 @@ interface IQueryApp<TView, TKey> : IApplication {
 
     @GetMapping
     fun list(@RequestParam parameters: MutableMap<String, Any>): HttpMessage {
-        return this.safeExecute("${this.name}获取数据失败") {
+        return this.safeExecute("获取${this.name}列表数据失败") {
             if (this.query != null)
                 it.data = this.query!!.list(parameters)
             else {
@@ -48,7 +49,7 @@ interface IQueryApp<TView, TKey> : IApplication {
 
     @GetMapping("/split/{size}/pages/{page}")
     fun paging(@PathVariable page: Int, @PathVariable size: Int, @RequestParam parameters: MutableMap<String, Any>): HttpMessage {
-        return this.safeExecute("${this.name}获取分页数据失败") {
+        return this.safeExecute("获取${this.name}分页数据[条数:$size,页码:$page]失败") {
             if (this.query != null) {
                 val params = PagingParam(page, size)
                 params.parameters = parameters

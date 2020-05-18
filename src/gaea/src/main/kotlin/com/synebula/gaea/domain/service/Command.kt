@@ -7,7 +7,7 @@ import java.util.*
  *
  * @author alex
  * @version 0.1
- * @since 2018 18-2-8
+ * @since 2020-05-15
  */
 class Command : ICommand {
     override var timestamp = 0L

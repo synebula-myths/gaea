@@ -1,4 +1,6 @@
-package com.synebula.gaea.data.serializable
+package com.synebula.gaea.data.serialization.json
+
+import com.synebula.gaea.data.serialization.ISerializable
 
 /**
  *

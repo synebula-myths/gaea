@@ -1,7 +1,7 @@
-package com.synebula.gaea.data.serializable
+package com.synebula.gaea.data.serialization
 
 /**
- * 继承该接口的类都可以序列号对象。
+ * 继承该接口的类都可以序列化对象。
  *
  * @author alex
  * @version 0.0.1

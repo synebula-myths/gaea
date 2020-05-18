@@ -5,7 +5,7 @@ package com.synebula.gaea.data.code
  *
  * @author alex
  * @version 0.1
- * @since 2018 18-2-1
+ * @since 2020-05-15
  *
  *
  * Twitter_Snowflake<br></br>

@@ -1,9 +1,11 @@
 package com.synebula.gaea.app
 
+import com.synebula.gaea.data.serialization.json.IJsonSerializer
 import com.synebula.gaea.domain.service.ICommand
 import com.synebula.gaea.domain.service.IService
 import com.synebula.gaea.log.ILogger
 import com.synebula.gaea.query.IQuery
+import javax.annotation.Resource
 
 /**
  * 联合服务，同时实现了ICommandApp和IQueryApp接口
@@ -19,4 +21,7 @@ open class UnionApp<TCommand : ICommand, TView, TKey>(
         override var query: IQuery<TView, TKey>?,
         override var logger: ILogger)
     : ICommandApp<TCommand, TKey>, IQueryApp<TView, TKey> {
+
+    @Resource
+    override var jsonSerializer: IJsonSerializer? = null
 }

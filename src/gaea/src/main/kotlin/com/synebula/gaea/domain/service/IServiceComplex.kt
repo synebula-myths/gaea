@@ -7,7 +7,7 @@ import com.synebula.gaea.data.message.Message
  *
  * @author alex
  * @version 0.1
- * @since 2018 18-2-8
+ * @since 2020-05-15
  */
 interface IServiceComplex<TKey, TSecond> {
 

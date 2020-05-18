@@ -5,7 +5,7 @@ package com.synebula.gaea.data
  *
  * @author alex
  * @version 0.1
- * @since 2018 18-2-2
+ * @since 2020-05-15
  */
 interface IObjectConverter {
 

@@ -5,7 +5,7 @@ package com.synebula.gaea.query
  *
  * @author alex
  * @version 0.1
- * @since 2018 18-2-5
+ * @since 2020-05-15
  */
 data class PagingParam(var page: Int = 1, var size: Int = 10) {
 

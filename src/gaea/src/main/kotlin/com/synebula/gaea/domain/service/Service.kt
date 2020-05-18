@@ -16,7 +16,7 @@ import com.synebula.gaea.log.ILogger
  * @param logger 日志组件
  * @author alex
  * @version 0.1
- * @since 2018 18-2-8
+ * @since 2020-05-15
  */
 open class Service<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
         protected var rootClass: Class<TAggregateRoot>,

@@ -11,7 +11,7 @@ import com.synebula.gaea.log.ILogger
  *
  * @author alex
  * @version 0.1
- * @since 2018 18-2-8
+ * @since 2020-05-15
  */
 open class ServiceComplex<TAggregateRoot : IComplexAggregateRoot<TKey, TSecond>, TKey, TSecond>
 (var logger: ILogger, protected var repository: IRepositoryComplex<TAggregateRoot, TKey, TSecond>,

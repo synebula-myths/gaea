@@ -5,7 +5,7 @@ package com.synebula.gaea.domain.service
  *
  * @author alex
  * @version 0.1
- * @since 2018 18-2-8
+ * @since 2020-05-15
  */
 interface ICommand {
     /**
