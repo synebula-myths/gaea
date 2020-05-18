@@ -1,7 +1,12 @@
-package com.synebula.gaea.query.mongo
+package com.synebula.gaea.mongo.query
 
+import com.synebula.gaea.extension.fields
 import com.synebula.gaea.extension.firstCharLowerCase
 import com.synebula.gaea.log.ILogger
+import com.synebula.gaea.mongo.order
+import com.synebula.gaea.mongo.select
+import com.synebula.gaea.mongo.where
+import com.synebula.gaea.mongo.whereId
 import com.synebula.gaea.query.IQueryTyped
 import com.synebula.gaea.query.PagingData
 import com.synebula.gaea.query.PagingParam
@@ -14,7 +19,7 @@ import java.lang.RuntimeException
  * @param repo MongoRepo对象
  */
 
-open class MongoQueryTyped(var repo: MongoTemplate, override var logger: ILogger? = null) : IQueryTyped, IMongoQuery {
+open class MongoQueryTyped(var repo: MongoTemplate, var logger: ILogger? = null) : IQueryTyped {
 
     /**
      * 查询的集合名称
@@ -29,28 +34,28 @@ open class MongoQueryTyped(var repo: MongoTemplate, override var logger: ILogger
      */
     var validViewCollection = false
 
-    override fun <TView, TKey> list(params: Map<String, Any>?, clazz: Class<TView>): List<TView> {
-        val viewFields = this.fields(clazz)
+    override fun <TView> list(params: Map<String, Any>?, clazz: Class<TView>): List<TView> {
+        val fields = clazz.fields()
         val query = Query()
-        this.where(query, params, clazz)
-        this.select(query, viewFields.toTypedArray())
+        query.where(params)
+        query.select(fields.toTypedArray())
         return this.repo.find(query, clazz, this.collection(clazz))
     }
 
-    override fun <TView, TKey> count(params: Map<String, Any>?, clazz: Class<TView>): Int {
+    override fun <TView> count(params: Map<String, Any>?, clazz: Class<TView>): Int {
         val query = Query()
-        return this.repo.count(this.where(query, params, clazz), this.collection(clazz)).toInt()
+        return this.repo.count(query.where(params), this.collection(clazz)).toInt()
     }
 
-    override fun <TView, TKey> paging(params: PagingParam, clazz: Class<TView>): PagingData<TView> {
-        val viewFields = this.fields(clazz)
+    override fun <TView> paging(params: PagingParam, clazz: Class<TView>): PagingData<TView> {
+        val fields = clazz.fields()
         val result = PagingData<TView>(1, 10)
         result.size = params.size
         result.page = params.page
         val query = Query()
-        this.where(query, params.parameters, clazz)
-        result.total = this.count<TView, TKey>(params.parameters, clazz)
-        this.select(query, viewFields.toTypedArray())
+        query.where(params.parameters)
+        result.total = this.count(params.parameters, clazz)
+        query.select(fields.toTypedArray())
         query.with(order(params.orderBy))
         query.skip(params.index).limit(params.size)
         result.data = this.repo.find(query, clazz, this.collection(clazz))
@@ -58,7 +63,7 @@ open class MongoQueryTyped(var repo: MongoTemplate, override var logger: ILogger
     }
 
     override fun <TView, TKey> get(key: TKey, clazz: Class<TView>): TView? {
-        return this.repo.findOne(idQuery(key), clazz, this.collection(clazz))
+        return this.repo.findOne(whereId(key), clazz, this.collection(clazz))
     }
 
     /**
@@ -66,7 +71,7 @@ open class MongoQueryTyped(var repo: MongoTemplate, override var logger: ILogger
      */
     protected fun <TView> collection(clazz: Class<TView>): String {
         return if (this.collection.isEmpty()) {
-            this.logger?.warn(this, "查询集合参数[collection]值为空, 尝试使用View<${clazz.name}>名称解析集合")
+            this.logger?.info(this, "查询集合参数[collection]值为空, 尝试使用View<${clazz.name}>名称解析集合")
             val collection = clazz.simpleName.removeSuffix("View").firstCharLowerCase()
             if (!validViewCollection || this.repo.collectionExists(collection))
                 collection

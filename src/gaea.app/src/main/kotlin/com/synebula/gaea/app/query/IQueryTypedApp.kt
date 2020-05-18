@@ -1,8 +1,8 @@
-package com.synebula.gaea.app
+package com.synebula.gaea.app.query
 
+import com.synebula.gaea.app.IApplication
 import com.synebula.gaea.app.component.HttpMessage
 import com.synebula.gaea.data.message.Status
-import com.synebula.gaea.query.IQuery
 import com.synebula.gaea.query.IQueryTyped
 import com.synebula.gaea.query.PagingParam
 import org.springframework.web.bind.annotation.GetMapping
@@ -44,7 +44,7 @@ interface IQueryTypedApp<TView, TKey> : IApplication {
     fun list(@RequestParam parameters: MutableMap<String, Any>): HttpMessage {
         return this.safeExecute("获取${this.name}列表数据失败") {
             if (this.query != null)
-                it.data = this.query!!.list<TView, TKey>(parameters, viewClass)
+                it.data = this.query!!.list(parameters, viewClass)
             else {
                 it.status = Status.Error
                 it.message = "没有对应服务，无法执行该操作"
@@ -58,7 +58,7 @@ interface IQueryTypedApp<TView, TKey> : IApplication {
             if (this.query != null) {
                 val params = PagingParam(page, size)
                 params.parameters = parameters
-                it.data = this.query!!.paging<TView, TKey>(params, viewClass)
+                it.data = this.query!!.paging(params, viewClass)
             } else {
                 it.status = Status.Error
                 it.message = "没有对应服务，无法执行该操作"

@@ -1,12 +1,12 @@
-package com.synebula.gaea.app
+package com.synebula.gaea.app.cmd
 
+import com.synebula.gaea.app.IApplication
 import com.synebula.gaea.app.component.HttpMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.data.serialization.json.IJsonSerializer
 import com.synebula.gaea.domain.service.ICommand
 import com.synebula.gaea.domain.service.IService
 import org.springframework.web.bind.annotation.*
-import javax.annotation.Resource
 
 /**
  * 应用类接口，提供向Command服务的接口

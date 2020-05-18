@@ -6,7 +6,7 @@ dependencies {
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        publish(MavenPublication) {
             group 'com.synebula'
             artifactId 'gaea.app'
             version "$version"

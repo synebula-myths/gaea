@@ -1,4 +1,4 @@
-package com.synebula.gaea.data.type
+package com.synebula.gaea.data.date
 
 enum class TimeUnit {
     Millisecond,

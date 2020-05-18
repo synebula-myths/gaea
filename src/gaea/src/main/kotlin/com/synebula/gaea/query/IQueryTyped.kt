@@ -20,7 +20,7 @@ interface IQueryTyped {
      * @param params 查询条件。
      * @return list
      */
-    fun <TView, TKey> list(params: Map<String, Any>?, clazz: Class<TView>): List<TView>
+    fun <TView> list(params: Map<String, Any>?, clazz: Class<TView>): List<TView>
 
     /**
      * 根据条件查询符合条件记录的数量
@@ -28,7 +28,7 @@ interface IQueryTyped {
      * @param params 查询条件。
      * @return int
      */
-    fun <TView, TKey> count(params: Map<String, Any>?, clazz: Class<TView>): Int
+    fun <TView> count(params: Map<String, Any>?, clazz: Class<TView>): Int
 
     /**
      * 根据实体类条件查询所有符合条件记录（分页查询）
@@ -36,5 +36,5 @@ interface IQueryTyped {
      * @param params 分页条件
      * @return 分页数据
      */
-    fun <TView, TKey> paging(params: PagingParam, clazz: Class<TView>): PagingData<TView>
+    fun <TView> paging(params: PagingParam, clazz: Class<TView>): PagingData<TView>
 }

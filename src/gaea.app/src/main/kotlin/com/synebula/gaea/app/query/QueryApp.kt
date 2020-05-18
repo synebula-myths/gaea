@@ -1,4 +1,4 @@
-package com.synebula.gaea.app
+package com.synebula.gaea.app.query
 
 import com.synebula.gaea.log.ILogger
 import com.synebula.gaea.query.IQuery

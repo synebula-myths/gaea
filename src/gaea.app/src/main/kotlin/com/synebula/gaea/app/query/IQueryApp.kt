@@ -1,5 +1,6 @@
-package com.synebula.gaea.app
+package com.synebula.gaea.app.query
 
+import com.synebula.gaea.app.IApplication
 import com.synebula.gaea.app.component.HttpMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.query.IQuery

@@ -1,6 +1,6 @@
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        publish(MavenPublication) {
             group 'com.synebula'
             artifactId 'gaea'
             version "$version"

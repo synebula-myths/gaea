@@ -1,6 +1,5 @@
 package com.synebula.gaea.data.date
 
-import com.synebula.gaea.data.type.TimeUnit
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -72,8 +71,6 @@ class DateTime : Comparable<DateTime> {
             instance.set(Calendar.DAY_OF_MONTH, instance.getActualMaximum(Calendar.DAY_OF_MONTH))
             return DateTime(instance)
         }
-
-    constructor()
 
     /**
      * 从Ｄate格式转化

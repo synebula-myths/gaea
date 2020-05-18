@@ -1,7 +1,5 @@
 package com.synebula.gaea.data.date
 
-import com.synebula.gaea.data.type.TimeUnit
-
 object TimeExchanger {
     /**
      * 转换率。分别对应：毫秒、秒、分、时、日

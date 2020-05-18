@@ -1,4 +1,4 @@
-package com.synebula.gaea.app
+package com.synebula.gaea.app.cmd
 
 import com.synebula.gaea.data.serialization.json.IJsonSerializer
 import com.synebula.gaea.domain.service.ICommand

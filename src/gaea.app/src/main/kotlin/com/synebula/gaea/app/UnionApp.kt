@@ -1,5 +1,7 @@
 package com.synebula.gaea.app
 
+import com.synebula.gaea.app.cmd.ICommandApp
+import com.synebula.gaea.app.query.IQueryApp
 import com.synebula.gaea.data.serialization.json.IJsonSerializer
 import com.synebula.gaea.domain.service.ICommand
 import com.synebula.gaea.domain.service.IService
