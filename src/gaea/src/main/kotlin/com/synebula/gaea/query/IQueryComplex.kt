@@ -5,7 +5,7 @@ package com.synebula.gaea.query
  *
  * @author wxf
  */
-interface IComplexQuery<TView, TKey, TSecond> {
+interface IQueryComplex<TView, TKey, TSecond> {
 
 
     /**

@@ -22,6 +22,4 @@ interface IService<TKey> {
     fun update(key: TKey, command: ICommand)
 
     fun remove(key: TKey)
-
-    fun <TAggregateRoot : IAggregateRoot<TKey>> get(key: TKey, clazz: Class<TAggregateRoot>): TAggregateRoot
 }

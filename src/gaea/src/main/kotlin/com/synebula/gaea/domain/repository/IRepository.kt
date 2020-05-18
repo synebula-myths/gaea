@@ -4,6 +4,8 @@ import com.synebula.gaea.domain.model.IAggregateRoot
 
 /**
  * 继承本接口表示对象为仓储类。
+ * 定义了提供增删改的仓储接口。
+ * 本接口泛型定义在类上，不需要显式提供聚合根的class对象，class对象作为类的成员变量声明。
  *
  * @param <TAggregateRoot> this T is the parameter
  * @author alex

@@ -12,28 +12,23 @@ import org.springframework.data.mongodb.core.query.isEqualTo
  * @param repo MongoRepo对象
  */
 open class MongoRepositoryTyped(private var repo: MongoTemplate)
-    : IRepositoryTyped {
+  : IRepositoryTyped, IMongoRepository {
 
-    override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> remove(id: TKey, clazz: Class<TAggregateRoot>) {
-        this.repo.remove(idQuery(id), clazz)
-    }
+  override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> remove(id: TKey, clazz: Class<TAggregateRoot>) {
+    this.repo.remove(idQuery(id), clazz)
+  }
 
-    override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> get(id: TKey, clazz: Class<TAggregateRoot>): TAggregateRoot {
-        return this.repo.findOne(idQuery(id), clazz) as TAggregateRoot
-    }
+  override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> get(id: TKey, clazz: Class<TAggregateRoot>): TAggregateRoot {
+    return this.repo.findOne(idQuery(id), clazz) as TAggregateRoot
+  }
 
-    override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> update(obj: TAggregateRoot, clazz: Class<TAggregateRoot>) {
-        this.repo.save(obj)
-    }
+  override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> update(obj: TAggregateRoot, clazz: Class<TAggregateRoot>) {
+    this.repo.save(obj)
+  }
 
-    override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> add(obj: TAggregateRoot, clazz: Class<TAggregateRoot>) {
-        this.repo.save(obj)
-    }
+  override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> add(obj: TAggregateRoot, clazz: Class<TAggregateRoot>) {
+    this.repo.save(obj)
+  }
 
-    /**
-     * 获取ID查询条件
-     *
-     * @param id 业务ID
-     */
-    fun <TKey> idQuery(id: TKey): Query = Query(Criteria("_id").isEqualTo(id))
+
 }

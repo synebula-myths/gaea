@@ -50,10 +50,6 @@ open class Service<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
         return this.repository.get(key)
     }
 
-    override fun <T : IAggregateRoot<TKey>> get(key: TKey, clazz: Class<T>): T {
-        return this.repository.get(key, clazz)
-    }
-
     /**
      * 转换ICommand类型到聚合根类型，默认实现，根据需要进行覆写。
      *

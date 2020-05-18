@@ -28,8 +28,7 @@ interface IApplication {
         } catch (ex: Exception) {
             msg.status = Status.Error
             msg.message = if (error.isEmpty()) ex.message ?: "" else error
-            msg.data = ex.message
-            logger.error(this, "$error: ${ex.message}")
+            logger.error(this, ex, "$error: ${ex.message}")
         }
         return msg
     }

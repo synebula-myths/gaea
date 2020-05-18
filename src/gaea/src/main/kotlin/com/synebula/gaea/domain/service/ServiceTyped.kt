@@ -8,7 +8,8 @@ import com.synebula.gaea.log.ILogger
 
 
 /**
- * class FlatService
+ * 依赖了IRepositoryTyped仓储借口的服务实现类 ServiceTyped
+ * 该类依赖仓储接口 @see IRepositoryTyped ,需要显式提供聚合根的class对象
  *
  * @param repository 仓储对象
  * @param rootClass 聚合根类对象
@@ -16,7 +17,7 @@ import com.synebula.gaea.log.ILogger
  * @param logger 日志组件
  * @author alex
  * @version 0.1
- * @since 2018 18-2-8
+ * @since 2020-05-17
  */
 open class ServiceTyped<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
         protected var rootClass: Class<TAggregateRoot>,
@@ -42,15 +43,11 @@ open class ServiceTyped<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
         this.repository.remove(key, rootClass)
     }
 
-    override fun <TAggregateRoot : IAggregateRoot<TKey>> get(key: TKey, clazz: Class<TAggregateRoot>): TAggregateRoot {
-        return this.repository.get(key, clazz)
-    }
-
     /**
      * 转换ICommand类型到聚合根类型，默认实现，根据需要进行覆写。
      *
-     * @param command
-     * @return
+     * @param command 需要转换的命令
+     * @return 聚合根
      */
     protected fun convert(command: ICommand): TAggregateRoot {
         try {

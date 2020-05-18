@@ -1,30 +1,32 @@
 package com.synebula.gaea.query.mongo
 
+import com.synebula.gaea.extension.firstCharLowerCase
 import com.synebula.gaea.log.ILogger
 import com.synebula.gaea.query.IQuery
 import com.synebula.gaea.query.PagingData
 import com.synebula.gaea.query.PagingParam
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Query
-import com.synebula.gaea.extension.*
 
 /**
  * 实现IQuery的Mongo查询类
  * @param repo MongoRepo对象
  */
-open class MongoQuery<TView>(var repo: MongoTemplate, override var logger: ILogger? = null) : IQuery<TView, String>, IMongoQuery<TView> {
+open class MongoQuery<TView>(var repo: MongoTemplate, override var logger: ILogger? = null) :
+        IQuery<TView, String>, IMongoQuery {
     /**
      * 查询的对象类
      */
     var clazz: Class<TView>? = null
 
     private var _collection = ""
+
     /**
      * 查询的集合名称
      */
-    var collection: String = ""
+    var collection: String
         set(value) {
-            field = value
+            this._collection = value
         }
         get() = if (this._collection.isNotEmpty())
             this._collection

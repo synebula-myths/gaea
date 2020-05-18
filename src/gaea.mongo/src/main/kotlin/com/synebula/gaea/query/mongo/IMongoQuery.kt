@@ -11,7 +11,7 @@ import java.lang.reflect.Field
 /**
  * 声明了Mongo查询的特有方法
  */
-interface IMongoQuery<TView> {
+interface IMongoQuery {
     /**
      * 日志组件
      */
@@ -34,14 +34,14 @@ interface IMongoQuery<TView> {
      *
      * @param id 业务ID
      */
-    fun idQuery(id: String): Query = Query(Criteria("_id").isEqualTo(id))
+    fun <TKey> idQuery(id: TKey): Query = Query(Criteria("_id").isEqualTo(id))
 
     /**
      * 获取视图对象的字段列表
      *
      * @param clazz 视图对象类型
      */
-    fun fields(clazz: Class<TView>): List<String> {
+    fun <TView> fields(clazz: Class<TView>): List<String> {
         return analyseFields(clazz.declaredFields)
     }
 
@@ -65,7 +65,7 @@ interface IMongoQuery<TView> {
      * @param params 参数列表
      * @param clazz 视图类对象
      */
-    fun where(query: Query, params: Map<String, Any>?, clazz: Class<TView>): Query {
+    fun <TView> where(query: Query, params: Map<String, Any>?, clazz: Class<TView>): Query {
         val criteria = Criteria()
         if (params != null) {
             for (param in params) {
@@ -83,7 +83,7 @@ interface IMongoQuery<TView> {
      */
     fun order(orders: Map<String, OrderType>?): Sort {
         val orderList = mutableListOf<Sort.Order>()
-        orders?.forEach() {
+        orders?.forEach {
             orderList.add(Sort.Order(Sort.Direction.valueOf(it.value.name), it.key))
         }
         return if (orderList.size == 0)
@@ -116,7 +116,7 @@ interface IMongoQuery<TView> {
      * @param value 字段值
      * @param clazz 视图类对象
      */
-    fun changeFieldType(key: String, value: Any, clazz: Class<TView>): Any? {
+    fun <TView> changeFieldType(key: String, value: Any, clazz: Class<TView>): Any? {
         val getter = clazz.getMethod("get${key.substring(0, 1).toUpperCase()}${key.substring(1)}")
         return this.convertType(value.toString(), getter.returnType)
     }

@@ -1,4 +1,4 @@
-rootProject.name = 'greek.gaea'
+rootProject.name = 'myths.gaea'
 include 'src:gaea'
 include 'src:gaea.app'
 include 'src:gaea.mongo'

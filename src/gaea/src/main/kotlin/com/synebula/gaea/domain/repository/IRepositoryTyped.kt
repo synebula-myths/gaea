@@ -2,6 +2,10 @@ package com.synebula.gaea.domain.repository
 
 import com.synebula.gaea.domain.model.IAggregateRoot
 
+/**
+ * 定义了提供增删改的仓储接口。
+ * 本接口泛型放置到方法上，并需要显式提供聚合根的class对象
+ */
 interface IRepositoryTyped {
     /**
      * 插入单个对象。
