@@ -120,7 +120,7 @@ open class MongoQuery<TView>(var repo: MongoTemplate, override var logger: ILogg
         if (this.clazz == null)
             throw RuntimeException("[${this.javaClass.name}] 没有声明查询View的类型")
         if (this._collection.isEmpty())
-            this.logger?.warn(this, null, "[${this.clazz!!.name}]没有声明查询集合名称, 后续尝试使用View对象名称解析集合")
+            this.logger?.warn(this, "查询集合参数[collection]值为空, 尝试使用View<${this.clazz?.name}>名称解析集合")
     }
 
 }
