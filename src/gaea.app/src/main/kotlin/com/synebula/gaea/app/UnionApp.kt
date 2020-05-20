@@ -1,7 +1,7 @@
 package com.synebula.gaea.app
 
 import com.synebula.gaea.app.cmd.ICommandApp
-import com.synebula.gaea.app.query.IQueryApp
+import com.synebula.gaea.app.query.IQueryGenericApp
 import com.synebula.gaea.data.serialization.json.IJsonSerializer
 import com.synebula.gaea.domain.service.ICommand
 import com.synebula.gaea.domain.service.IService
@@ -22,7 +22,7 @@ open class UnionApp<TCommand : ICommand, TView, TKey>(
         override var service: IService<TKey>?,
         override var query: IQuery<TView, TKey>?,
         override var logger: ILogger)
-    : ICommandApp<TCommand, TKey>, IQueryApp<TView, TKey> {
+    : ICommandApp<TCommand, TKey>, IQueryGenericApp<TView, TKey> {
 
     @Resource
     override var jsonSerializer: IJsonSerializer? = null

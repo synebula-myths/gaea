@@ -1,11 +1,13 @@
 package com.synebula.gaea.app
 
 import com.synebula.gaea.app.cmd.ICommandApp
+import com.synebula.gaea.app.query.IQueryGenericApp
 import com.synebula.gaea.app.query.IQueryTypedApp
 import com.synebula.gaea.data.serialization.json.IJsonSerializer
 import com.synebula.gaea.domain.service.ICommand
 import com.synebula.gaea.domain.service.IService
 import com.synebula.gaea.log.ILogger
+import com.synebula.gaea.query.IQuery
 import com.synebula.gaea.query.IQueryTyped
 import javax.annotation.Resource
 
