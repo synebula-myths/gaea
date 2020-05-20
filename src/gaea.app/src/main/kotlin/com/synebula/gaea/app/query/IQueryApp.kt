@@ -48,8 +48,8 @@ interface IQueryApp<TView, TKey> : IApplication {
         }
     }
 
-    @GetMapping("/split/{size}/pages/{page}")
-    fun paging(@PathVariable page: Int, @PathVariable size: Int, @RequestParam parameters: MutableMap<String, Any>): HttpMessage {
+    @GetMapping("/segments/{size}/pages/{page}")
+    fun paging(@PathVariable size: Int, @PathVariable page: Int, @RequestParam parameters: MutableMap<String, Any>): HttpMessage {
         return this.safeExecute("获取${this.name}分页数据[条数:$size,页码:$page]失败") {
             if (this.query != null) {
                 val params = PagingParam(page, size)
