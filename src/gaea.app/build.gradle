@@ -1,6 +1,7 @@
 dependencies {
     compile project(":src:gaea")
     compile("org.springframework.boot:spring-boot-starter-web:$spring_version")
+    compile("org.springframework.boot:spring-boot-starter-mail:$spring_version")
     compile group: 'net.sf.dozer', name: 'dozer', version: '5.5.1'
 }
 
