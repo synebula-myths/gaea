@@ -1,6 +1,7 @@
 package com.synebula.gaea.app
 
-import org.springframework.http.HttpMessage
+import com.synebula.gaea.app.component.HttpMessage
+
 
 /**
  * 用户登入登出接口定义

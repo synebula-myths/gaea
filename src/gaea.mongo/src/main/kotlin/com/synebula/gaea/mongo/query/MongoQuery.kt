@@ -15,9 +15,10 @@ import org.springframework.data.mongodb.core.query.Query
 
 /**
  * 实现IQuery的Mongo查询类
- * @param repo MongoRepo对象
+ * @param template MongoRepo对象
+ * @param logger 日志组件
  */
-open class MongoQuery<TView>(var repo: MongoTemplate, var logger: ILogger? = null) : IQuery<TView, String> {
+open class MongoQuery<TView>(var template: MongoTemplate, var logger: ILogger? = null) : IQuery<TView, String> {
     /**
      * 查询的对象类
      */
@@ -45,10 +46,10 @@ open class MongoQuery<TView>(var repo: MongoTemplate, var logger: ILogger? = nul
      * 构造方法
      *
      * @param clazz 视图对象类型
-     * @param repo MongoRepo对象
+     * @param query MongoRepo对象
      */
-    constructor(clazz: Class<TView>, repo: MongoTemplate)
-            : this(repo) {
+    constructor(clazz: Class<TView>, query: MongoTemplate)
+            : this(query) {
         this.clazz = clazz
     }
 
@@ -56,21 +57,22 @@ open class MongoQuery<TView>(var repo: MongoTemplate, var logger: ILogger? = nul
      * 构造方法
      *
      * @param collection 查询的集合名称
-     * @param repo MongoRepo对象
+     * @param query MongoRepo对象
      */
-    constructor(collection: String, repo: MongoTemplate)
-            : this(repo) {
+    constructor(collection: String, query: MongoTemplate)
+            : this(query) {
         this.collection = collection
     }
 
     /**
      * 构造方法
      *
+     * @param collection 查询的集合名称
      * @param clazz 视图对象类型
-     * @param repo MongoRepo对象
+     * @param query MongoRepo对象
      */
-    constructor(collection: String, clazz: Class<TView>, repo: MongoTemplate)
-            : this(clazz, repo) {
+    constructor(collection: String, clazz: Class<TView>, query: MongoTemplate)
+            : this(clazz, query) {
         this.collection = collection
     }
 
@@ -82,7 +84,7 @@ open class MongoQuery<TView>(var repo: MongoTemplate, var logger: ILogger? = nul
             val query = Query()
             query.select(fields.toTypedArray())
             query.where(params)
-            this.repo.find(query, this.clazz!!, this.collection)
+            this.template.find(query, this.clazz!!, this.collection)
         } else listOf()
     }
 
@@ -90,7 +92,7 @@ open class MongoQuery<TView>(var repo: MongoTemplate, var logger: ILogger? = nul
         this.check()
         return if (this.clazz != null) {
             val query = Query()
-            this.repo.count(query.where(params), this.collection).toInt()
+            this.template.count(query.where(params), this.collection).toInt()
         } else 0
     }
 
@@ -105,7 +107,7 @@ open class MongoQuery<TView>(var repo: MongoTemplate, var logger: ILogger? = nul
             query.select(fields.toTypedArray())
             query.with(order(params.orderBy))
             query.skip(params.index).limit(params.size)
-            result.data = this.repo.find(query, this.clazz!!, this.collection)
+            result.data = this.template.find(query, this.clazz!!, this.collection)
             result
         } else PagingData(1, 10)
     }
@@ -113,12 +115,12 @@ open class MongoQuery<TView>(var repo: MongoTemplate, var logger: ILogger? = nul
     override fun get(key: String): TView? {
         this.check()
         return if (this.clazz != null) {
-            val view = this.repo.findOne(whereId(key), this.clazz!!, this.collection)
+            val view = this.template.findOne(whereId(key), this.clazz!!, this.collection)
             view
         } else null
     }
 
-    private fun check() {
+    protected fun check() {
         if (this.clazz == null)
             throw RuntimeException("[${this.javaClass.name}] 没有声明查询View的类型")
         if (this._collection.isEmpty())

@@ -10,6 +10,13 @@ import java.util.*
  * @tparam T 消息数据类型
  */
 open class Message<T>(var status: Int = Status.Success) {
+
+    /**
+     * 获取状态是否成功
+     */
+    val success: Boolean
+        get() = this.status == Status.Success
+
     /**
      * 传递的业务数据
      */
@@ -38,6 +45,12 @@ open class Message<T>(var status: Int = Status.Success) {
         this.message = message
     }
 
+
+    /**
+     * 从另一对象中复制数据
+     *
+     * @param other 另一消息对象
+     */
     open fun from(other: Message<T>) {
         this.status = other.status
         this.data = other.data
