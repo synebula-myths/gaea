@@ -6,43 +6,30 @@ import com.synebula.gaea.mongo.whereId
 import org.springframework.data.mongodb.core.MongoTemplate
 
 /**
- * 实现IAggregateRoot的mongo仓储类
+ * 实现ITypedRepository的mongo仓储类
  * @param repo MongoRepo对象
  */
-class MongoRepository<TAggregateRoot : IAggregateRoot<String>>(private var repo: MongoTemplate)
-    : IRepository<TAggregateRoot, String> {
+open class MongoRepository(private var repo: MongoTemplate) : IRepository {
 
-    /**
-     * 仓储的对象类
-     */
-    override var clazz: Class<TAggregateRoot>? = null
-
-    /**
-     * 构造
-     * @param clazz 仓储Domain对象
-     * @param repo MongoRepo对象
-     */
-    constructor(clazz: Class<TAggregateRoot>, repo: MongoTemplate) : this(repo) {
-        this.clazz = clazz
+    override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> remove(id: TKey, clazz: Class<TAggregateRoot>) {
+        this.repo.remove(whereId(id), clazz)
     }
 
-    override fun add(obj: TAggregateRoot) {
+    override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> get(
+        id: TKey,
+        clazz: Class<TAggregateRoot>
+    ): TAggregateRoot {
+        return this.repo.findOne(whereId(id), clazz) as TAggregateRoot
+    }
+
+    override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> update(
+        obj: TAggregateRoot,
+        clazz: Class<TAggregateRoot>
+    ) {
         this.repo.save(obj)
     }
 
-    override fun update(obj: TAggregateRoot) {
+    override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> add(obj: TAggregateRoot, clazz: Class<TAggregateRoot>) {
         this.repo.save(obj)
-    }
-
-    override fun remove(id: String) {
-        this.repo.remove(whereId(id), this.clazz!!)
-    }
-
-    override fun get(id: String): TAggregateRoot {
-        return this.repo.findOne(whereId(id), clazz!!) as TAggregateRoot
-    }
-
-    override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> get(id: TKey, clazz: Class<TAggregateRoot>): TAggregateRoot {
-        return this.repo.findOne(whereId(id.toString()), clazz) as TAggregateRoot
     }
 }

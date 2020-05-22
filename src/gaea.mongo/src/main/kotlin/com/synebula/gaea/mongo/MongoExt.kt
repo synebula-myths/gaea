@@ -41,7 +41,7 @@ fun Query.where(params: Map<String, Any>?): Query {
  *
  * @param id 业务ID
  */
-fun <TKey> whereId(id: TKey): Query = Query(Criteria("_id").isEqualTo(id))
+fun <TKey> whereId(id: TKey): Query = Query.query(Criteria.where("_id").`is`(id))
 
 /**
  * 获取排序对象

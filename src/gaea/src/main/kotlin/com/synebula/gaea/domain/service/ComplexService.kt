@@ -3,7 +3,7 @@ package com.synebula.gaea.domain.service
 import com.synebula.gaea.data.IObjectConverter
 import com.synebula.gaea.data.message.Message
 import com.synebula.gaea.domain.model.complex.IComplexAggregateRoot
-import com.synebula.gaea.domain.repository.IRepositoryComplex
+import com.synebula.gaea.domain.repository.IComplexRepository
 import com.synebula.gaea.log.ILogger
 
 /**
@@ -13,10 +13,12 @@ import com.synebula.gaea.log.ILogger
  * @version 0.1
  * @since 2020-05-15
  */
-open class ServiceComplex<TAggregateRoot : IComplexAggregateRoot<TKey, TSecond>, TKey, TSecond>
-(var logger: ILogger, protected var repository: IRepositoryComplex<TAggregateRoot, TKey, TSecond>,
- protected var converter: IObjectConverter, protected var aggregateRootClass: Class<TAggregateRoot>)
-    : IServiceComplex<TKey, TSecond> {
+open class ComplexService<TAggregateRoot : IComplexAggregateRoot<TKey, TSecond>, TKey, TSecond>(
+    protected var clazz: Class<TAggregateRoot>,
+    protected var repository: IComplexRepository<TAggregateRoot, TKey, TSecond>,
+    protected var converter: IObjectConverter,
+    override var logger: ILogger
+) : IComplexService<TKey, TSecond> {
 
     override fun add(command: ICommand): Message<Pair<TKey, TSecond>> {
         val msg = Message<Pair<TKey, TSecond>>()
@@ -45,7 +47,7 @@ open class ServiceComplex<TAggregateRoot : IComplexAggregateRoot<TKey, TSecond>,
      */
     protected fun convert(command: ICommand): TAggregateRoot {
         try {
-            return converter.convert(command, aggregateRootClass)
+            return converter.convert(command, clazz)
         } catch (ex: Exception) {
             throw RuntimeException("command not match aggregate root", ex)
         }

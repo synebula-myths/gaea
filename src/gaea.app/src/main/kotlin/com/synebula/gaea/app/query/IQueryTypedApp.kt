@@ -1,9 +1,8 @@
 package com.synebula.gaea.app.query
 
-import com.synebula.gaea.app.IApplication
 import com.synebula.gaea.app.component.HttpMessage
 import com.synebula.gaea.data.message.Status
-import com.synebula.gaea.query.IQueryTyped
+import com.synebula.gaea.query.IQuery
 import com.synebula.gaea.query.PagingParam
 
 /**
@@ -14,26 +13,26 @@ import com.synebula.gaea.query.PagingParam
  * @version 0.1
  * @since 2020-05-15
  */
-interface IQueryTypedApp<TView, TKey> : IApplication, IQueryApp<TView, TKey> {
+interface IQueryTypedApp<TView, TKey> : IQueryApp<TView, TKey> {
     /**
      * 查询服务
      */
-    var query: IQueryTyped?
+    var query: IQuery?
 
     /**
      * 查询的View类型
      */
-    var viewClass: Class<TView>
+    var clazz: Class<TView>
 
     override fun doGet(key: TKey): HttpMessage {
         return this.doQuery("获取${this.name}数据失败") {
-            this.query!!.get(key, viewClass)
+            this.query!!.get(key, clazz)
         }
     }
 
     override fun doList(params: Map<String, Any>): HttpMessage {
         return this.doQuery("获取${this.name}列表数据失败") {
-            this.query!!.list(params, viewClass)
+            this.query!!.list(params, clazz)
         }
     }
 
@@ -41,7 +40,7 @@ interface IQueryTypedApp<TView, TKey> : IApplication, IQueryApp<TView, TKey> {
         return this.doQuery("获取${this.name}分页数据[条数:$size,页码:$page]失败") {
             val data = PagingParam(page, size)
             data.parameters = params
-            this.query!!.paging(data, viewClass)
+            this.query!!.paging(data, clazz)
         }
     }
 

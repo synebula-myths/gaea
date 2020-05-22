@@ -12,119 +12,73 @@ import com.synebula.gaea.query.PagingData
 import com.synebula.gaea.query.PagingParam
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Query
+import java.lang.RuntimeException
 
 /**
  * 实现IQuery的Mongo查询类
- * @param template MongoRepo对象
- * @param logger 日志组件
+ * @param repo MongoRepo对象
  */
-open class MongoQuery<TView>(var template: MongoTemplate, var logger: ILogger? = null) : IQuery<TView, String> {
-    /**
-     * 查询的对象类
-     */
-    var clazz: Class<TView>? = null
 
-    private var _collection = ""
+open class MongoQuery(var repo: MongoTemplate, var logger: ILogger? = null) : IQuery {
 
     /**
      * 查询的集合名称
+     *
+     * 若没有为成员变量collection赋值，会尝试使用View名称解析集合名称。
+     * 规则为移除View后缀并首字母小写，此时使用
      */
-    var collection: String
-        set(value) {
-            this._collection = value
-        }
-        get() = if (this._collection.isNotEmpty())
-            this._collection
-        else {
-            if (this.clazz != null)
-                this.clazz!!.simpleName.removeSuffix("View").firstCharLowerCase()
-            else
-                ""
-        }
+    var collection: String = ""
 
     /**
-     * 构造方法
-     *
-     * @param clazz 视图对象类型
-     * @param query MongoRepo对象
+     * 使用View解析是collection时是否校验存在，默认不校验
      */
-    constructor(clazz: Class<TView>, query: MongoTemplate)
-            : this(query) {
-        this.clazz = clazz
+    var validViewCollection = false
+
+    override fun <TView> list(params: Map<String, Any>?, clazz: Class<TView>): List<TView> {
+        val fields = clazz.fields()
+        val query = Query()
+        query.where(params)
+        query.select(fields.toTypedArray())
+        return this.repo.find(query, clazz, this.collection(clazz))
+    }
+
+    override fun <TView> count(params: Map<String, Any>?, clazz: Class<TView>): Int {
+        val query = Query()
+        return this.repo.count(query.where(params), this.collection(clazz)).toInt()
+    }
+
+    override fun <TView> paging(params: PagingParam, clazz: Class<TView>): PagingData<TView> {
+        val fields = clazz.fields()
+        val result = PagingData<TView>(1, 10)
+        result.size = params.size
+        result.page = params.page
+        val query = Query()
+        query.where(params.parameters)
+        result.total = this.count(params.parameters, clazz)
+        query.select(fields.toTypedArray())
+        query.with(order(params.orderBy))
+        query.skip(params.index).limit(params.size)
+        result.data = this.repo.find(query, clazz, this.collection(clazz))
+        return result
+    }
+
+    override fun <TView, TKey> get(key: TKey, clazz: Class<TView>): TView? {
+        return this.repo.findOne(whereId(key), clazz, this.collection(clazz))
     }
 
     /**
-     * 构造方法
-     *
-     * @param collection 查询的集合名称
-     * @param query MongoRepo对象
+     * 获取collection
      */
-    constructor(collection: String, query: MongoTemplate)
-            : this(query) {
-        this.collection = collection
+    protected fun <TView> collection(clazz: Class<TView>): String {
+        return if (this.collection.isEmpty()) {
+            this.logger?.info(this, "查询集合参数[collection]值为空, 尝试使用View<${clazz.name}>名称解析集合")
+            val collection = clazz.simpleName.removeSuffix("View").firstCharLowerCase()
+            if (!validViewCollection || this.repo.collectionExists(collection))
+                collection
+            else {
+                throw RuntimeException("找不到名为[$collection]的集合")
+            }
+        } else
+            this.collection
     }
-
-    /**
-     * 构造方法
-     *
-     * @param collection 查询的集合名称
-     * @param clazz 视图对象类型
-     * @param query MongoRepo对象
-     */
-    constructor(collection: String, clazz: Class<TView>, query: MongoTemplate)
-            : this(clazz, query) {
-        this.collection = collection
-    }
-
-
-    override fun list(params: Map<String, Any>?): List<TView> {
-        this.check()
-        return if (this.clazz != null) {
-            val fields = this.clazz!!.fields()
-            val query = Query()
-            query.select(fields.toTypedArray())
-            query.where(params)
-            this.template.find(query, this.clazz!!, this.collection)
-        } else listOf()
-    }
-
-    override fun count(params: Map<String, Any>?): Int {
-        this.check()
-        return if (this.clazz != null) {
-            val query = Query()
-            this.template.count(query.where(params), this.collection).toInt()
-        } else 0
-    }
-
-    override fun paging(params: PagingParam): PagingData<TView> {
-        this.check()
-        return if (this.clazz != null) {
-            val query = Query()
-            val fields = this.clazz!!.fields()
-            val result = PagingData<TView>(params.page, params.size)
-            query.where(params.parameters)
-            result.total = this.count(params.parameters)
-            query.select(fields.toTypedArray())
-            query.with(order(params.orderBy))
-            query.skip(params.index).limit(params.size)
-            result.data = this.template.find(query, this.clazz!!, this.collection)
-            result
-        } else PagingData(1, 10)
-    }
-
-    override fun get(key: String): TView? {
-        this.check()
-        return if (this.clazz != null) {
-            val view = this.template.findOne(whereId(key), this.clazz!!, this.collection)
-            view
-        } else null
-    }
-
-    protected fun check() {
-        if (this.clazz == null)
-            throw RuntimeException("[${this.javaClass.name}] 没有声明查询View的类型")
-        if (this._collection.isEmpty())
-            this.logger?.warn(this, "查询集合参数[collection]值为空, 尝试使用View<${this.clazz?.name}>名称解析集合")
-    }
-
 }

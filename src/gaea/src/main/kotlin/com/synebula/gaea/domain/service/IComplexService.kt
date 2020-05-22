@@ -1,6 +1,7 @@
 package com.synebula.gaea.domain.service
 
 import com.synebula.gaea.data.message.Message
+import com.synebula.gaea.log.ILogger
 
 /**
  * class IFlatService
@@ -9,7 +10,11 @@ import com.synebula.gaea.data.message.Message
  * @version 0.1
  * @since 2020-05-15
  */
-interface IServiceComplex<TKey, TSecond> {
+interface IComplexService<TKey, TSecond> {
+    /**
+     * 日志组件。
+     */
+    var logger: ILogger
 
     fun add(command: ICommand): Message<Pair<TKey, TSecond>>
 

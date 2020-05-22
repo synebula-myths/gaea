@@ -8,30 +8,28 @@ import com.synebula.gaea.log.ILogger
 
 
 /**
- * class FlatService
+ * 依赖了IRepositoryTyped仓储借口的服务实现类 ServiceTyped
+ * 该类依赖仓储接口 @see IRepositoryTyped ,需要显式提供聚合根的class对象
  *
  * @param repository 仓储对象
- * @param rootClass 聚合根类对象
+ * @param clazz 聚合根类对象
  * @param converter 对象转换组件
  * @param logger 日志组件
  * @author alex
  * @version 0.1
- * @since 2020-05-15
+ * @since 2020-05-17
  */
 open class Service<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
-        protected var rootClass: Class<TAggregateRoot>,
-        protected var repository: IRepository<TAggregateRoot, TKey>,
-        protected var converter: IObjectConverter,
-        override var logger: ILogger) : IService<TKey> {
-
-    init {
-        this.repository.clazz = rootClass
-    }
+    protected var clazz: Class<TAggregateRoot>,
+    protected var repository: IRepository,
+    protected var converter: IObjectConverter,
+    override var logger: ILogger
+) : IService<TKey> {
 
     override fun add(command: ICommand): Message<TKey> {
         val msg = Message<TKey>()
         val root = this.convert(command)
-        this.repository.add(root)
+        this.repository.add(root, this.clazz)
         msg.data = root.id
         return msg
     }
@@ -39,29 +37,24 @@ open class Service<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
     override fun update(key: TKey, command: ICommand) {
         val root = this.convert(command)
         root.id = key
-        this.repository.update(root)
+        this.repository.update(root, this.clazz)
     }
 
     override fun remove(key: TKey) {
-        this.repository.remove(key)
-    }
-
-    fun get(key: TKey): TAggregateRoot {
-        return this.repository.get(key)
+        this.repository.remove(key, this.clazz)
     }
 
     /**
      * 转换ICommand类型到聚合根类型，默认实现，根据需要进行覆写。
      *
-     * @param command
-     * @return
+     * @param command 需要转换的命令
+     * @return 聚合根
      */
     protected fun convert(command: ICommand): TAggregateRoot {
         try {
-            return converter.convert(command, rootClass)
+            return converter.convert(command, this.clazz)
         } catch (ex: Exception) {
             throw RuntimeException("command not match aggregate root", ex)
         }
-
     }
 }

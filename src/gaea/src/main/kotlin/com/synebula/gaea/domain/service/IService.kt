@@ -13,7 +13,7 @@ import com.synebula.gaea.log.ILogger
  */
 interface IService<TKey> {
     /**
-     * 日志组件。若无日志组件则默认为NullLogger对象，不会为null。
+     * 日志组件。
      */
     var logger: ILogger
 

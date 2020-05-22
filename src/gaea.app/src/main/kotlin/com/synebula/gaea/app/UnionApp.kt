@@ -1,7 +1,7 @@
 package com.synebula.gaea.app
 
 import com.synebula.gaea.app.cmd.ICommandApp
-import com.synebula.gaea.app.query.IQueryGenericApp
+import com.synebula.gaea.app.query.IQueryTypedApp
 import com.synebula.gaea.data.serialization.json.IJsonSerializer
 import com.synebula.gaea.domain.service.ICommand
 import com.synebula.gaea.domain.service.IService
@@ -18,11 +18,12 @@ import javax.annotation.Resource
  * @param logger 日志组件
  */
 open class UnionApp<TCommand : ICommand, TView, TKey>(
-        override var name: String,
-        override var service: IService<TKey>?,
-        override var query: IQuery<TView, TKey>?,
-        override var logger: ILogger)
-    : ICommandApp<TCommand, TKey>, IQueryGenericApp<TView, TKey> {
+    override var name: String,
+    override var clazz: Class<TView>,
+    override var service: IService<TKey>?,
+    override var query: IQuery?,
+    override var logger: ILogger)
+    : ICommandApp<TCommand, TKey>, IQueryTypedApp<TView, TKey> {
 
     @Resource
     override var jsonSerializer: IJsonSerializer? = null

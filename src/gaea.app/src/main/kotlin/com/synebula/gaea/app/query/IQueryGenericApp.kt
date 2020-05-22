@@ -1,13 +1,9 @@
 package com.synebula.gaea.app.query
 
-import com.synebula.gaea.app.IApplication
 import com.synebula.gaea.app.component.HttpMessage
 import com.synebula.gaea.data.message.Status
-import com.synebula.gaea.query.IQuery
+import com.synebula.gaea.query.IGenericQuery
 import com.synebula.gaea.query.PagingParam
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestParam
 
 /**
  * 应用类接口，提供实现Query服务的接口
@@ -21,7 +17,7 @@ interface IQueryGenericApp<TView, TKey> : IQueryApp<TView, TKey> {
     /**
      * 查询服务
      */
-    var query: IQuery<TView, TKey>?
+    var query: IGenericQuery<TView, TKey>?
 
 
     /**
