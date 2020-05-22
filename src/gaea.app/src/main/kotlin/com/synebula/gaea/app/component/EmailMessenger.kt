@@ -49,11 +49,12 @@ class EmailMessenger : IEmailMessenger {
         receivers.forEach {
             try {
                 val mail = mailSender.createMimeMessage()
-                val mimeMessageHelper = MimeMessageHelper(mail)
+                val mimeMessageHelper = MimeMessageHelper(mail, true, "utf-8")
                 mimeMessageHelper.setFrom(sender)
                 mimeMessageHelper.setTo(it)
                 mimeMessageHelper.setSubject(subject)
-                mimeMessageHelper.setText(content)
+                mimeMessageHelper.setText(content, true)
+
                 files.forEach { (name, path) ->
                     val file = FileSystemResource(File(path))
                     mimeMessageHelper.addAttachment(name, file)
