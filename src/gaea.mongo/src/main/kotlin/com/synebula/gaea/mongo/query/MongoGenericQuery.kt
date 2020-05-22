@@ -83,7 +83,7 @@ open class MongoGenericQuery<TView>(var template: MongoTemplate, var logger: ILo
             val fields = this.clazz!!.fields()
             val query = Query()
             query.select(fields.toTypedArray())
-            query.where(params)
+            query.where(params, this.clazz!!)
             this.template.find(query, this.clazz!!, this.collection)
         } else listOf()
     }
@@ -92,7 +92,7 @@ open class MongoGenericQuery<TView>(var template: MongoTemplate, var logger: ILo
         this.check()
         return if (this.clazz != null) {
             val query = Query()
-            this.template.count(query.where(params), this.collection).toInt()
+            this.template.count(query.where(params, this.clazz!!), this.collection).toInt()
         } else 0
     }
 
@@ -102,7 +102,7 @@ open class MongoGenericQuery<TView>(var template: MongoTemplate, var logger: ILo
             val query = Query()
             val fields = this.clazz!!.fields()
             val result = PagingData<TView>(params.page, params.size)
-            query.where(params.parameters)
+            query.where(params.parameters, this.clazz!!)
             result.total = this.count(params.parameters)
             query.select(fields.toTypedArray())
             query.with(order(params.orderBy))

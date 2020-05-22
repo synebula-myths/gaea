@@ -37,14 +37,14 @@ open class MongoQuery(var repo: MongoTemplate, var logger: ILogger? = null) : IQ
     override fun <TView> list(params: Map<String, Any>?, clazz: Class<TView>): List<TView> {
         val fields = clazz.fields()
         val query = Query()
-        query.where(params)
+        query.where(params, clazz)
         query.select(fields.toTypedArray())
         return this.repo.find(query, clazz, this.collection(clazz))
     }
 
     override fun <TView> count(params: Map<String, Any>?, clazz: Class<TView>): Int {
         val query = Query()
-        return this.repo.count(query.where(params), this.collection(clazz)).toInt()
+        return this.repo.count(query.where(params, clazz), this.collection(clazz)).toInt()
     }
 
     override fun <TView> paging(params: PagingParam, clazz: Class<TView>): PagingData<TView> {
@@ -53,7 +53,7 @@ open class MongoQuery(var repo: MongoTemplate, var logger: ILogger? = null) : IQ
         result.size = params.size
         result.page = params.page
         val query = Query()
-        query.where(params.parameters)
+        query.where(params.parameters, clazz)
         result.total = this.count(params.parameters, clazz)
         query.select(fields.toTypedArray())
         query.with(order(params.orderBy))
