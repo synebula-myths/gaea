@@ -96,17 +96,17 @@ open class MongoGenericQuery<TView>(var template: MongoTemplate, var logger: ILo
         } else 0
     }
 
-    override fun paging(params: PagingParam): PagingData<TView> {
+    override fun paging(param: PagingParam): PagingData<TView> {
         this.check()
         return if (this.clazz != null) {
             val query = Query()
             val fields = this.clazz!!.fields()
-            val result = PagingData<TView>(params.page, params.size)
-            query.where(params.parameters, this.clazz!!)
-            result.total = this.count(params.parameters)
+            val result = PagingData<TView>(param.page, param.size)
+            result.total = this.count(param.parameters)
+            query.where(param.parameters, this.clazz!!)
             query.select(fields.toTypedArray())
-            query.with(order(params.orderBy))
-            query.skip(params.index).limit(params.size)
+            query.with(order(param.orderBy))
+            query.skip(param.index).limit(param.size)
             result.data = this.template.find(query, this.clazz!!, this.collection)
             result
         } else PagingData(1, 10)

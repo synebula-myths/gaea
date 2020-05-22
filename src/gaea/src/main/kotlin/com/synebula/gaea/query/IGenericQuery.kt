@@ -35,8 +35,8 @@ interface IGenericQuery<TView, TKey> {
     /**
      * 根据实体类条件查询所有符合条件记录（分页查询）
      *
-     * @param params 分页条件
+     * @param param 分页条件
      * @return 分页数据
      */
-    fun paging(params: PagingParam): PagingData<TView>
+    fun paging(param: PagingParam): PagingData<TView>
 }

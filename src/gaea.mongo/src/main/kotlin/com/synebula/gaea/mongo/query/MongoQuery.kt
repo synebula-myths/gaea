@@ -47,17 +47,15 @@ open class MongoQuery(var repo: MongoTemplate, var logger: ILogger? = null) : IQ
         return this.repo.count(query.where(params, clazz), this.collection(clazz)).toInt()
     }
 
-    override fun <TView> paging(params: PagingParam, clazz: Class<TView>): PagingData<TView> {
+    override fun <TView> paging(param: PagingParam, clazz: Class<TView>): PagingData<TView> {
         val fields = clazz.fields()
-        val result = PagingData<TView>(1, 10)
-        result.size = params.size
-        result.page = params.page
+        val result = PagingData<TView>(param.page, param.size)
+        result.total = this.count(param.parameters, clazz)
         val query = Query()
-        query.where(params.parameters, clazz)
-        result.total = this.count(params.parameters, clazz)
+        query.where(param.parameters, clazz)
         query.select(fields.toTypedArray())
-        query.with(order(params.orderBy))
-        query.skip(params.index).limit(params.size)
+        query.with(order(param.orderBy))
+        query.skip(param.index).limit(param.size)
         result.data = this.repo.find(query, clazz, this.collection(clazz))
         return result
     }
