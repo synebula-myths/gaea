@@ -10,7 +10,7 @@ import java.lang.reflect.Field
 
 
 /**
- * 获取查询条件
+ * 获取查询字段列表
  *
  * @param fields 字段列表
  */

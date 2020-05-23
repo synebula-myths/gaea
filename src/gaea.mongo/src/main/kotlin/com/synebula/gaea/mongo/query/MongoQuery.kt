@@ -1,6 +1,6 @@
 package com.synebula.gaea.mongo.query
 
-import com.synebula.gaea.extension.fields
+import com.synebula.gaea.extension.fieldNames
 import com.synebula.gaea.extension.firstCharLowerCase
 import com.synebula.gaea.log.ILogger
 import com.synebula.gaea.mongo.order
@@ -35,7 +35,7 @@ open class MongoQuery(var repo: MongoTemplate, var logger: ILogger? = null) : IQ
     var validViewCollection = false
 
     override fun <TView> list(params: Map<String, Any>?, clazz: Class<TView>): List<TView> {
-        val fields = clazz.fields()
+        val fields = clazz.fieldNames()
         val query = Query()
         query.where(params, clazz)
         query.select(fields.toTypedArray())
@@ -48,7 +48,7 @@ open class MongoQuery(var repo: MongoTemplate, var logger: ILogger? = null) : IQ
     }
 
     override fun <TView> paging(param: PagingParam, clazz: Class<TView>): PagingData<TView> {
-        val fields = clazz.fields()
+        val fields = clazz.fieldNames()
         val result = PagingData<TView>(param.page, param.size)
         result.total = this.count(param.parameters, clazz)
         val query = Query()
