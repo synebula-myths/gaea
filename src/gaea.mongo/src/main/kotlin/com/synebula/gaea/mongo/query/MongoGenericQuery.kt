@@ -103,6 +103,11 @@ open class MongoGenericQuery<TView>(var template: MongoTemplate, var logger: ILo
             val fields = this.clazz!!.fieldNames()
             val result = PagingData<TView>(param.page, param.size)
             result.total = this.count(param.parameters)
+            //如果总数和索引相同，说明该页没有数据，直接跳到上一页
+            if (result.total == result.index) {
+                param.page -= 1
+                result.page -= 1
+            }
             query.select(fields.toTypedArray())
             query.where(param.parameters, this.clazz!!)
             query.with(order(param.orderBy))

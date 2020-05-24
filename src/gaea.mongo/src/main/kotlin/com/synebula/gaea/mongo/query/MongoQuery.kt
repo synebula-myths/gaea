@@ -48,12 +48,17 @@ open class MongoQuery(var repo: MongoTemplate, var logger: ILogger? = null) : IQ
     }
 
     override fun <TView> paging(param: PagingParam, clazz: Class<TView>): PagingData<TView> {
+        val query = Query()
         val fields = clazz.fieldNames()
         val result = PagingData<TView>(param.page, param.size)
         result.total = this.count(param.parameters, clazz)
-        val query = Query()
-        query.where(param.parameters, clazz)
+        //如果总数和索引相同，说明该页没有数据，直接跳到上一页
+        if (result.total == result.index) {
+            param.page -= 1
+            result.page -= 1
+        }
         query.select(fields.toTypedArray())
+        query.where(param.parameters, clazz)
         query.with(order(param.orderBy))
         query.skip(param.index).limit(param.size)
         result.data = this.repo.find(query, clazz, this.collection(clazz))
