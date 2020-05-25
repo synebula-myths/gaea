@@ -1,5 +1,6 @@
 package com.synebula.gaea.mongo
 
+import com.synebula.gaea.data.date.DateTime
 import com.synebula.gaea.query.Operator
 import com.synebula.gaea.query.OrderType
 import com.synebula.gaea.query.Where
@@ -7,6 +8,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import java.lang.reflect.Field
+import java.util.*
 
 
 /**
@@ -27,36 +29,55 @@ fun Query.select(fields: Array<String>): Query {
  * @param params 参数列表
  * @param onWhere 获取字段查询方式的方法
  */
-fun Query.where(params: Map<String, Any>?, onWhere: ((v: String) -> Operator) = { Operator.default }): Query {
-    val criteria = Criteria()
-    val rangeStartSuffix = ".start" //范围查询开始后缀
-    val rangeEndSuffix = ".end" //范围查询结束后缀
+fun Query.where(
+    params: Map<String, Any>?,
+    onWhere: ((v: String) -> Operator) = { Operator.default },
+    onFieldType: ((v: String) -> Class<*>?) = { null }
+): Query {
+    val list = arrayListOf<Criteria>()
     if (params != null) {
         for (param in params) {
             val key = param.key
+            var value = param.value
+            val fieldType = onFieldType(key)
+            if (fieldType != null && value.javaClass != fieldType && fieldType == Date::class.java) {
+                value = DateTime(value.toString(), "yyyy-MM-dd").date
+            }
             when (onWhere(key)) {
-                Operator.eq -> criteria.and(key).`is`(param.value)
-                Operator.ne -> criteria.and(key).ne(param.value)
-                Operator.lt -> criteria.and(key).lt(param.value)
-                Operator.gt -> criteria.and(key).gt(param.value)
-                Operator.lte -> criteria.and(key).lte(param.value)
-                Operator.gte -> criteria.and(key).gte(param.value)
-                Operator.like -> criteria.and(key).regex(param.value.toString())
-                Operator.default -> {
-                    when {
-                        //以范围查询开始后缀结尾表示要用大于或等于查询方式
-                        key.endsWith(rangeStartSuffix) ->
-                            criteria.and(key.removeSuffix(rangeStartSuffix)).gte(param.value)
-                        //以范围查询结束后缀结尾表示要用小于或等于查询方式
-                        key.endsWith(rangeEndSuffix) ->
-                            criteria.and(key.removeSuffix(rangeEndSuffix)).gte(param.value)
-                        else -> criteria.and(key).`is`(param.value)
-                    }
-                }
+                Operator.eq -> list.add(Criteria.where(key).`is`(value))
+                Operator.ne -> list.add(Criteria.where(key).ne(value))
+                Operator.lt -> list.add(Criteria.where(key).lt(value))
+                Operator.gt -> list.add(Criteria.where(key).gt(value))
+                Operator.lte -> list.add(Criteria.where(key).lte(value))
+                Operator.gte -> list.add(Criteria.where(key).gte(value))
+                Operator.like -> list.add(Criteria.where(key).regex(value.toString()))
+                Operator.default -> rangeWhere(param.key, value, onFieldType(param.key), list)
             }
         }
     }
-    return this.addCriteria(criteria)
+    return this.addCriteria(Criteria().andOperator(*list.toTypedArray()))
+}
+
+private fun rangeWhere(key: String, value: Any, fieldType: Class<*>?, list: MutableList<Criteria>) {
+    val rangeStartSuffix = "[0]" //范围查询开始后缀
+    val rangeEndSuffix = "[1]" //范围查询结束后缀
+    var condition = value
+    if (value.javaClass != fieldType && fieldType == Date::class.java) {
+        condition = DateTime(value.toString(), "yyyy-MM-dd").date
+    }
+    when {
+        //以范围查询开始后缀结尾表示要用大于或等于查询方式
+        key.endsWith(rangeStartSuffix) ->
+            list.add(
+                Criteria.where(key.removeSuffix(rangeStartSuffix)).gte(condition)
+            )
+        //以范围查询结束后缀结尾表示要用小于或等于查询方式
+        key.endsWith(rangeEndSuffix) ->
+            list.add(
+                Criteria.where(key.removeSuffix(rangeEndSuffix)).lte(condition)
+            )
+        else -> list.add(Criteria.where(key).`is`(value))
+    }
 }
 
 /**
@@ -67,11 +88,11 @@ fun Query.where(params: Map<String, Any>?, onWhere: ((v: String) -> Operator) = 
 fun Query.where(params: Map<String, Any>?, clazz: Class<*>): Query {
     var field: Field?
     var where: Where?
-    return this.where(params) { name ->
-        field = clazz.getDeclaredField(name)
+    return this.where(params, { name ->
+        field = clazz.declaredFields.find { it.name == name }
         where = field?.getDeclaredAnnotation(Where::class.java)
-        if (where == null) Operator.eq else where!!.operator
-    }
+        if (where == null) Operator.default else where!!.operator
+    })
 }
 
 /**
