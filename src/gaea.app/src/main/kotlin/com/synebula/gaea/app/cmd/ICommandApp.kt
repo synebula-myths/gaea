@@ -22,7 +22,7 @@ interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
 
     @PostMapping
     fun add(@RequestBody command: TCommand): HttpMessage {
-        return this.throwExecute("添加${this.name}数据失败 - ${if (jsonSerializer != null) jsonSerializer?.serialize(command) else ""}") {
+        return this.safeExecute("添加${this.name}数据失败 - ${if (jsonSerializer != null) jsonSerializer?.serialize(command) else ""}") {
             if (this.service != null) {
                 val msg = this.service!!.add(command)
                 it.load(msg)
@@ -35,7 +35,7 @@ interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
 
     @DeleteMapping("/{key:.+}")
     fun remove(@PathVariable key: TKey): HttpMessage {
-        return this.throwExecute("删除${this.name}失败[Key: $key]") {
+        return this.safeExecute("删除${this.name}失败[Key: $key]") {
             if (this.service != null)
                 it.data = this.service!!.remove(key)
             else {
@@ -47,7 +47,7 @@ interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
 
     @PutMapping("/{key:.+}")
     fun update(@PathVariable key: TKey, @RequestBody command: TCommand): HttpMessage {
-        return this.throwExecute("更新${this.name}失败 - ${if (jsonSerializer != null) jsonSerializer?.serialize(command) else ""}") {
+        return this.safeExecute("更新${this.name}失败 - ${if (jsonSerializer != null) jsonSerializer?.serialize(command) else ""}") {
             if (this.service != null)
                 this.service!!.update(key, command)
             else {

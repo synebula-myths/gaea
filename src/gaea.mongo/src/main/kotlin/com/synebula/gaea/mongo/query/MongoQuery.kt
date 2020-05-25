@@ -3,16 +3,13 @@ package com.synebula.gaea.mongo.query
 import com.synebula.gaea.extension.fieldNames
 import com.synebula.gaea.extension.firstCharLowerCase
 import com.synebula.gaea.log.ILogger
-import com.synebula.gaea.mongo.order
-import com.synebula.gaea.mongo.select
-import com.synebula.gaea.mongo.where
-import com.synebula.gaea.mongo.whereId
+import com.synebula.gaea.mongo.*
+import com.synebula.gaea.mongo.Collection
 import com.synebula.gaea.query.IQuery
 import com.synebula.gaea.query.PagingData
 import com.synebula.gaea.query.PagingParam
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Query
-import java.lang.RuntimeException
 
 /**
  * 实现IQuery的Mongo查询类
@@ -20,14 +17,6 @@ import java.lang.RuntimeException
  */
 
 open class MongoQuery(var repo: MongoTemplate, var logger: ILogger? = null) : IQuery {
-
-    /**
-     * 查询的集合名称
-     *
-     * 若没有为成员变量collection赋值，会尝试使用View名称解析集合名称。
-     * 规则为移除View后缀并首字母小写，此时使用
-     */
-    var collection: String = ""
 
     /**
      * 使用View解析是collection时是否校验存在，默认不校验
@@ -73,15 +62,17 @@ open class MongoQuery(var repo: MongoTemplate, var logger: ILogger? = null) : IQ
      * 获取collection
      */
     protected fun <TView> collection(clazz: Class<TView>): String {
-        return if (this.collection.isEmpty()) {
-            this.logger?.info(this, "查询集合参数[collection]值为空, 尝试使用View<${clazz.name}>名称解析集合")
-            val collection = clazz.simpleName.removeSuffix("View").firstCharLowerCase()
-            if (!validViewCollection || this.repo.collectionExists(collection))
-                collection
+        val collection: Collection? = clazz.getDeclaredAnnotation(Collection::class.java)
+        return if (collection != null)
+            return collection.name
+        else {
+            this.logger?.info(this, "视图类没有标记[Collection]注解，无法获取Collection名称。尝试使用View<${clazz.name}>名称解析集合")
+            val name = clazz.simpleName.removeSuffix("View").firstCharLowerCase()
+            if (!validViewCollection || this.repo.collectionExists(name))
+                name
             else {
                 throw RuntimeException("找不到名为[$collection]的集合")
             }
-        } else
-            this.collection
+        }
     }
 }
