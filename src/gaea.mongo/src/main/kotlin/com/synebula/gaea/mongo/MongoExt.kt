@@ -28,19 +28,28 @@ fun Query.select(fields: Array<String>): Query {
  */
 fun Query.where(params: Map<String, Any>?, onWhere: ((v: String) -> Operator) = { Operator.eq }): Query {
     val criteria = Criteria()
+    val rangeStartSuffix = ".start" //范围查询开始后缀
+    val rangeEndSuffix = ".end" //范围查询结束后缀
     if (params != null) {
         for (param in params) {
-            val where = onWhere(param.key)
-            when (where) {
-                Operator.eq -> criteria.and(param.key).`is`(param.value)
-                Operator.ne -> criteria.and(param.key).ne(param.value)
-                Operator.lt -> criteria.and(param.key).lt(param.value)
-                Operator.gt -> criteria.and(param.key).gt(param.value)
-                Operator.lte -> criteria.and(param.key).lte(param.value)
-                Operator.gte -> criteria.and(param.key).gte(param.value)
-                Operator.like -> criteria.and(param.key).regex(param.value.toString())
+            val key = param.key
+            when {
+                //以范围查询开始后缀结尾表示要用大于或等于查询方式
+                key.endsWith(rangeStartSuffix) ->
+                    criteria.and(key.removeSuffix(rangeStartSuffix)).gte(param.value)
+                //以范围查询结束后缀结尾表示要用小于或等于查询方式
+                key.endsWith(rangeEndSuffix) ->
+                    criteria.and(key.removeSuffix(rangeEndSuffix)).gte(param.value)
+                else -> when (onWhere(key)) {
+                    Operator.eq -> criteria.and(key).`is`(param.value)
+                    Operator.ne -> criteria.and(key).ne(param.value)
+                    Operator.lt -> criteria.and(key).lt(param.value)
+                    Operator.gt -> criteria.and(key).gt(param.value)
+                    Operator.lte -> criteria.and(key).lte(param.value)
+                    Operator.gte -> criteria.and(key).gte(param.value)
+                    Operator.like -> criteria.and(key).regex(param.value.toString())
+                }
             }
-
         }
     }
     return this.addCriteria(criteria)
