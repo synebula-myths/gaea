@@ -30,9 +30,9 @@ fun Query.select(fields: Array<String>): Query {
  * @param onWhere 获取字段查询方式的方法
  */
 fun Query.where(
-    params: Map<String, Any>?,
-    onWhere: ((v: String) -> Operator) = { Operator.default },
-    onFieldType: ((v: String) -> Class<*>?) = { null }
+        params: Map<String, Any>?,
+        onWhere: ((v: String) -> Operator) = { Operator.default },
+        onFieldType: ((v: String) -> Class<*>?) = { null }
 ): Query {
     val list = arrayListOf<Criteria>()
     if (params != null) {
@@ -41,7 +41,7 @@ fun Query.where(
             var value = param.value
             val fieldType = onFieldType(key)
             if (fieldType != null && value.javaClass != fieldType && fieldType == Date::class.java) {
-                value = DateTime(value.toString(), "yyyy-MM-dd").date
+                value = DateTime(value.toString(), "yyyy-MM-dd HH:mm:ss").date
             }
             when (onWhere(key)) {
                 Operator.eq -> list.add(Criteria.where(key).`is`(value))
@@ -51,31 +51,30 @@ fun Query.where(
                 Operator.lte -> list.add(Criteria.where(key).lte(value))
                 Operator.gte -> list.add(Criteria.where(key).gte(value))
                 Operator.like -> list.add(Criteria.where(key).regex(value.toString()))
-                Operator.default -> rangeWhere(param.key, value, onFieldType(param.key), list)
+                Operator.default -> rangeWhere(param.key, value, list, onFieldType)
             }
         }
     }
-    return this.addCriteria(Criteria().andOperator(*list.toTypedArray()))
+    val criteria = Criteria()
+    if (list.isNotEmpty()) criteria.andOperator(*list.toTypedArray())
+    return this.addCriteria(criteria)
 }
 
-private fun rangeWhere(key: String, value: Any, fieldType: Class<*>?, list: MutableList<Criteria>) {
+private fun rangeWhere(key: String, value: Any, list: MutableList<Criteria>, onFieldType: ((v: String) -> Class<*>?) = { null }) {
     val rangeStartSuffix = "[0]" //范围查询开始后缀
     val rangeEndSuffix = "[1]" //范围查询结束后缀
     var condition = value
-    if (value.javaClass != fieldType && fieldType == Date::class.java) {
-        condition = DateTime(value.toString(), "yyyy-MM-dd").date
+    val realKey = key.removeSuffix(rangeStartSuffix).removeSuffix(rangeEndSuffix)
+    val fieldType = onFieldType(realKey)
+    if (fieldType != null && value.javaClass != fieldType && fieldType == Date::class.java) {
+        condition = DateTime(value.toString(), "yyyy-MM-dd HH:mm:ss").date
     }
+
     when {
         //以范围查询开始后缀结尾表示要用大于或等于查询方式
-        key.endsWith(rangeStartSuffix) ->
-            list.add(
-                Criteria.where(key.removeSuffix(rangeStartSuffix)).gte(condition)
-            )
+        key.endsWith(rangeStartSuffix) -> list.add(Criteria.where(realKey).gte(condition))
         //以范围查询结束后缀结尾表示要用小于或等于查询方式
-        key.endsWith(rangeEndSuffix) ->
-            list.add(
-                Criteria.where(key.removeSuffix(rangeEndSuffix)).lte(condition)
-            )
+        key.endsWith(rangeEndSuffix) -> list.add(Criteria.where(realKey).lte(condition))
         else -> list.add(Criteria.where(key).`is`(value))
     }
 }
@@ -92,7 +91,7 @@ fun Query.where(params: Map<String, Any>?, clazz: Class<*>): Query {
         field = clazz.declaredFields.find { it.name == name }
         where = field?.getDeclaredAnnotation(Where::class.java)
         if (where == null) Operator.default else where!!.operator
-    })
+    }, { name -> clazz.declaredFields.find { it.name == name }?.type })
 }
 
 /**
