@@ -25,29 +25,33 @@ fun Query.select(fields: Array<String>): Query {
  * 根据参数获取查询条件
  *
  * @param params 参数列表
+ * @param onWhere 获取字段查询方式的方法
  */
-fun Query.where(params: Map<String, Any>?, onWhere: ((v: String) -> Operator) = { Operator.eq }): Query {
+fun Query.where(params: Map<String, Any>?, onWhere: ((v: String) -> Operator) = { Operator.default }): Query {
     val criteria = Criteria()
     val rangeStartSuffix = ".start" //范围查询开始后缀
     val rangeEndSuffix = ".end" //范围查询结束后缀
     if (params != null) {
         for (param in params) {
             val key = param.key
-            when {
-                //以范围查询开始后缀结尾表示要用大于或等于查询方式
-                key.endsWith(rangeStartSuffix) ->
-                    criteria.and(key.removeSuffix(rangeStartSuffix)).gte(param.value)
-                //以范围查询结束后缀结尾表示要用小于或等于查询方式
-                key.endsWith(rangeEndSuffix) ->
-                    criteria.and(key.removeSuffix(rangeEndSuffix)).gte(param.value)
-                else -> when (onWhere(key)) {
-                    Operator.eq -> criteria.and(key).`is`(param.value)
-                    Operator.ne -> criteria.and(key).ne(param.value)
-                    Operator.lt -> criteria.and(key).lt(param.value)
-                    Operator.gt -> criteria.and(key).gt(param.value)
-                    Operator.lte -> criteria.and(key).lte(param.value)
-                    Operator.gte -> criteria.and(key).gte(param.value)
-                    Operator.like -> criteria.and(key).regex(param.value.toString())
+            when (onWhere(key)) {
+                Operator.eq -> criteria.and(key).`is`(param.value)
+                Operator.ne -> criteria.and(key).ne(param.value)
+                Operator.lt -> criteria.and(key).lt(param.value)
+                Operator.gt -> criteria.and(key).gt(param.value)
+                Operator.lte -> criteria.and(key).lte(param.value)
+                Operator.gte -> criteria.and(key).gte(param.value)
+                Operator.like -> criteria.and(key).regex(param.value.toString())
+                Operator.default -> {
+                    when {
+                        //以范围查询开始后缀结尾表示要用大于或等于查询方式
+                        key.endsWith(rangeStartSuffix) ->
+                            criteria.and(key.removeSuffix(rangeStartSuffix)).gte(param.value)
+                        //以范围查询结束后缀结尾表示要用小于或等于查询方式
+                        key.endsWith(rangeEndSuffix) ->
+                            criteria.and(key.removeSuffix(rangeEndSuffix)).gte(param.value)
+                        else -> criteria.and(key).`is`(param.value)
+                    }
                 }
             }
         }

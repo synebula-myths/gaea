@@ -34,5 +34,10 @@ enum class Operator {
     /**
      * 模糊匹配
      */
-    like
+    like,
+
+    /**
+     * 默认查询, 未定义查询方式, 业务人员自己实现查询方式
+     */
+    default
 }
