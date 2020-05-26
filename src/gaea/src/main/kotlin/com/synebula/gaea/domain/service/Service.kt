@@ -20,10 +20,10 @@ import com.synebula.gaea.log.ILogger
  * @since 2020-05-17
  */
 open class Service<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
-    protected var clazz: Class<TAggregateRoot>,
-    protected var repository: IRepository,
-    protected var converter: IObjectConverter,
-    override var logger: ILogger
+        protected open var clazz: Class<TAggregateRoot>,
+        protected open var repository: IRepository,
+        protected open var converter: IObjectConverter,
+        override var logger: ILogger
 ) : IService<TKey> {
 
     override fun add(command: ICommand): Message<TKey> {
@@ -50,7 +50,7 @@ open class Service<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
      * @param command 需要转换的命令
      * @return 聚合根
      */
-    protected fun convert(command: ICommand): TAggregateRoot {
+    protected open fun convert(command: ICommand): TAggregateRoot {
         try {
             return converter.convert(command, this.clazz)
         } catch (ex: Exception) {
