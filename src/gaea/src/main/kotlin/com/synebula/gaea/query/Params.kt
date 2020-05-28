@@ -1,13 +1,13 @@
 package com.synebula.gaea.query
 
 /**
- * class PagingParam
+ * class 分页参数信息
  *
  * @author alex
  * @version 0.1
  * @since 2020-05-15
  */
-data class PagingParam(var page: Int = 1, var size: Int = 10) {
+data class Params(var page: Int = 1, var size: Int = 10) {
 
     /**
      * 数据索引，从0开始。表示数据在总量的第几条。（index = (page - 1) * size）
@@ -29,7 +29,7 @@ data class PagingParam(var page: Int = 1, var size: Int = 10) {
     /**
      * 添加查询条件
      */
-    fun addParameter(field: String, value: Any): PagingParam {
+    fun addParameter(field: String, value: Any): Params {
         parameters[field] = value
         return this
     }
@@ -37,7 +37,7 @@ data class PagingParam(var page: Int = 1, var size: Int = 10) {
     /**
      * 添加排序条件
      */
-    fun addOrderBy(field: String, type: OrderType = OrderType.ASC): PagingParam {
+    fun addOrderBy(field: String, type: OrderType = OrderType.ASC): Params {
         orderBy[field] = type
         return this
     }

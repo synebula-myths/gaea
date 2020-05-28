@@ -36,5 +36,5 @@ interface IQuery {
      * @param param 分页条件
      * @return 分页数据
      */
-    fun <TView> paging(param: PagingParam, clazz: Class<TView>): PagingData<TView>
+    fun <TView> paging(param: Params, clazz: Class<TView>): Page<TView>
 }

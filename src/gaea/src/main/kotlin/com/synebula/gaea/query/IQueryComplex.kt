@@ -38,5 +38,5 @@ interface IQueryComplex<TView, TKey, TSecond> {
      * @param param 分页条件
      * @return
      */
-    fun paging(param: PagingParam): PagingData<TView>
+    fun paging(param: Params): Page<TView>
 }

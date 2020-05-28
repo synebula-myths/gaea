@@ -6,7 +6,7 @@ package com.synebula.gaea.query
  *
  * @author alex
  */
-class PagingData<T> {
+class Page<T> {
     /**
      * 页码，从1开始。
      */

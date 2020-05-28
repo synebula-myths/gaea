@@ -38,5 +38,5 @@ interface IGenericQuery<TView, TKey> {
      * @param param 分页条件
      * @return 分页数据
      */
-    fun paging(param: PagingParam): PagingData<TView>
+    fun paging(param: Params): Page<TView>
 }

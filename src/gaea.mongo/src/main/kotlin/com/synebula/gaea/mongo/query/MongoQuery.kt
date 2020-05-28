@@ -6,17 +6,17 @@ import com.synebula.gaea.log.ILogger
 import com.synebula.gaea.mongo.*
 import com.synebula.gaea.mongo.Collection
 import com.synebula.gaea.query.IQuery
-import com.synebula.gaea.query.PagingData
-import com.synebula.gaea.query.PagingParam
+import com.synebula.gaea.query.Page
+import com.synebula.gaea.query.Params
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Query
 
 /**
  * 实现IQuery的Mongo查询类
- * @param repo MongoRepo对象
+ * @param template MongoRepo对象
  */
 
-open class MongoQuery(var repo: MongoTemplate, var logger: ILogger? = null) : IQuery {
+open class MongoQuery(var template: MongoTemplate, var logger: ILogger? = null) : IQuery {
 
     /**
      * 使用View解析是collection时是否校验存在，默认不校验
@@ -28,18 +28,18 @@ open class MongoQuery(var repo: MongoTemplate, var logger: ILogger? = null) : IQ
         val query = Query()
         query.where(params, clazz)
         query.select(fields.toTypedArray())
-        return this.repo.find(query, clazz, this.collection(clazz))
+        return this.template.find(query, clazz, this.collection(clazz))
     }
 
     override fun <TView> count(params: Map<String, Any>?, clazz: Class<TView>): Int {
         val query = Query()
-        return this.repo.count(query.where(params, clazz), this.collection(clazz)).toInt()
+        return this.template.count(query.where(params, clazz), this.collection(clazz)).toInt()
     }
 
-    override fun <TView> paging(param: PagingParam, clazz: Class<TView>): PagingData<TView> {
+    override fun <TView> paging(param: Params, clazz: Class<TView>): Page<TView> {
         val query = Query()
         val fields = clazz.fieldNames()
-        val result = PagingData<TView>(param.page, param.size)
+        val result = Page<TView>(param.page, param.size)
         result.total = this.count(param.parameters, clazz)
         //如果总数和索引相同，说明该页没有数据，直接跳到上一页
         if (result.total == result.index) {
@@ -50,12 +50,12 @@ open class MongoQuery(var repo: MongoTemplate, var logger: ILogger? = null) : IQ
         query.where(param.parameters, clazz)
         query.with(order(param.orderBy))
         query.skip(param.index).limit(param.size)
-        result.data = this.repo.find(query, clazz, this.collection(clazz))
+        result.data = this.template.find(query, clazz, this.collection(clazz))
         return result
     }
 
     override fun <TView, TKey> get(key: TKey, clazz: Class<TView>): TView? {
-        return this.repo.findOne(whereId(key), clazz, this.collection(clazz))
+        return this.template.findOne(whereId(key), clazz, this.collection(clazz))
     }
 
     /**
@@ -68,7 +68,7 @@ open class MongoQuery(var repo: MongoTemplate, var logger: ILogger? = null) : IQ
         else {
             this.logger?.info(this, "视图类没有标记[Collection]注解，无法获取Collection名称。尝试使用View<${clazz.name}>名称解析集合")
             val name = clazz.simpleName.removeSuffix("View").firstCharLowerCase()
-            if (!validViewCollection || this.repo.collectionExists(name))
+            if (!validViewCollection || this.template.collectionExists(name))
                 name
             else {
                 throw RuntimeException("找不到名为[$collection]的集合")

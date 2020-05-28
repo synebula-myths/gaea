@@ -3,7 +3,7 @@ package com.synebula.gaea.app.query
 import com.synebula.gaea.app.component.HttpMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.query.IGenericQuery
-import com.synebula.gaea.query.PagingParam
+import com.synebula.gaea.query.Params
 
 /**
  * 应用类接口，提供实现Query服务的接口
@@ -51,7 +51,7 @@ interface IQueryGenericApp<TView, TKey> : IQueryApp<TView, TKey> {
      */
     override fun doPaging(size: Int, page: Int, params: MutableMap<String, Any>): HttpMessage {
         return this.doQuery("获取${this.name}分页数据[条数:$size,页码:$page]失败") {
-            val data = PagingParam(page, size)
+            val data = Params(page, size)
             data.parameters = params
             this.query!!.paging(data)
         }
