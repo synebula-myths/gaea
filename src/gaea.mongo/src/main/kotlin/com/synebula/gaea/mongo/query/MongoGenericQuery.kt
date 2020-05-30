@@ -102,7 +102,7 @@ open class MongoGenericQuery<TView>(
             }
             query.select(fields.toTypedArray())
             query.where(param.parameters, this.clazz!!)
-            query.with(order(param.orderBy))
+            query.with(order(param.orders))
             query.skip(param.index).limit(param.size)
             result.data = this.template.find(query, this.clazz!!, this.collection)
             result

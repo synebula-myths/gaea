@@ -19,7 +19,7 @@ data class Params(var page: Int = 1, var size: Int = 10) {
     /**
      * 排序条件。
      */
-    var orderBy: MutableMap<String, OrderType> = hashMapOf()
+    var orders: MutableMap<String, OrderType> = hashMapOf()
 
     /**
      * 查询条件。
@@ -38,7 +38,7 @@ data class Params(var page: Int = 1, var size: Int = 10) {
      * 添加排序条件
      */
     fun addOrderBy(field: String, type: OrderType = OrderType.ASC): Params {
-        orderBy[field] = type
+        orders[field] = type
         return this
     }
 }

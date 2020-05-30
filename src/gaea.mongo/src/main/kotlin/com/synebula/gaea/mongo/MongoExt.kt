@@ -112,7 +112,7 @@ fun order(orders: Map<String, OrderType>?): Sort {
         orderList.add(Sort.Order(Sort.Direction.valueOf(it.value.name), it.key))
     }
     return if (orderList.size == 0)
-        Sort.by("_id")
+        Sort.by(Sort.Direction.DESC, "_id")
     else
         Sort.by(orderList)
 }

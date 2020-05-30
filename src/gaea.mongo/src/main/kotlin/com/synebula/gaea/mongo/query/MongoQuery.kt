@@ -48,7 +48,7 @@ open class MongoQuery(var template: MongoTemplate, var logger: ILogger? = null) 
         }
         query.select(fields.toTypedArray())
         query.where(param.parameters, clazz)
-        query.with(order(param.orderBy))
+        query.with(order(param.orders))
         query.skip(param.index).limit(param.size)
         result.data = this.template.find(query, clazz, this.collection(clazz))
         return result
