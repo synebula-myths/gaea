@@ -1,6 +1,6 @@
 package com.synebula.gaea.app.component
 
-import com.synebula.gaea.io.messager.IEmailMessenger
+import com.synebula.gaea.io.comm.IEmailMessenger
 import com.synebula.gaea.log.ILogger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
