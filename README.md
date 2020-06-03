@@ -6,15 +6,18 @@
 
 ## 项目结构
 
+```
 |-- doc
     |--
 |-- src
     |-- gaea #核心库
     |-- gaea.app #应用服务库，依赖SpringBoot声明了Controller等web服务接口
     |-- gaea.mongo #使用mongo数据库实现了Repository和Query查询
-    
+```
+
 ## Package结构
 
+```
 |-- app #应用服务
     |-- cmd #命令服务接口
     |-- component #应用服务常用组件
@@ -36,3 +39,4 @@
 |-- log #日志相关接口
 |-- mongo #Mongo相关服务
 |-- query #定义了查询相关接口
+```
