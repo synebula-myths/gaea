@@ -1,4 +1,4 @@
-package com.synebula.gaea.io.messager
+package com.synebula.gaea.io.comm
 
 interface IEmailMessenger {
     /**
