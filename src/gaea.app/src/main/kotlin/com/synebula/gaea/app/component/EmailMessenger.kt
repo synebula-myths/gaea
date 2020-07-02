@@ -12,21 +12,23 @@ import java.io.File
 
 @Component
 class EmailMessenger : IEmailMessenger {
-    private var mailSender = JavaMailSenderImpl()
 
-    @Value("\${mail.host}")
+    @Autowired
+    private lateinit var mailSender: JavaMailSenderImpl
+
+    @Value("\${spring.mail.host}")
     var host = ""
 
-    @Value("\${mail.port}")
+    @Value("\${spring.mail.port}")
     var port = ""
 
-    @Value("\${mail.sender}")
+    @Value("\${spring.mail.sender}")
     var sender = ""
 
-    @Value("\${mail.username}")
+    @Value("\${spring.mail.username}")
     var username = ""
 
-    @Value("\${mail.password}")
+    @Value("\${spring.mail.password}")
     var password = ""
 
     @Autowired
@@ -40,18 +42,16 @@ class EmailMessenger : IEmailMessenger {
      * @param receivers 邮件接受者
      * @param files 附件
      */
-    override fun sendMessage(subject: String, content: String, receivers: List<String>, files: Map<String, String>) {
+    override fun sendMessage(subject: String, content: String, receivers: List<String>, files: Map<String, String>): Map<String, Boolean> {
+        val result = mutableMapOf<String, Boolean>()
         this.check()
-        mailSender.host = host
-        mailSender.username = username
-        mailSender.password = password
-        mailSender.port = if (port.isEmpty()) port.toInt() else 25
-        receivers.forEach {
+        receivers.forEach { receiver ->
+            result[receiver] = true
             try {
                 val mail = mailSender.createMimeMessage()
                 val mimeMessageHelper = MimeMessageHelper(mail, true, "utf-8")
                 mimeMessageHelper.setFrom(sender)
-                mimeMessageHelper.setTo(it)
+                mimeMessageHelper.setTo(receiver)
                 mimeMessageHelper.setSubject(subject)
                 mimeMessageHelper.setText(content, true)
 
@@ -61,9 +61,11 @@ class EmailMessenger : IEmailMessenger {
                 }
                 mailSender.send(mail) //发送
             } catch (e: Exception) {
-                logger.error(e, "发送邮件[$subject]至地址[$it]失败")
+                logger.error(e, "发送邮件[$subject]至地址[$receiver]失败")
+                result[receiver] = false
             }
         }
+        return result
     }
 
     private fun check() {

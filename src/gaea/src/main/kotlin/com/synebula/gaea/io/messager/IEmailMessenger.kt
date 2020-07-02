@@ -10,5 +10,5 @@ interface IEmailMessenger {
      * @param files 附件
      */
     fun sendMessage(subject: String, content: String,
-                    receivers: List<String>, files: Map<String, String> = mapOf())
+                    receivers: List<String>, files: Map<String, String> = mapOf()): Map<String, Boolean>
 }
