@@ -5,7 +5,7 @@ import com.synebula.gaea.log.ILogger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
-import org.springframework.mail.javamail.JavaMailSenderImpl
+import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Component
 import java.io.File
@@ -14,7 +14,7 @@ import java.io.File
 class EmailMessenger : IEmailMessenger {
 
     @Autowired
-    private lateinit var mailSender: JavaMailSenderImpl
+    private lateinit var mailSender: JavaMailSender
 
     @Value("\${spring.mail.host}")
     var host = ""
