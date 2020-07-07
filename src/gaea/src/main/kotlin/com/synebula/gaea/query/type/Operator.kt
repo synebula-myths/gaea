@@ -1,4 +1,4 @@
-package com.synebula.gaea.query
+package com.synebula.gaea.query.type
 
 enum class Operator {
     /**

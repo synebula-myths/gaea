@@ -1,5 +1,7 @@
 package com.synebula.gaea.query
 
+import com.synebula.gaea.query.type.Order
+
 /**
  * class 分页参数信息
  *
@@ -19,7 +21,7 @@ data class Params(var page: Int = 1, var size: Int = 10) {
     /**
      * 排序条件。
      */
-    var orders: MutableMap<String, OrderType> = hashMapOf()
+    var orders: MutableMap<String, Order> = hashMapOf()
 
     /**
      * 查询条件。
@@ -37,7 +39,7 @@ data class Params(var page: Int = 1, var size: Int = 10) {
     /**
      * 添加排序条件
      */
-    fun addOrderBy(field: String, type: OrderType = OrderType.ASC): Params {
+    fun addOrderBy(field: String, type: Order = Order.ASC): Params {
         orders[field] = type
         return this
     }

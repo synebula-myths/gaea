@@ -30,9 +30,9 @@ fun Query.select(fields: Array<String>): Query {
  * @param onWhere 获取字段查询方式的方法
  */
 fun Query.where(
-        params: Map<String, Any>?,
-        onWhere: ((v: String) -> Operator) = { Operator.default },
-        onFieldType: ((v: String) -> Class<*>?) = { null }
+    params: Map<String, Any>?,
+    onWhere: ((v: String) -> Operator) = { Operator.default },
+    onFieldType: ((v: String) -> Class<*>?) = { null }
 ): Query {
     val list = arrayListOf<Criteria>()
     if (params != null) {
@@ -106,7 +106,7 @@ fun <TKey> whereId(id: TKey): Query = Query.query(Criteria.where("_id").`is`(id)
  *
  * @param orders 排序条件字段
  */
-fun order(orders: Map<String, OrderType>?): Sort {
+fun order(orders: Map<String, Order>?): Sort {
     val orderList = mutableListOf<Sort.Order>()
     orders?.forEach {
         orderList.add(Sort.Order(Sort.Direction.valueOf(it.value.name), it.key))

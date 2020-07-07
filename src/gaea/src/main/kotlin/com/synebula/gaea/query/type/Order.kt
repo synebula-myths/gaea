@@ -1,4 +1,4 @@
-package com.synebula.gaea.query
+package com.synebula.gaea.query.type
 
 /**
  * class OrderType
@@ -7,7 +7,7 @@ package com.synebula.gaea.query
  * @version 0.1
  * @since 2020-05-15
  */
-enum class OrderType {
+enum class Order {
     /**
      * 升序排列
      */
