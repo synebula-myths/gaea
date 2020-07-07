@@ -8,8 +8,8 @@ import com.synebula.gaea.log.ILogger
 
 
 /**
- * 依赖了IRepositoryTyped仓储借口的服务实现类 ServiceTyped
- * 该类依赖仓储接口 @see IRepositoryTyped ,需要显式提供聚合根的class对象
+ * 依赖了IRepository仓储借口的服务实现类 Service
+ * 该类依赖仓储接口 @see IRepository, 需要显式提供聚合根的class对象
  *
  * @param repository 仓储对象
  * @param clazz 聚合根类对象
@@ -20,10 +20,10 @@ import com.synebula.gaea.log.ILogger
  * @since 2020-05-17
  */
 open class Service<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
-        protected open var clazz: Class<TAggregateRoot>,
-        protected open var repository: IRepository,
-        protected open var converter: IObjectConverter,
-        override var logger: ILogger
+    protected open var clazz: Class<TAggregateRoot>,
+    protected open var repository: IRepository,
+    protected open var converter: IObjectConverter,
+    override var logger: ILogger
 ) : IService<TKey> {
 
     override fun add(command: ICommand): Message<TKey> {

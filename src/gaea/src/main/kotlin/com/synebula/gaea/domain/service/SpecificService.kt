@@ -3,12 +3,13 @@ package com.synebula.gaea.domain.service
 import com.synebula.gaea.data.IObjectConverter
 import com.synebula.gaea.data.message.Message
 import com.synebula.gaea.domain.model.IAggregateRoot
-import com.synebula.gaea.domain.repository.IGenericRepository
+import com.synebula.gaea.domain.repository.ISpecificRepository
 import com.synebula.gaea.log.ILogger
 
 
 /**
- * class FlatService
+ * 依赖了ISpecificRepository仓储借口的服务实现类 Service
+ * 该类依赖仓储接口 @see ISpecificRepository, 泛型类上指定了仓储实例的类型
  *
  * @param repository 仓储对象
  * @param clazz 聚合根类对象
@@ -18,9 +19,9 @@ import com.synebula.gaea.log.ILogger
  * @version 0.1
  * @since 2020-05-15
  */
-open class GenericService<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
+open class SpecificService<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
     protected var clazz: Class<TAggregateRoot>,
-    protected var repository: IGenericRepository<TAggregateRoot, TKey>,
+    protected var repository: ISpecificRepository<TAggregateRoot, TKey>,
     protected var converter: IObjectConverter,
     override var logger: ILogger
 ) : IService<TKey> {

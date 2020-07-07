@@ -10,7 +10,7 @@ import com.synebula.gaea.domain.model.IAggregateRoot
  * @param <TAggregateRoot> this T is the parameter
  * @author alex
  */
-interface IGenericRepository<TAggregateRoot : IAggregateRoot<TKey>, TKey> {
+interface ISpecificRepository<TAggregateRoot : IAggregateRoot<TKey>, TKey> {
 
     /**
      * 仓储的对象类

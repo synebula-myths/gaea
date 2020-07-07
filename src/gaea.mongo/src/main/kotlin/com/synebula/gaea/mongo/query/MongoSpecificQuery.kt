@@ -3,14 +3,14 @@ package com.synebula.gaea.mongo.query
 import com.synebula.gaea.extension.fieldNames
 import com.synebula.gaea.extension.firstCharLowerCase
 import com.synebula.gaea.log.ILogger
-import com.synebula.gaea.mongo.Collection
 import com.synebula.gaea.mongo.order
 import com.synebula.gaea.mongo.select
 import com.synebula.gaea.mongo.where
 import com.synebula.gaea.mongo.whereId
-import com.synebula.gaea.query.IGenericQuery
+import com.synebula.gaea.query.ISpecificQuery
 import com.synebula.gaea.query.Page
 import com.synebula.gaea.query.Params
+import com.synebula.gaea.query.annotation.Table
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Query
 
@@ -20,10 +20,11 @@ import org.springframework.data.mongodb.core.query.Query
  * @param template MongoRepo对象
  * @param logger 日志组件
  */
-open class MongoGenericQuery<TView>(
-        var template: MongoTemplate,
-        var clazz: Class<TView>? = null,
-        var logger: ILogger? = null) : IGenericQuery<TView, String> {
+open class MongoSpecificQuery<TView>(
+    var template: MongoTemplate,
+    var clazz: Class<TView>? = null,
+    var logger: ILogger? = null
+) : ISpecificQuery<TView, String> {
 
     /**
      * 使用View解析是collection时是否校验存在，默认不校验
@@ -129,7 +130,7 @@ open class MongoGenericQuery<TView>(
      */
     protected fun <TView> collection(clazz: Class<TView>?): String {
         if (clazz == null) throw java.lang.RuntimeException("[${this.javaClass}]没有指定查询实体类型[clazz]")
-        val collection: Collection? = clazz.getDeclaredAnnotation(Collection::class.java)
+        val collection = clazz.getDeclaredAnnotation(Table::class.java)
         return if (collection != null)
             return collection.name
         else {

@@ -33,8 +33,8 @@ interface IQuery {
     /**
      * 根据实体类条件查询所有符合条件记录（分页查询）
      *
-     * @param param 分页条件
+     * @param params 分页条件
      * @return 分页数据
      */
-    fun <TView> paging(param: Params, clazz: Class<TView>): Page<TView>
+    fun <TView> paging(params: Params, clazz: Class<TView>): Page<TView>
 }

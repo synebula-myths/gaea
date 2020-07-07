@@ -16,7 +16,7 @@ import javax.annotation.Resource
 open class CommandApp<TCommand : ICommand, TKey>(
         override var name: String,
         override var service: IService<TKey>?,
-        override var logger: ILogger) : ICommandApp<TCommand, TKey> {
+        override var logger: ILogger?) : ICommandApp<TCommand, TKey> {
     @Resource
     override var jsonSerializer: IJsonSerializer? = null
 }

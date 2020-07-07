@@ -1,9 +1,9 @@
 package com.synebula.gaea.mongo
 
 import com.synebula.gaea.data.date.DateTime
-import com.synebula.gaea.query.Operator
-import com.synebula.gaea.query.OrderType
-import com.synebula.gaea.query.Where
+import com.synebula.gaea.query.annotation.Where
+import com.synebula.gaea.query.type.Operator
+import com.synebula.gaea.query.type.Order
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query

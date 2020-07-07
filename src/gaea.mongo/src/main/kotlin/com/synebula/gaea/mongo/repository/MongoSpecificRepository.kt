@@ -1,7 +1,7 @@
 package com.synebula.gaea.mongo.repository
 
 import com.synebula.gaea.domain.model.IAggregateRoot
-import com.synebula.gaea.domain.repository.IGenericRepository
+import com.synebula.gaea.domain.repository.ISpecificRepository
 import com.synebula.gaea.mongo.whereId
 import org.springframework.data.mongodb.core.MongoTemplate
 
@@ -9,8 +9,8 @@ import org.springframework.data.mongodb.core.MongoTemplate
  * 实现IAggregateRoot的mongo仓储类
  * @param repo MongoRepo对象
  */
-class MongoGenericRepository<TAggregateRoot : IAggregateRoot<String>>(private var repo: MongoTemplate) :
-    IGenericRepository<TAggregateRoot, String> {
+class MongoSpecificRepository<TAggregateRoot : IAggregateRoot<String>>(private var repo: MongoTemplate) :
+    ISpecificRepository<TAggregateRoot, String> {
 
     /**
      * 仓储的对象类
