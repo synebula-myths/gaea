@@ -30,28 +30,40 @@ fun Query.select(fields: Array<String>): Query {
  * @param onWhere 获取字段查询方式的方法
  */
 fun Query.where(
-    params: Map<String, Any>?,
-    onWhere: ((v: String) -> Operator) = { Operator.default },
-    onFieldType: ((v: String) -> Class<*>?) = { null }
+        params: Map<String, Any>?,
+        onWhere: ((v: String) -> Where?) = { null },
+        onFieldType: ((v: String) -> Class<*>?) = { null }
 ): Query {
     val list = arrayListOf<Criteria>()
     if (params != null) {
         for (param in params) {
             val key = param.key
             var value = param.value
+
+            //日期类型特殊处理为String类型
             val fieldType = onFieldType(key)
             if (fieldType != null && value.javaClass != fieldType && fieldType == Date::class.java) {
                 value = DateTime(value.toString(), "yyyy-MM-dd HH:mm:ss").date
             }
-            when (onWhere(key)) {
-                Operator.eq -> list.add(Criteria.where(key).`is`(value))
-                Operator.ne -> list.add(Criteria.where(key).ne(value))
-                Operator.lt -> list.add(Criteria.where(key).lt(value))
-                Operator.gt -> list.add(Criteria.where(key).gt(value))
-                Operator.lte -> list.add(Criteria.where(key).lte(value))
-                Operator.gte -> list.add(Criteria.where(key).gte(value))
-                Operator.like -> list.add(Criteria.where(key).regex(value.toString()))
-                Operator.default -> rangeWhere(param.key, value, list, onFieldType)
+
+            val where = onWhere(key)
+            if (where == null) {
+                list.add(tryRangeWhere(param.key, value, fieldType))
+            } else {
+                //判断执行查询子元素还是本字段
+                val field = if (where.children.isEmpty()) key else where.children
+                var criteria = Criteria.where(field)
+                criteria = when (where.operator) {
+                    Operator.eq -> criteria.`is`(value)
+                    Operator.ne -> criteria.ne(value)
+                    Operator.lt -> criteria.lt(value)
+                    Operator.gt -> criteria.gt(value)
+                    Operator.lte -> criteria.lte(value)
+                    Operator.gte -> criteria.gte(value)
+                    Operator.like -> criteria.regex(value.toString(), if (where.sensitiveCase) "" else "i")
+                    Operator.default -> tryRangeWhere(param.key, value, fieldType)
+                }
+                list.add(if (where.children.isEmpty()) criteria else Criteria.where(key).elemMatch(criteria))
             }
         }
     }
@@ -60,22 +72,24 @@ fun Query.where(
     return this.addCriteria(criteria)
 }
 
-private fun rangeWhere(key: String, value: Any, list: MutableList<Criteria>, onFieldType: ((v: String) -> Class<*>?) = { null }) {
+/**
+ * 尝试范围查询，失败则返回正常查询条件。
+ */
+private fun tryRangeWhere(key: String, value: Any, fieldType: Class<*>?): Criteria {
     val rangeStartSuffix = "[0]" //范围查询开始后缀
     val rangeEndSuffix = "[1]" //范围查询结束后缀
     var condition = value
     val realKey = key.removeSuffix(rangeStartSuffix).removeSuffix(rangeEndSuffix)
-    val fieldType = onFieldType(realKey)
     if (fieldType != null && value.javaClass != fieldType && fieldType == Date::class.java) {
         condition = DateTime(value.toString(), "yyyy-MM-dd HH:mm:ss").date
     }
 
-    when {
+    return when {
         //以范围查询开始后缀结尾表示要用大于或等于查询方式
-        key.endsWith(rangeStartSuffix) -> list.add(Criteria.where(realKey).gte(condition))
+        key.endsWith(rangeStartSuffix) -> Criteria.where(realKey).gte(condition)
         //以范围查询结束后缀结尾表示要用小于或等于查询方式
-        key.endsWith(rangeEndSuffix) -> list.add(Criteria.where(realKey).lte(condition))
-        else -> list.add(Criteria.where(key).`is`(value))
+        key.endsWith(rangeEndSuffix) -> Criteria.where(realKey).lte(condition)
+        else -> Criteria.where(key).`is`(value)
     }
 }
 
@@ -86,11 +100,9 @@ private fun rangeWhere(key: String, value: Any, list: MutableList<Criteria>, onF
  */
 fun Query.where(params: Map<String, Any>?, clazz: Class<*>): Query {
     var field: Field?
-    var where: Where?
     return this.where(params, { name ->
         field = clazz.declaredFields.find { it.name == name }
-        where = field?.getDeclaredAnnotation(Where::class.java)
-        if (where == null) Operator.default else where!!.operator
+        field?.getDeclaredAnnotation(Where::class.java)
     }, { name -> clazz.declaredFields.find { it.name == name }?.type })
 }
 
