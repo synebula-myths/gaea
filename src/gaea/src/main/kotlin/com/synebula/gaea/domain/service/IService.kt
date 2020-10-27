@@ -28,7 +28,7 @@ interface IService<TKey> {
      * @param key 监听器标志。
      * @param func 监听方法。
      */
-    fun addBeforeRemoveListener(key: String, func: (id: TKey) -> Boolean)
+    fun addBeforeRemoveListener(key: String, func: (id: TKey) -> Message<String>)
 
     /**
      * 移除一个删除对象前执行监听器。

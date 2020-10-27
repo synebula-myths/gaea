@@ -39,4 +39,13 @@ interface IRepository {
      * @return 聚合根
      */
     fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> get(id: TKey, clazz: Class<TAggregateRoot>): TAggregateRoot
+
+
+    /**
+     * 根据条件查询符合条件记录的数量
+     *
+     * @param params 查询条件。
+     * @return int
+     */
+    fun <TAggregateRoot> count(params: Map<String, Any>?, clazz: Class<TAggregateRoot>): Int
 }

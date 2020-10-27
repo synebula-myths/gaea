@@ -58,4 +58,13 @@ interface ISpecificRepository<TAggregateRoot : IAggregateRoot<TKey>, TKey> {
      */
     fun <T : IAggregateRoot<TKey>, TKey> get(id: TKey, clazz: Class<T>): T
 
+
+    /**
+     * 根据条件查询符合条件记录的数量
+     *
+     * @param params 查询条件。
+     * @return int
+     */
+    fun <TAggregateRoot> count(params: Map<String, Any>?): Int
+
 }

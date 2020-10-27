@@ -33,14 +33,14 @@ open class SpecificService<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
     /**
      * 删除对象前执行监听器。
      */
-    protected val beforeRemoveListeners = mutableMapOf<String, (id: TKey) -> Boolean>()
+    protected val beforeRemoveListeners = mutableMapOf<String, (id: TKey) -> Message<String>>()
 
     /**
      * 添加一个删除对象前执行监听器。
      * @param key 监听器标志。
      * @param func 监听方法。
      */
-    override  fun addBeforeRemoveListener(key: String, func: (id: TKey) -> Boolean) {
+    override fun addBeforeRemoveListener(key: String, func: (id: TKey) -> Message<String>) {
         this.beforeRemoveListeners[key] = func
     }
 
@@ -67,14 +67,15 @@ open class SpecificService<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
     }
 
     override fun remove(id: TKey) {
-        var exec = true
         val functions = this.beforeRemoveListeners.values
+        var msg: Message<String>
         for (func in functions) {
-            exec = func(id)
-            if (!exec) break
+            msg = func(id)
+            if (!msg.success) {
+                throw java.lang.RuntimeException(msg.data)
+            }
         }
-        if (exec)
-            this.repository.remove(id)
+        this.repository.remove(id)
     }
 
     fun get(id: TKey): TAggregateRoot {

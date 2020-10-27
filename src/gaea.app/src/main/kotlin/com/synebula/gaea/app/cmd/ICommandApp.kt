@@ -35,7 +35,7 @@ interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
 
     @DeleteMapping("/{id:.+}")
     fun remove(@PathVariable id: TKey): HttpMessage {
-        return this.safeExecute("删除${this.name}失败[id: $id]") {
+        return this.safeExecute("删除${this.name}[id: $id]失败") {
             if (this.service != null)
                 it.data = this.service!!.remove(id)
             else {
