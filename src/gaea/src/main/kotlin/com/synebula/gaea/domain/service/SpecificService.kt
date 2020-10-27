@@ -20,14 +20,36 @@ import com.synebula.gaea.log.ILogger
  * @since 2020-05-15
  */
 open class SpecificService<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
-    protected var clazz: Class<TAggregateRoot>,
-    protected var repository: ISpecificRepository<TAggregateRoot, TKey>,
-    protected var converter: IObjectConverter,
-    override var logger: ILogger
+        protected var clazz: Class<TAggregateRoot>,
+        protected var repository: ISpecificRepository<TAggregateRoot, TKey>,
+        protected var converter: IObjectConverter,
+        override var logger: ILogger
 ) : IService<TKey> {
 
     init {
         this.repository.clazz = clazz
+    }
+
+    /**
+     * 删除对象前执行监听器。
+     */
+    protected val beforeRemoveListeners = mutableMapOf<String, (id: TKey) -> Boolean>()
+
+    /**
+     * 添加一个删除对象前执行监听器。
+     * @param key 监听器标志。
+     * @param func 监听方法。
+     */
+    override  fun addBeforeRemoveListener(key: String, func: (id: TKey) -> Boolean) {
+        this.beforeRemoveListeners[key] = func
+    }
+
+    /**
+     * 移除一个删除对象前执行监听器。
+     * @param key 监听器标志。
+     */
+    override fun removeBeforeRemoveListener(key: String) {
+        this.beforeRemoveListeners.remove(key)
     }
 
     override fun add(command: ICommand): Message<TKey> {
@@ -38,18 +60,25 @@ open class SpecificService<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
         return msg
     }
 
-    override fun update(key: TKey, command: ICommand) {
+    override fun update(id: TKey, command: ICommand) {
         val root = this.convert(command)
-        root.id = key
+        root.id = id
         this.repository.update(root)
     }
 
-    override fun remove(key: TKey) {
-        this.repository.remove(key)
+    override fun remove(id: TKey) {
+        var exec = true
+        val functions = this.beforeRemoveListeners.values
+        for (func in functions) {
+            exec = func(id)
+            if (!exec) break
+        }
+        if (exec)
+            this.repository.remove(id)
     }
 
-    fun get(key: TKey): TAggregateRoot {
-        return this.repository.get(key)
+    fun get(id: TKey): TAggregateRoot {
+        return this.repository.get(id)
     }
 
     /**

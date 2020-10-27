@@ -20,11 +20,33 @@ import com.synebula.gaea.log.ILogger
  * @since 2020-05-17
  */
 open class Service<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
-    protected open var clazz: Class<TAggregateRoot>,
-    protected open var repository: IRepository,
-    protected open var converter: IObjectConverter,
-    override var logger: ILogger
+        protected open var clazz: Class<TAggregateRoot>,
+        protected open var repository: IRepository,
+        protected open var converter: IObjectConverter,
+        override var logger: ILogger
 ) : IService<TKey> {
+
+    /**
+     * 删除对象前执行监听器。
+     */
+    protected val beforeRemoveListeners = mutableMapOf<String, (id: TKey) -> Boolean>()
+
+    /**
+     * 添加一个删除对象前执行监听器。
+     * @param key 监听器标志。
+     * @param func 监听方法。
+     */
+    override fun addBeforeRemoveListener(key: String, func: (id: TKey) -> Boolean) {
+        this.beforeRemoveListeners[key] = func
+    }
+
+    /**
+     * 移除一个删除对象前执行监听器。
+     * @param key 监听器标志。
+     */
+    override fun removeBeforeRemoveListener(key: String) {
+        this.beforeRemoveListeners.remove(key)
+    }
 
     override fun add(command: ICommand): Message<TKey> {
         val msg = Message<TKey>()
@@ -34,14 +56,21 @@ open class Service<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
         return msg
     }
 
-    override fun update(key: TKey, command: ICommand) {
+    override fun update(id: TKey, command: ICommand) {
         val root = this.convert(command)
-        root.id = key
+        root.id = id
         this.repository.update(root, this.clazz)
     }
 
-    override fun remove(key: TKey) {
-        this.repository.remove(key, this.clazz)
+    override fun remove(id: TKey) {
+        var exec = true
+        val functions = this.beforeRemoveListeners.values
+        for (func in functions) {
+            exec = func(id)
+            if (!exec) break
+        }
+        if (exec)
+            this.repository.remove(id, this.clazz)
     }
 
     /**

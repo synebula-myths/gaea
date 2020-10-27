@@ -23,10 +23,10 @@ interface ISpecificQueryApp<TView, TKey> : IApplication {
      */
     var query: ISpecificQuery<TView, TKey>?
 
-    @GetMapping("/{key:.+}")
-    fun get(@PathVariable key: TKey): HttpMessage {
+    @GetMapping("/{id:.+}")
+    fun get(@PathVariable id: TKey): HttpMessage {
         return this.doQuery("获取${this.name}数据失败") {
-            this.query!!.get(key)
+            this.query!!.get(id)
         }
     }
 

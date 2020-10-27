@@ -19,7 +19,20 @@ interface IService<TKey> {
 
     fun add(command: ICommand): Message<TKey>
 
-    fun update(key: TKey, command: ICommand)
+    fun update(id: TKey, command: ICommand)
 
-    fun remove(key: TKey)
+    fun remove(id: TKey)
+
+    /**
+     * 添加一个删除对象前执行监听器。
+     * @param key 监听器标志。
+     * @param func 监听方法。
+     */
+    fun addBeforeRemoveListener(key: String, func: (id: TKey) -> Boolean)
+
+    /**
+     * 移除一个删除对象前执行监听器。
+     * @param key 监听器标志。
+     */
+    fun removeBeforeRemoveListener(key: String)
 }

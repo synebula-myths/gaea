@@ -20,10 +20,10 @@ interface IQueryApp<TView, TKey> : IApplication {
      */
     var clazz: Class<TView>
 
-    @GetMapping("/{key:.+}")
-    fun get(@PathVariable key: TKey): HttpMessage {
+    @GetMapping("/{id:.+}")
+    fun get(@PathVariable id: TKey): HttpMessage {
         return this.doQuery("获取${this.name}数据失败") {
-            this.query!!.get(key, clazz)
+            this.query!!.get(id, clazz)
         }
     }
 

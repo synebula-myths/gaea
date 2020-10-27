@@ -110,10 +110,10 @@ open class MongoSpecificQuery<TView>(
         } else Page(1, 10)
     }
 
-    override fun get(key: String): TView? {
+    override fun get(id: String): TView? {
         this.check()
         return if (this.clazz != null) {
-            val view = this.template.findOne(whereId(key), this.clazz!!, this.collection)
+            val view = this.template.findOne(whereId(id), this.clazz!!, this.collection)
             view
         } else null
     }

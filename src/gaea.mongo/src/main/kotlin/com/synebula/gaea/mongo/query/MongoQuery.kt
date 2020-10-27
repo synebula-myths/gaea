@@ -57,8 +57,8 @@ open class MongoQuery(var template: MongoTemplate, var logger: ILogger? = null) 
         return result
     }
 
-    override fun <TView, TKey> get(key: TKey, clazz: Class<TView>): TView? {
-        return this.template.findOne(whereId(key), clazz, this.collection(clazz))
+    override fun <TView, TKey> get(id: TKey, clazz: Class<TView>): TView? {
+        return this.template.findOne(whereId(id), clazz, this.collection(clazz))
     }
 
     /**

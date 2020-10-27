@@ -14,7 +14,7 @@ interface ISpecificQuery<TView, TKey> {
      * @param key 对象Key。
      * @return
      */
-    fun get(key: TKey): TView?
+    fun get(id: TKey): TView?
 
     /**
      * 根据实体类条件查询所有符合条件记录
