@@ -1,8 +1,8 @@
 package com.synebula.gaea.app.component
 
-import com.synebula.gaea.data.message.Message
+import com.synebula.gaea.data.message.DataMessage
 
-class HttpMessage() : Message<Any>() {
+class HttpMessage() : DataMessage<Any>() {
 
     constructor(data: Any) : this() {
         this.data = data
@@ -17,7 +17,7 @@ class HttpMessage() : Message<Any>() {
         this.data = data
     }
 
-    fun load(msg: Message<*>) {
+    fun load(msg: DataMessage<*>) {
         this.status = msg.status
         this.message = msg.message
         this.data = msg.data

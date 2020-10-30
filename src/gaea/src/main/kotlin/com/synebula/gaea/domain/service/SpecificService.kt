@@ -1,6 +1,7 @@
 package com.synebula.gaea.domain.service
 
 import com.synebula.gaea.data.IObjectConverter
+import com.synebula.gaea.data.message.DataMessage
 import com.synebula.gaea.data.message.Message
 import com.synebula.gaea.domain.model.IAggregateRoot
 import com.synebula.gaea.domain.repository.ISpecificRepository
@@ -33,14 +34,14 @@ open class SpecificService<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
     /**
      * 删除对象前执行监听器。
      */
-    protected val beforeRemoveListeners = mutableMapOf<String, (id: TKey) -> Message<String>>()
+    protected val beforeRemoveListeners = mutableMapOf<String, (id: TKey) -> Message>()
 
     /**
      * 添加一个删除对象前执行监听器。
      * @param key 监听器标志。
      * @param func 监听方法。
      */
-    override fun addBeforeRemoveListener(key: String, func: (id: TKey) -> Message<String>) {
+    override fun addBeforeRemoveListener(key: String, func: (id: TKey) -> Message) {
         this.beforeRemoveListeners[key] = func
     }
 
@@ -52,8 +53,8 @@ open class SpecificService<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
         this.beforeRemoveListeners.remove(key)
     }
 
-    override fun add(command: ICommand): Message<TKey> {
-        val msg = Message<TKey>()
+    override fun add(command: ICommand): DataMessage<TKey> {
+        val msg = DataMessage<TKey>()
         val root = this.convert(command)
         this.repository.add(root)
         msg.data = root.id
@@ -68,11 +69,11 @@ open class SpecificService<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
 
     override fun remove(id: TKey) {
         val functions = this.beforeRemoveListeners.values
-        var msg: Message<String>
+        var msg: Message
         for (func in functions) {
             msg = func(id)
             if (!msg.success) {
-                throw java.lang.RuntimeException(msg.data)
+                throw java.lang.RuntimeException(msg.message)
             }
         }
         this.repository.remove(id)

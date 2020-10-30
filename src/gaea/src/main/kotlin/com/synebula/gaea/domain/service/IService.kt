@@ -1,7 +1,7 @@
 package com.synebula.gaea.domain.service
 
+import com.synebula.gaea.data.message.DataMessage
 import com.synebula.gaea.data.message.Message
-import com.synebula.gaea.domain.model.IAggregateRoot
 import com.synebula.gaea.log.ILogger
 
 
@@ -17,7 +17,7 @@ interface IService<TKey> {
      */
     var logger: ILogger
 
-    fun add(command: ICommand): Message<TKey>
+    fun add(command: ICommand): DataMessage<TKey>
 
     fun update(id: TKey, command: ICommand)
 
@@ -28,7 +28,7 @@ interface IService<TKey> {
      * @param key 监听器标志。
      * @param func 监听方法。
      */
-    fun addBeforeRemoveListener(key: String, func: (id: TKey) -> Message<String>)
+    fun addBeforeRemoveListener(key: String, func: (id: TKey) -> Message)
 
     /**
      * 移除一个删除对象前执行监听器。

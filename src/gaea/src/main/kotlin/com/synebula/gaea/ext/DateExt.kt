@@ -1,4 +1,4 @@
-package com.synebula.gaea.extension
+package com.synebula.gaea.ext
 
 import com.synebula.gaea.data.date.TimeSpan
 import java.util.*

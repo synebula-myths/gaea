@@ -1,4 +1,4 @@
-package com.synebula.gaea.extension
+package com.synebula.gaea.ext
 
 import java.math.BigInteger
 import java.security.MessageDigest

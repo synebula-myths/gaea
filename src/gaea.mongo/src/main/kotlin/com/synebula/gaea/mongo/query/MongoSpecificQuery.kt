@@ -1,7 +1,7 @@
 package com.synebula.gaea.mongo.query
 
-import com.synebula.gaea.extension.fieldNames
-import com.synebula.gaea.extension.firstCharLowerCase
+import com.synebula.gaea.ext.fieldNames
+import com.synebula.gaea.ext.firstCharLowerCase
 import com.synebula.gaea.log.ILogger
 import com.synebula.gaea.mongo.order
 import com.synebula.gaea.mongo.select

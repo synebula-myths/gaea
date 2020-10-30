@@ -1,4 +1,4 @@
-package com.synebula.gaea.extension
+package com.synebula.gaea.ext
 
 /**
  * 获取对象字段信息字符串列表。
