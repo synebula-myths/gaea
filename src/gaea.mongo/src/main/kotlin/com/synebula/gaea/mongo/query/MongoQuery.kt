@@ -27,7 +27,7 @@ open class MongoQuery(var template: MongoTemplate, var logger: ILogger? = null) 
     var validViewCollection = false
 
     override fun <TView> list(params: Map<String, Any>?, clazz: Class<TView>): List<TView> {
-        val fields = clazz.fieldNames()
+        val fields = this.fields(clazz)
         val query = Query()
         query.where(params, clazz)
         query.select(fields.toTypedArray())
@@ -41,7 +41,7 @@ open class MongoQuery(var template: MongoTemplate, var logger: ILogger? = null) 
 
     override fun <TView> paging(params: Params, clazz: Class<TView>): Page<TView> {
         val query = Query()
-        val fields = clazz.fieldNames()
+        val fields = this.fields(clazz)
         val result = Page<TView>(params.page, params.size)
         result.total = this.count(params.parameters, clazz)
         //如果总数和索引相同，说明该页没有数据，直接跳到上一页
@@ -61,12 +61,23 @@ open class MongoQuery(var template: MongoTemplate, var logger: ILogger? = null) 
         return this.template.findOne(whereId(id), clazz, this.collection(clazz))
     }
 
+    fun <TView> fields(clazz: Class<TView>): List<String> {
+        val fields = mutableListOf<String>()
+        fields.addAll(clazz.fieldNames())
+        var parent = clazz.superclass
+        while (parent != Any::class.java) {
+            fields.addAll(clazz.superclass.fieldNames())
+            parent = parent.superclass
+        }
+        return fields
+    }
+
     /**
      * 获取collection
      */
     fun <TView> collection(clazz: Class<TView>): String {
         val table: Table? = clazz.getDeclaredAnnotation(
-            Table::class.java
+                Table::class.java
         )
         return if (table != null)
             return table.name

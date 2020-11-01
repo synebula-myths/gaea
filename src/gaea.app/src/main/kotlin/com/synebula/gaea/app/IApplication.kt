@@ -28,7 +28,7 @@ interface IApplication {
         } catch (ex: Exception) {
             msg.status = Status.Error
             msg.message = if (error.isEmpty()) ex.message ?: "" else "$error: ${ex.message}"
-            logger?.error(this, ex, "$error: ${ex.message}")
+            logger?.error(this, ex, "[$name]$error: ${ex.message}")
         }
         return msg
     }
@@ -42,7 +42,7 @@ interface IApplication {
             process(msg)
             logger?.debug(this, "$name business execute success")
         } catch (ex: Exception) {
-            logger?.error(this, ex, "$error。异常消息将抛出！: ${ex.message}")
+            logger?.error(this, ex, "[$name]$error。异常消息将抛出！: ${ex.message}")
             throw RuntimeException(error, ex)
         }
         return msg
