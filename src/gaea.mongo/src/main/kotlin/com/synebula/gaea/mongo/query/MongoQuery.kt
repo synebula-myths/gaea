@@ -30,7 +30,7 @@ open class MongoQuery(var template: MongoTemplate, var logger: ILogger? = null) 
         val fields = this.fields(clazz)
         val query = Query()
         query.where(params, clazz)
-        query.select(fields.toTypedArray())
+        query.select(fields)
         return this.template.find(query, clazz, this.collection(clazz))
     }
 
@@ -49,7 +49,7 @@ open class MongoQuery(var template: MongoTemplate, var logger: ILogger? = null) 
             params.page -= 1
             result.page -= 1
         }
-        query.select(fields.toTypedArray())
+        query.select(fields)
         query.where(params.parameters, clazz)
         query.with(order(params.orders))
         query.skip(params.index).limit(params.size)
@@ -61,7 +61,7 @@ open class MongoQuery(var template: MongoTemplate, var logger: ILogger? = null) 
         return this.template.findOne(whereId(id), clazz, this.collection(clazz))
     }
 
-    fun <TView> fields(clazz: Class<TView>): List<String> {
+    fun <TView> fields(clazz: Class<TView>): Array<String> {
         val fields = mutableListOf<String>()
         fields.addAll(clazz.fieldNames())
         var parent = clazz.superclass
@@ -69,7 +69,7 @@ open class MongoQuery(var template: MongoTemplate, var logger: ILogger? = null) 
             fields.addAll(clazz.superclass.fieldNames())
             parent = parent.superclass
         }
-        return fields
+        return fields.toTypedArray()
     }
 
     /**
