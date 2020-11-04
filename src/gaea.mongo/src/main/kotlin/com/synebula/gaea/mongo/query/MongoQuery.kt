@@ -12,6 +12,7 @@ import com.synebula.gaea.query.Page
 import com.synebula.gaea.query.Params
 import com.synebula.gaea.query.annotation.Table
 import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 
 /**
@@ -25,6 +26,10 @@ open class MongoQuery(var template: MongoTemplate, var logger: ILogger? = null) 
      * 使用View解析是collection时是否校验存在，默认不校验
      */
     var validViewCollection = false
+
+    override fun <TView, TKey> get(id: TKey, clazz: Class<TView>): TView? {
+        return this.template.findOne(whereId(id), clazz, this.collection(clazz))
+    }
 
     override fun <TView> list(params: Map<String, Any>?, clazz: Class<TView>): List<TView> {
         val fields = this.fields(clazz)
@@ -57,8 +62,8 @@ open class MongoQuery(var template: MongoTemplate, var logger: ILogger? = null) 
         return result
     }
 
-    override fun <TView, TKey> get(id: TKey, clazz: Class<TView>): TView? {
-        return this.template.findOne(whereId(id), clazz, this.collection(clazz))
+    override fun <TView> range(field: String, params: List<Any>, clazz: Class<TView>): List<TView> {
+        return this.template.find(Query.query(Criteria.where(field).`in`(params)), clazz, this.collection(clazz))
     }
 
     fun <TView> fields(clazz: Class<TView>): Array<String> {
