@@ -48,7 +48,7 @@ fun Query.where(
 
             val where = onWhere(key)
             if (where == null) {
-                list.add(tryRangeWhere(param.key, value, fieldType))
+                list.add(tryRangeWhere(param.key, value, onFieldType))
             } else {
                 //判断执行查询子元素还是本字段
                 val field = if (where.children.isEmpty()) key else where.children
@@ -61,7 +61,7 @@ fun Query.where(
                     Operator.lte -> criteria.lte(value)
                     Operator.gte -> criteria.gte(value)
                     Operator.like -> criteria.regex(value.toString(), if (where.sensitiveCase) "" else "i")
-                    Operator.default -> tryRangeWhere(param.key, value, fieldType)
+                    Operator.default -> tryRangeWhere(param.key, value, onFieldType)
                 }
                 list.add(if (where.children.isEmpty()) criteria else Criteria.where(key).elemMatch(criteria))
             }
@@ -75,11 +75,12 @@ fun Query.where(
 /**
  * 尝试范围查询，失败则返回正常查询条件。
  */
-private fun tryRangeWhere(key: String, value: Any, fieldType: Class<*>?): Criteria {
+private fun tryRangeWhere(key: String, value: Any, onFieldType: ((v: String) -> Class<*>?) = { null }): Criteria {
     val rangeStartSuffix = "[0]" //范围查询开始后缀
     val rangeEndSuffix = "[1]" //范围查询结束后缀
     var condition = value
     val realKey = key.removeSuffix(rangeStartSuffix).removeSuffix(rangeEndSuffix)
+    val fieldType = onFieldType(realKey)
     if (fieldType != null && value.javaClass != fieldType && fieldType == Date::class.java) {
         condition = DateTime(value.toString(), "yyyy-MM-dd HH:mm:ss").date
     }
