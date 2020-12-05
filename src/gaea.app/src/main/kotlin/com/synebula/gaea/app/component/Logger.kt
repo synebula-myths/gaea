@@ -88,7 +88,7 @@ class Logger : ILogger {
 
     override fun debug(t: Throwable) {
         if (this.logger.isDebugEnabled) {
-            this.logger.debug(t.toString())
+            this.logger.debug(t.message, t)
         }
     }
 
@@ -134,7 +134,7 @@ class Logger : ILogger {
 
     override fun info(t: Throwable) {
         if (this.logger.isInfoEnabled) {
-            this.logger.info(t.toString())
+            this.logger.info(t.message, t)
         }
     }
 
@@ -179,7 +179,7 @@ class Logger : ILogger {
 
     override fun warn(t: Throwable) {
         if (this.logger.isWarnEnabled) {
-            this.logger.warn(t.toString())
+            this.logger.warn(t.message, t)
         }
     }
 
@@ -225,7 +225,7 @@ class Logger : ILogger {
 
     override fun error(t: Throwable) {
         if (this.logger.isErrorEnabled) {
-            this.logger.error(t.toString())
+            this.logger.error(t.message, t)
         }
     }
 
