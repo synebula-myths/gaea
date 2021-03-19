@@ -17,8 +17,8 @@ data class Params(var page: Int = 1, var size: Int = 10) {
     /**
      * 数据索引，从0开始。表示数据在总量的第几条。（index = (page - 1) * size）
      */
-    var index: Int = 0
-        get() = (page - 1) * size
+    var index: Long = 0
+        get() = (page.toLong() - 1) * size
         private set
 
     /**
