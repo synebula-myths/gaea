@@ -20,6 +20,18 @@ interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
 
     var service: IService<TKey>?
 
+    @DeleteMapping("/{id:.+}")
+    fun remove(@PathVariable id: TKey): HttpMessage {
+        return this.safeExecute("删除${this.name}[id: $id]失败") {
+            if (this.service != null)
+                it.data = this.service!!.remove(id)
+            else {
+                it.status = Status.Error
+                it.message = "没有对应服务，无法执行该操作"
+            }
+        }
+    }
+
     @PostMapping
     fun add(@RequestBody command: TCommand): HttpMessage {
         return this.safeExecute("添加${this.name}数据失败 - ${if (jsonSerializer != null) jsonSerializer?.serialize(command) else ""}") {
@@ -27,18 +39,6 @@ interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
                 val msg = this.service!!.add(command)
                 it.load(msg)
             } else {
-                it.status = Status.Error
-                it.message = "没有对应服务，无法执行该操作"
-            }
-        }
-    }
-
-    @DeleteMapping("/{id:.+}")
-    fun remove(@PathVariable id: TKey): HttpMessage {
-        return this.safeExecute("删除${this.name}[id: $id]失败") {
-            if (this.service != null)
-                it.data = this.service!!.remove(id)
-            else {
                 it.status = Status.Error
                 it.message = "没有对应服务，无法执行该操作"
             }
