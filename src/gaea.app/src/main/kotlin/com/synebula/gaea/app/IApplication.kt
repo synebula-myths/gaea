@@ -21,7 +21,7 @@ interface IApplication {
      * 安全执行
      */
     fun safeExecute(error: String, process: ((msg: HttpMessage) -> Unit)): HttpMessage {
-        val msg = HttpMessage(Status.Success)
+        val msg = HttpMessage()
         try {
             process(msg)
             logger?.debug(this, "$name business execute success")
@@ -37,7 +37,7 @@ interface IApplication {
      * 可抛出自定义异常信息的安全controller实现了异常捕获和消息组成。
      */
     fun throwExecute(error: String, process: ((msg: HttpMessage) -> Unit)): HttpMessage {
-        val msg = HttpMessage(Status.Success)
+        val msg = HttpMessage()
         try {
             process(msg)
             logger?.debug(this, "$name business execute success")
