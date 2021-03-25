@@ -8,13 +8,8 @@ package com.synebula.gaea.data.code
  * @since 2016年10月24日 下午2:53:50
  */
 class CompositeCode(val generators: List<ICodeGenerator<*>>?) : ICodeGenerator<String> {
-
-    /*
-	 * Method
-	 */
-
     override fun generate(): String {
-        if (this.generators == null || generators.size == 0)
+        if (this.generators == null || generators.isEmpty())
             return ""
         val buffer = StringBuffer()
         for (generator in generators) {

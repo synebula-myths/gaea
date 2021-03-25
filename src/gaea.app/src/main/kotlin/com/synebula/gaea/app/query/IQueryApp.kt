@@ -28,7 +28,7 @@ interface IQueryApp<TView, TKey> : IApplication {
     }
 
     @GetMapping
-    fun list(@RequestParam params: MutableMap<String, Any>): HttpMessage {
+    fun list(@RequestParam params: LinkedHashMap<String, Any>): HttpMessage {
         return this.doQuery("获取${this.name}列表数据失败") {
             this.query!!.list(params, clazz)
         }
@@ -38,11 +38,10 @@ interface IQueryApp<TView, TKey> : IApplication {
     fun paging(
         @PathVariable size: Int,
         @PathVariable page: Int,
-        @RequestParam parameters: MutableMap<String, Any>
+        @RequestParam parameters: LinkedHashMap<String, Any>
     ): HttpMessage {
         return this.doQuery("获取${this.name}分页数据[条数:$size,页码:$page]失败") {
-            val data = Params(page, size)
-            data.parameters = parameters
+            val data = Params(page, size, parameters)
             this.query!!.paging(data, clazz)
         }
     }

@@ -10,5 +10,5 @@ package com.synebula.gaea.data.cache
 interface ICache {
     fun add(key: String, value: CacheEntity)
 
-    operator fun get(key: String): CacheEntity
+    operator fun get(key: String): CacheEntity?
 }

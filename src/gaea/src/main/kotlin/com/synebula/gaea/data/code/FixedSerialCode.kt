@@ -29,11 +29,6 @@ class FixedSerialCode(
         var step: Int = 1
 ) : ICodeGenerator<String> {
 
-
-    /*
-     * Method
-     */
-
     @Synchronized
     override fun generate(): String {
         val value = this.seed
