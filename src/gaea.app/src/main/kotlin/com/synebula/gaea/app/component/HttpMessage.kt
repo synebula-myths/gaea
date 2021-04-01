@@ -1,5 +1,6 @@
 package com.synebula.gaea.app.component
 
+import com.google.gson.Gson
 import com.synebula.gaea.data.message.DataMessage
 
 class HttpMessage() : DataMessage<Any>() {
@@ -21,5 +22,9 @@ class HttpMessage() : DataMessage<Any>() {
         this.status = msg.status
         this.message = msg.message
         this.data = msg.data
+    }
+
+    override fun toString(): String {
+        return Gson().toJson(this)
     }
 }
