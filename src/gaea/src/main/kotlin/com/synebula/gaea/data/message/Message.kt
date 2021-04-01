@@ -9,9 +9,7 @@ open class Message {
     /**
      * 获取状态是否成功
      */
-    val success: Boolean
-        get() = this.status == Status.Success
-
+    fun success(): Boolean = this.status == Status.Success
 
     /**
      * 附带提示消息
