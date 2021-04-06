@@ -2,7 +2,7 @@ package com.synebula.gaea.app.component.aop
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.synebula.gaea.app.IApplication
-import com.synebula.gaea.app.component.HttpMessage
+import com.synebula.gaea.app.struct.HttpMessage
 import com.synebula.gaea.app.component.aop.annotation.ExceptionMessage
 import com.synebula.gaea.app.component.aop.annotation.Handler
 import com.synebula.gaea.app.component.aop.annotation.ModuleName

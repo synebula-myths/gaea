@@ -1,5 +1,6 @@
-package com.synebula.gaea.app.component.poi.excel
+package com.synebula.gaea.app.component.poi
 
+import com.synebula.gaea.app.struct.ExcelData
 import org.apache.poi.hssf.usermodel.HSSFCell
 import org.apache.poi.hssf.usermodel.HSSFCellStyle
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
@@ -9,7 +10,6 @@ import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.VerticalAlignment
 import java.lang.Exception
 import java.lang.RuntimeException
-import kotlin.math.ceil
 
 /**
  * Excel操作对象
@@ -35,7 +35,7 @@ object Excel {
         val titleFont = wb.createFont()
         titleFont.bold = true
         titleStyle.setFont(titleFont)
-        this.setBorderStyle(titleStyle, BorderStyle.THIN)
+        setBorderStyle(titleStyle, BorderStyle.THIN)
 
         //声明列对象
         // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制
@@ -48,7 +48,7 @@ object Excel {
                 cell = row.createCell(col)
                 cell.setCellStyle(titleStyle)
                 cell.setCellValue(data.columnNames[col])
-                this.setColumnWidth(data.columnNames[col], col, sheet)
+                setColumnWidth(data.columnNames[col], col, sheet)
             } catch (ex: RuntimeException) {
                 throw Exception("创建索引${col}列[${data.columnNames[col]}]时出现异常", ex)
             }
@@ -57,7 +57,7 @@ object Excel {
         val contentStyle = wb.createCellStyle()
         contentStyle.alignment = HorizontalAlignment.LEFT// 创建一个修改居左格式
         contentStyle.verticalAlignment = VerticalAlignment.CENTER
-        this.setBorderStyle(contentStyle, BorderStyle.THIN)
+        setBorderStyle(contentStyle, BorderStyle.THIN)
 
         //创建内容
         var col = 0
@@ -70,7 +70,7 @@ object Excel {
                     cell = row.createCell(col)
                     cell.setCellStyle(contentStyle)
                     cell.setCellValue(data.data[i][col])
-                    this.setColumnWidth(data.data[i][col], col, sheet)
+                    setColumnWidth(data.data[i][col], col, sheet)
 
                     col++
                 }

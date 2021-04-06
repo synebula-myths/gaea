@@ -1,7 +1,7 @@
 package com.synebula.gaea.app.cmd
 
 import com.synebula.gaea.app.IApplication
-import com.synebula.gaea.app.component.HttpMessage
+import com.synebula.gaea.app.struct.HttpMessage
 import com.synebula.gaea.app.component.aop.annotation.ExceptionMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.data.serialization.json.IJsonSerializer

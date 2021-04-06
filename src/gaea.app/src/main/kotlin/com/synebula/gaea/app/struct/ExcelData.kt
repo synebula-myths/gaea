@@ -1,4 +1,4 @@
-package com.synebula.gaea.app.component.poi.excel
+package com.synebula.gaea.app.struct
 
 class ExcelData(var title: String = "",
                 var columnNames: List<String> = listOf(),

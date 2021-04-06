@@ -1,4 +1,4 @@
-package com.synebula.gaea.app.component
+package com.synebula.gaea.app.struct
 
 import com.google.gson.Gson
 import com.synebula.gaea.data.message.DataMessage
