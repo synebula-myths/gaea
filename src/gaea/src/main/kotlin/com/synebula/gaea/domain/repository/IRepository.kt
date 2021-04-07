@@ -16,6 +16,14 @@ interface IRepository {
     fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> add(obj: TAggregateRoot, clazz: Class<TAggregateRoot>)
 
     /**
+     * 插入多个个对象。
+     *
+     * @param obj 需要插入的对象。
+     * @return 返回原对象，如果对象ID为自增，则补充自增ID。
+     */
+    fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> add(obj: List<TAggregateRoot>, clazz: Class<TAggregateRoot>)
+
+    /**
      * 更新对象。
      *
      * @param obj 需要更新的对象。

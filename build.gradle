@@ -21,7 +21,7 @@ allprojects {
 
 subprojects {
     ext {
-        version '0.9.1'
+        version '0.10.0'
         spring_version = "2.3.0.RELEASE"
     }
 

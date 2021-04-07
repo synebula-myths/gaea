@@ -35,6 +35,9 @@ open class MongoRepository(private var repo: MongoTemplate) : IRepository {
         this.repo.save(obj)
     }
 
+    override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> add(obj: List<TAggregateRoot>, clazz: Class<TAggregateRoot>) {
+        this.repo.insert(obj, clazz)
+    }
 
     override fun <TAggregateRoot> count(params: Map<String, Any>?, clazz: Class<TAggregateRoot>): Int {
         val query = Query()
