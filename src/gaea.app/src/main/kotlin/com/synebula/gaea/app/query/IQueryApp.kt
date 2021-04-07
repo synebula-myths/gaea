@@ -2,7 +2,7 @@ package com.synebula.gaea.app.query
 
 import com.synebula.gaea.app.IApplication
 import com.synebula.gaea.app.struct.HttpMessage
-import com.synebula.gaea.app.component.aop.annotation.ExceptionMessage
+import com.synebula.gaea.app.component.aop.annotation.MethodName
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.query.IQuery
 import com.synebula.gaea.query.Params
@@ -21,24 +21,24 @@ interface IQueryApp<TView, TKey> : IApplication {
      */
     var clazz: Class<TView>
 
+    @MethodName("获取数据")
     @GetMapping("/{id:.+}")
-    @ExceptionMessage("获取数据失败")
     fun get(@PathVariable id: TKey): HttpMessage {
         return this.doQuery {
             this.query!!.get(id, clazz)
         }
     }
 
+    @MethodName("获取列表数据")
     @GetMapping
-    @ExceptionMessage("获取列表数据失败")
     fun list(@RequestParam params: LinkedHashMap<String, Any>): HttpMessage {
         return this.doQuery {
             this.query!!.list(params, clazz)
         }
     }
 
+    @MethodName("获取分页数据")
     @GetMapping("/segments/{size}/pages/{page}")
-    @ExceptionMessage("获取分页数据失败")
     fun paging(
         @PathVariable size: Int,
         @PathVariable page: Int,

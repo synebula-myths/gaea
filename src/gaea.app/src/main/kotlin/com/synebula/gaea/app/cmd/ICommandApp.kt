@@ -2,7 +2,7 @@ package com.synebula.gaea.app.cmd
 
 import com.synebula.gaea.app.IApplication
 import com.synebula.gaea.app.struct.HttpMessage
-import com.synebula.gaea.app.component.aop.annotation.ExceptionMessage
+import com.synebula.gaea.app.component.aop.annotation.MethodName
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.data.serialization.json.IJsonSerializer
 import com.synebula.gaea.domain.service.ICommand
@@ -23,7 +23,7 @@ interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
 
 
     @PostMapping
-    @ExceptionMessage("添加异常")
+    @MethodName("添加")
     fun add(@RequestBody command: TCommand): HttpMessage {
         val msg = HttpMessage()
         if (this.service != null) {
@@ -36,7 +36,7 @@ interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
     }
 
     @PutMapping("/{id:.+}")
-    @ExceptionMessage("更新异常")
+    @MethodName("更新")
     fun update(@PathVariable id: TKey, @RequestBody command: TCommand): HttpMessage {
         val msg = HttpMessage()
         if (this.service != null)
@@ -50,7 +50,7 @@ interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
 
 
     @DeleteMapping("/{id:.+}")
-    @ExceptionMessage("删除异常")
+    @MethodName("删除")
     fun remove(@PathVariable id: TKey): HttpMessage {
         val msg = HttpMessage()
         if (this.service != null)

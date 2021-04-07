@@ -3,7 +3,7 @@ package com.synebula.gaea.app.component.aop
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.synebula.gaea.app.IApplication
 import com.synebula.gaea.app.struct.HttpMessage
-import com.synebula.gaea.app.component.aop.annotation.ExceptionMessage
+import com.synebula.gaea.app.component.aop.annotation.MethodName
 import com.synebula.gaea.app.component.aop.annotation.Handler
 import com.synebula.gaea.app.component.aop.annotation.ModuleName
 import com.synebula.gaea.data.message.Status
@@ -55,7 +55,7 @@ abstract class AppAspect {
         }!!//获取声明类型中的方法信息
         val funcAnnotations = func.annotations ?: arrayOf()
 
-        var exceptionMessage = func.name
+        var funcName = func.name
         //遍历方法注解
         for (funcAnnotation in funcAnnotations) {
             val annotations = funcAnnotation.annotationClass.annotations
@@ -66,8 +66,8 @@ abstract class AppAspect {
                 val handleClazz = applicationContext.getBean(handler.value.java)
                 handleClazz.handle(clazz, func, point.args)
             }
-            if (funcAnnotation is ExceptionMessage)
-                exceptionMessage = funcAnnotation.message
+            if (funcAnnotation is MethodName)
+                funcName = funcAnnotation.name
         }
 
         return try {
@@ -83,7 +83,7 @@ abstract class AppAspect {
                     moduleName = name.value
                 }
             }
-            val message = "$moduleName - $exceptionMessage"
+            val message = "$moduleName - $funcName 异常"
             logger.error(
                 ex,
                 "$message。Method args ${paramDiscover.getParameterNames(func)?.contentToString()} values is ${
