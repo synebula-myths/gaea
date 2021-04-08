@@ -25,7 +25,15 @@ class DateTime : Comparable<DateTime> {
     /**
      * 列出时间的级别数组
      */
-    private val calendarLevel = intArrayOf(Calendar.MILLISECOND, Calendar.SECOND, Calendar.MINUTE, Calendar.HOUR_OF_DAY, Calendar.DAY_OF_MONTH, Calendar.MONTH, Calendar.YEAR)
+    private val calendarLevel = intArrayOf(
+            Calendar.MILLISECOND,
+            Calendar.SECOND,
+            Calendar.MINUTE,
+            Calendar.HOUR_OF_DAY,
+            Calendar.DAY_OF_MONTH,
+            Calendar.MONTH,
+            Calendar.YEAR
+    )
 
     val date: Date
         get() = calendar.time
@@ -43,33 +51,145 @@ class DateTime : Comparable<DateTime> {
             return instance.time
         }
 
+    /**
+     * 当前时间年
+     */
     var year: Int
         get() = calendar.get(Calendar.YEAR)
         set(value) = calendar.set(Calendar.YEAR, value)
 
+    /**
+     * 当前时间月
+     */
     var month: Int
         get() = calendar.get(Calendar.MONTH)
         set(value) = calendar.set(Calendar.MONTH, value)
 
+    /**
+     * 当前时间天
+     */
     var day: Int
         get() = calendar.get(Calendar.DAY_OF_MONTH)
         set(value) = calendar.set(Calendar.DAY_OF_MONTH, value)
 
+    /**
+     * 获取时间
+     */
     val time: Time
         get() = Time(calendar.time)
 
-    val firstDay: DateTime
+    /**
+     * 获取当月天数
+     */
+    val days: Int
+        get() {
+            return this.calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+        }
+
+    /**
+     * 当前月第一天
+     */
+    val firstDayOfMonth: DateTime
         get() {
             val instance = calendar.clone() as Calendar
             instance.set(Calendar.DAY_OF_MONTH, 1)
             return DateTime(instance)
         }
 
-    val lastDay: DateTime
+    /**
+     * 当前月最后一天
+     */
+    val lastDayOfMonth: DateTime
         get() {
             val instance = calendar.clone() as Calendar
             instance.set(Calendar.DAY_OF_MONTH, instance.getActualMaximum(Calendar.DAY_OF_MONTH))
             return DateTime(instance)
+        }
+
+    /**
+     * 当前周第一天
+     */
+    val firstDayOfWeek: DateTime
+        get() {
+            val instance = calendar.clone() as Calendar
+            instance.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+            instance.set(Calendar.HOUR_OF_DAY, 0)
+            instance.set(Calendar.MINUTE, 0)
+            instance.set(Calendar.SECOND, 0)
+            instance.set(Calendar.MILLISECOND, 0)
+            return DateTime(instance)
+        }
+
+    /**
+     * 当前周最后一天
+     */
+    val lastDayOfWeek: DateTime
+        get() {
+            val instance = this.firstDayOfWeek.calendar.clone() as Calendar
+            instance.add(Calendar.DAY_OF_WEEK, 6)//当前周第一天加6天
+            instance.set(Calendar.HOUR_OF_DAY, 23)
+            instance.set(Calendar.MINUTE, 59)
+            instance.set(Calendar.SECOND, 59)
+            instance.set(Calendar.MILLISECOND, 0)
+            return DateTime(instance)
+        }
+
+    /**
+     * 当前天最早时间
+     */
+    val earliestTime: DateTime
+        get() {
+            val instance = this.calendar.clone() as Calendar
+            instance.set(Calendar.HOUR_OF_DAY, 0)
+            instance.set(Calendar.MINUTE, 0)
+            instance.set(Calendar.SECOND, 0)
+            instance.set(Calendar.MILLISECOND, 0)
+            return DateTime(instance)
+        }
+
+    /**
+     * 当前天最晚时间
+     */
+    val latestTime: DateTime
+        get() {
+            val instance = this.calendar.clone() as Calendar
+            instance.set(Calendar.HOUR_OF_DAY, 23)
+            instance.set(Calendar.MINUTE, 59)
+            instance.set(Calendar.SECOND, 59)
+            instance.set(Calendar.MILLISECOND, 0)
+            return DateTime(instance)
+        }
+
+    /**
+     * 当前时间最上一月
+     */
+    val previousMonth: DateTime
+        get() {
+            return this.addMonth(-1)
+        }
+
+    /**
+     * 当前时间下一月
+     */
+    val nextMonth: DateTime
+        get() {
+            return this.addMonth(1)
+        }
+
+    /**
+     * 当前时间最上一天
+     */
+    val previousDay: DateTime
+        get() {
+            return this.addDay(-1)
+        }
+
+    /**
+     * 当前时间下一天
+     */
+    val nextDay: DateTime
+        get() {
+            return this.addDay(1)
         }
 
     /**
@@ -186,6 +306,61 @@ class DateTime : Comparable<DateTime> {
             this.calendar.add(Calendar.MINUTE, span.minute)
             this.calendar.add(Calendar.SECOND, span.second)
         }
+    }
+
+    /**
+     * 判断当前时间是否在某时间后
+     *
+     * @param other 另一时间
+     */
+    fun after(other: DateTime): Boolean {
+        return this.date.after(other.date)
+    }
+
+    /**
+     * 判断当前时间是否在某时间前
+     *
+     * @param other 另一时间
+     */
+    fun before(other: DateTime): Boolean {
+        return this.date.before(other.date)
+    }
+
+    /**
+     * 加减月份。
+     *
+     * @param month 月份。可以为负数，即为减。
+     */
+    fun addMonth(month: Int): DateTime {
+        val instance = calendar.clone() as Calendar
+        instance.add(Calendar.MONTH, month)
+        return DateTime(instance)
+    }
+
+    /**
+     * 加减日期。
+     *
+     * @param day 天数。可以为负数，即为减。
+     */
+    fun addDay(day: Int): DateTime {
+        val instance = calendar.clone() as Calendar
+        instance.add(Calendar.DAY_OF_MONTH, day)
+        return DateTime(instance)
+    }
+
+    /**
+     * 当前天是否工作日
+     */
+    fun isWorkday(): Boolean {
+        return !this.isWeekend()
+    }
+
+    /**
+     * 当前天是否周末
+     */
+    fun isWeekend(): Boolean {
+        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+        return (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY)
     }
 
     operator fun minus(other: DateTime): TimeSpan {
