@@ -54,7 +54,12 @@ interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
     fun remove(@PathVariable id: TKey): HttpMessage {
         val msg = HttpMessage()
         if (this.service != null)
-            msg.data = this.service!!.remove(id)
+            try {
+                msg.data = this.service!!.remove(id)
+            } catch (ex: IllegalStateException) {
+                msg.status = Status.Error
+                msg.message = ex.message ?: ""
+            }
         else {
             msg.status = Status.Error
             msg.message = "没有对应服务，无法执行该操作"

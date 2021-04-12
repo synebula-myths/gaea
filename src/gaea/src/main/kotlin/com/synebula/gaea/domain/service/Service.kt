@@ -69,7 +69,7 @@ open class Service<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
         for (func in functions) {
             msg = func(id)
             if (!msg.success()) {
-                throw RuntimeException(msg.message)
+                throw IllegalStateException(msg.message)
             }
         }
         this.repository.remove(id, this.clazz)
