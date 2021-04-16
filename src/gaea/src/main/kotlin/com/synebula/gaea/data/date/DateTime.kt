@@ -26,13 +26,13 @@ class DateTime : Comparable<DateTime> {
      * 列出时间的级别数组
      */
     private val calendarLevel = intArrayOf(
-            Calendar.MILLISECOND,
-            Calendar.SECOND,
-            Calendar.MINUTE,
-            Calendar.HOUR_OF_DAY,
-            Calendar.DAY_OF_MONTH,
-            Calendar.MONTH,
-            Calendar.YEAR
+        Calendar.MILLISECOND,
+        Calendar.SECOND,
+        Calendar.MINUTE,
+        Calendar.HOUR_OF_DAY,
+        Calendar.DAY_OF_MONTH,
+        Calendar.MONTH,
+        Calendar.YEAR
     )
 
     val date: Date
@@ -279,7 +279,8 @@ class DateTime : Comparable<DateTime> {
      * @return 是否。
      */
     fun between(start: DateTime, end: DateTime): Boolean {
-        return this in start..end
+        //return this in start..end
+        return start.dateNoTime.compareTo(this.dateNoTime) * this.dateNoTime.compareTo(end.dateNoTime) >= 0
     }
 
     /**
