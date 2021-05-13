@@ -20,8 +20,8 @@ open class MongoRepository(private var repo: MongoTemplate) : IRepository {
     override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> get(
             id: TKey,
             clazz: Class<TAggregateRoot>
-    ): TAggregateRoot {
-        return this.repo.findOne(whereId(id), clazz) as TAggregateRoot
+    ): TAggregateRoot? {
+        return this.repo.findOne(whereId(id), clazz)
     }
 
     override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> update(

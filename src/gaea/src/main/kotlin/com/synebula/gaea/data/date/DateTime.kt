@@ -7,7 +7,7 @@ import java.util.*
 /**
  * 时间格式，方便用于获取Date格式的多种形式
  */
-class DateTime : Comparable<DateTime> {
+class DateTime() : Comparable<DateTime> {
 
     // 内部存储日历格式方便操作
     /**
@@ -195,28 +195,25 @@ class DateTime : Comparable<DateTime> {
     /**
      * 从Ｄate格式转化
      */
-    constructor(date: Date) {
+    constructor(date: Date) : this() {
         this.calendar.time = date
-        this.calendar.set(Calendar.MILLISECOND, 0)
     }
 
     /**
      * 从Calendar格式转化
      */
-    constructor(calendar: Calendar) {
+    constructor(calendar: Calendar) : this() {
         this.calendar = calendar
-        this.calendar.set(Calendar.MILLISECOND, 0)
     }
 
     /**
      * 从Ｄate格式转化
      */
-    constructor(date: String, format: String) {
+    constructor(date: String, format: String = "yyyy-MM-dd HH:mm:ss") : this() {
         val formatter = SimpleDateFormat(format)
         try {
             val value = formatter.parse(date)
             this.calendar.time = value
-            this.calendar.set(Calendar.MILLISECOND, 0)
         } catch (e: ParseException) {
             throw RuntimeException("date string can't format to date", e)
         }
@@ -225,9 +222,8 @@ class DateTime : Comparable<DateTime> {
     /**
      * 从Ｄate格式转化。需要注意的是月0代表是一月，以此类推。
      */
-    constructor(year: Int, month: Int, day: Int = 0, hour: Int = 0, minute: Int = 0, second: Int = 0) {
+    constructor(year: Int, month: Int, day: Int = 0, hour: Int = 0, minute: Int = 0, second: Int = 0) : this() {
         this.calendar.set(year, month, day, hour, minute, second)
-        this.calendar.set(Calendar.MILLISECOND, 0)
     }
 
     /**
@@ -294,25 +290,12 @@ class DateTime : Comparable<DateTime> {
         return this.compareTo(start, level) >= 0 && this.compareTo(end, level) <= 0
     }
 
-    /**
-     * 增加秒
-     */
-    fun addSeconds(seconds: Long) {
-        if (seconds <= Int.MAX_VALUE)
-            this.calendar.add(Calendar.SECOND, seconds.toInt())
-        else {
-            val span = TimeSpan(seconds * 1000)
-            this.calendar.add(Calendar.DAY_OF_MONTH, span.day)
-            this.calendar.add(Calendar.HOUR_OF_DAY, span.hour)
-            this.calendar.add(Calendar.MINUTE, span.minute)
-            this.calendar.add(Calendar.SECOND, span.second)
-        }
-    }
 
     /**
      * 判断当前时间是否在某时间后
      *
      * @param other 另一时间
+     * @return new DateTime object
      */
     fun after(other: DateTime): Boolean {
         return this.date.after(other.date)
@@ -322,31 +305,165 @@ class DateTime : Comparable<DateTime> {
      * 判断当前时间是否在某时间前
      *
      * @param other 另一时间
+     * @return new DateTime object
      */
     fun before(other: DateTime): Boolean {
         return this.date.before(other.date)
+    }
+
+
+    /**
+     * 加减年。
+     *
+     * @param year 月份。可以为负数，即为减。
+     * @return this
+     */
+    fun addYear(year: Int): DateTime {
+        this.calendar.add(Calendar.YEAR, year)
+        return this
     }
 
     /**
      * 加减月份。
      *
      * @param month 月份。可以为负数，即为减。
+     * @return this
      */
     fun addMonth(month: Int): DateTime {
-        val instance = calendar.clone() as Calendar
-        instance.add(Calendar.MONTH, month)
-        return DateTime(instance)
+        this.calendar.add(Calendar.MONTH, month)
+        return this
     }
+
 
     /**
      * 加减日期。
      *
      * @param day 天数。可以为负数，即为减。
+     * @return this
      */
     fun addDay(day: Int): DateTime {
-        val instance = calendar.clone() as Calendar
-        instance.add(Calendar.DAY_OF_MONTH, day)
-        return DateTime(instance)
+        this.calendar.add(Calendar.DAY_OF_MONTH, day)
+        return this
+    }
+
+
+    /**
+     * 加减小时。
+     *
+     * @param hour 小时。可以为负数，即为减。
+     * @return this
+     */
+    fun addHour(hour: Int): DateTime {
+        this.calendar.add(Calendar.HOUR_OF_DAY, hour)
+        return this
+    }
+
+    /**
+     * 加减分钟。
+     *
+     * @param minute 分钟。可以为负数，即为减。
+     * @return this
+     */
+    fun addMinute(minute: Int): DateTime {
+        this.calendar.add(Calendar.MINUTE, minute)
+        return this
+    }
+
+    /**
+     * 加减秒
+     * @param second 秒数。可以为负数，即为减。
+     * @return this
+     */
+    fun addSecond(second: Int): DateTime {
+        this.calendar.add(Calendar.SECOND, second)
+        return this
+    }
+
+    /**
+     * 加减毫秒
+     * @param millisecond 毫秒数。可以为负数，即为减。
+     * @return this
+     */
+    fun addMillisecond(millisecond: Int): DateTime {
+        this.calendar.add(Calendar.MILLISECOND, millisecond)
+        return this
+    }
+
+    /**
+     * 设置年。
+     *
+     * @param year 月份。
+     * @return this
+     */
+    fun setYear(year: Int): DateTime {
+        this.calendar.set(Calendar.YEAR, year)
+        return this
+    }
+
+    /**
+     * 设置月份。
+     *
+     * @param month 月份。
+     * @return this
+     */
+    fun setMonth(month: Int): DateTime {
+        this.calendar.set(Calendar.MONTH, month)
+        return this
+    }
+
+
+    /**
+     * 设置日期。
+     *
+     * @param day 天数。
+     * @return this
+     */
+    fun setDay(day: Int): DateTime {
+        this.calendar.set(Calendar.DAY_OF_MONTH, day)
+        return this
+    }
+
+
+    /**
+     * 设置小时。
+     *
+     * @param hour 小时。
+     * @return this
+     */
+    fun setHour(hour: Int): DateTime {
+        this.calendar.set(Calendar.HOUR_OF_DAY, hour)
+        return this
+    }
+
+    /**
+     * 设置分钟。
+     *
+     * @param minute 分钟。
+     * @return this
+     */
+    fun setMinute(minute: Int): DateTime {
+        this.calendar.set(Calendar.MINUTE, minute)
+        return this
+    }
+
+    /**
+     * 设置秒
+     * @param second 总秒数。
+     * @return this
+     */
+    fun setSecond(second: Int): DateTime {
+        this.calendar.set(Calendar.SECOND, second)
+        return this
+    }
+
+    /**
+     * 设置毫秒。
+     * @param millisecond 毫秒数。
+     * @return this
+     */
+    fun setMillisecond(millisecond: Int): DateTime {
+        this.calendar.set(Calendar.MILLISECOND, millisecond)
+        return this
     }
 
     /**
@@ -360,10 +477,29 @@ class DateTime : Comparable<DateTime> {
      * 当前天是否周末
      */
     fun isWeekend(): Boolean {
-        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+        val dayOfWeek = this.calendar.get(Calendar.DAY_OF_WEEK)
         return (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY)
     }
 
+    /**
+     * 清空毫秒，避免误差
+     */
+    fun clearMillisecond() {
+        this.calendar.set(Calendar.MILLISECOND, 0)
+    }
+
+    /**
+     * 克隆当前对象
+     *
+     * @return 返回新的DateTime对象
+     */
+    fun clone(): DateTime {
+        return DateTime(this.calendar)
+    }
+
+    /**
+     * 时间相见
+     */
     operator fun minus(other: DateTime): TimeSpan {
         return TimeSpan(this.milliseconds - other.milliseconds)
     }

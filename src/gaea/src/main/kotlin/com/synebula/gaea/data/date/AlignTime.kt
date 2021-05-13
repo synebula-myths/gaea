@@ -1,6 +1,8 @@
 package com.synebula.gaea.data.date
 
 import java.util.*
+import kotlin.math.ceil
+import kotlin.math.floor
 
 /**
  * 校准时间。
@@ -61,9 +63,9 @@ class AlignTime {
      */
     fun ceilingTime(lastTime: DateTime, intervalSeconds: Int): DateTime {
         val span = lastTime - this.baseTime
-        val count = Math.ceil(span.totalSeconds / intervalSeconds).toInt()
+        val count = ceil(span.totalSeconds / intervalSeconds).toInt()
         val newTime = DateTime(this.baseTime.date)
-        newTime.addSeconds(count * intervalSeconds * 1L)
+        newTime.addSecond(count * intervalSeconds)
         return newTime
     }
 
@@ -97,9 +99,9 @@ class AlignTime {
      */
     fun floorTime(lastTime: DateTime, intervalSeconds: Int): DateTime {
         val span = lastTime - this.baseTime
-        val count = Math.floor(span.totalSeconds / intervalSeconds).toInt()
+        val count = floor(span.totalSeconds / intervalSeconds).toInt()
         val newTime = DateTime(this.baseTime.date)
-        newTime.addSeconds(count * intervalSeconds * 1L)
+        newTime.addSecond(count * intervalSeconds)
         return newTime
     }
 }

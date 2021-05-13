@@ -46,7 +46,7 @@ interface IRepository {
      * @param clazz 操作数据的类型
      * @return 聚合根
      */
-    fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> get(id: TKey, clazz: Class<TAggregateRoot>): TAggregateRoot
+    fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> get(id: TKey, clazz: Class<TAggregateRoot>): TAggregateRoot?
 
 
     /**
