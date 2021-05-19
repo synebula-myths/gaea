@@ -1,6 +1,7 @@
 package com.synebula.gaea.app.component.aop
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
 import com.synebula.gaea.app.IApplication
 import com.synebula.gaea.app.struct.HttpMessage
 import com.synebula.gaea.app.component.aop.annotation.MethodName
@@ -15,11 +16,12 @@ import org.aspectj.lang.annotation.Around
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.core.DefaultParameterNameDiscoverer
+import org.springframework.web.multipart.MultipartFile
 
 abstract class AppAspect {
     private var paramDiscover = DefaultParameterNameDiscoverer()
 
-    private val mapper = ObjectMapper()
+    private val gson = Gson()
 
     @Autowired
     lateinit var logger: ILogger
@@ -39,8 +41,8 @@ abstract class AppAspect {
     fun throws(point: JoinPoint, ex: Throwable) {
         val clazz = point.signature.declaringType
         logger.error(
-            ex,
-            "${clazz.name}.${point.signature.name} exception：${ex.message}， args：${mapper.writeValueAsString(point.args)}"
+                ex,
+                "${clazz.name}.${point.signature.name} exception：${ex.message}， args：${gson.toJson(point.args)}"
         )
     }
 
@@ -84,13 +86,10 @@ abstract class AppAspect {
                 }
             }
             val message = "$moduleName - $funcName 异常"
-            logger.error(
-                ex,
-                "$message。Method args ${paramDiscover.getParameterNames(func)?.contentToString()} values is ${
-                    mapper.writeValueAsString(
-                        point.args
-                    )
-                }"
+            logger.error(ex,
+                    "$message。Method args ${
+                    paramDiscover.getParameterNames(func)?.contentToString()} values is ${
+                    gson.toJson(point.args)}"
             )
             return HttpMessage(Status.Error, message)
         }

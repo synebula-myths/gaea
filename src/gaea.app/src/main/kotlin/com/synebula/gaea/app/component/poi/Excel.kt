@@ -1,6 +1,7 @@
 package com.synebula.gaea.app.component.poi
 
 import com.synebula.gaea.app.struct.ExcelData
+import org.apache.poi.hpsf.Decimal
 import org.apache.poi.hssf.usermodel.HSSFCell
 import org.apache.poi.hssf.usermodel.HSSFCellStyle
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
@@ -8,8 +9,9 @@ import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.VerticalAlignment
-import java.lang.Exception
-import java.lang.RuntimeException
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.springframework.web.multipart.MultipartFile
+import java.util.*
 
 /**
  * Excel操作对象
@@ -79,6 +81,69 @@ object Excel {
             }
         }
         writeTo(wb)
+    }
+
+    /**
+     * 导入文件
+     *
+     * @param file 上传文件流
+     * @param columns 文件列名称、类型定义
+     * @param startRow 数据起始行，默认0
+     * @param startColumn 数据起始列，默认0
+     *
+     * @return ExcelData
+     */
+    fun import(
+            file: MultipartFile,
+            columns: List<Pair<String, String>>,
+            startRow: Int = 0,
+            startColumn: Int = 0
+    ): List<Map<String, Any>> {
+        if (file.originalFilename?.endsWith(".xls") != true && file.originalFilename?.endsWith(".xlsx") != true)
+            throw RuntimeException("无法识别的文件格式[${file.originalFilename}]")
+
+        val workbook = if (file.originalFilename?.endsWith(".xls") == true)
+            HSSFWorkbook(file.inputStream)
+        else
+            XSSFWorkbook(file.inputStream)
+        val sheet = workbook.getSheetAt(0)
+
+        val data = mutableListOf<Map<String, Any>>()
+        for (i in startRow..sheet.lastRowNum) {
+            val row = sheet.getRow(i) ?: continue
+            val rowData = mutableMapOf<String, Any>()
+            for (c in startColumn until columns.size + startColumn) {
+                try {
+                    val column = columns[c]
+                    val value: Any = when (column.second) {
+                        Int::class.java.name, Double::class.java.name,
+                        Float::class.java.name, Decimal::class.java.name -> try {
+                            row.getCell(c).numericCellValue
+                        } catch (ignored: Exception) {
+                            row.getCell(c).stringCellValue
+                        }
+                        Boolean::class.java.name -> try {
+                            row.getCell(c).booleanCellValue
+                        } catch (ignored: Exception) {
+                            row.getCell(c).stringCellValue
+                        }
+                        Date::class.java.name -> try {
+                            row.getCell(c).dateCellValue
+                        } catch (ignored: Exception) {
+                            row.getCell(c).stringCellValue
+                        }
+                        else -> row.getCell(c).stringCellValue
+                    }
+                    rowData.put(columns[c].first, value)
+                } catch (ex: Exception) {
+                    throw RuntimeException("解析EXCEL文件${file.originalFilename}第${i}行第${c}列出错", ex)
+                }
+            }
+            data.add(rowData)
+        }
+        workbook.close()
+        file.inputStream.close()
+        return data
     }
 
     /**
