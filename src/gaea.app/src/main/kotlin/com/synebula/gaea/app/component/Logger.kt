@@ -48,7 +48,7 @@ class Logger : ILogger {
 
     override fun trace(format: String, vararg args: Any) {
         if (this.logger.isTraceEnabled) {
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             this.logger.trace(message)
         }
     }
@@ -56,7 +56,7 @@ class Logger : ILogger {
 
     override fun trace(t: Throwable, format: String, vararg args: Any) {
         if (this.logger.isTraceEnabled) {
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             this.logger.trace(message, t)
         }
     }
@@ -64,7 +64,7 @@ class Logger : ILogger {
     override fun trace(obj: Any, format: String, vararg args: Any) {
         if (this.logger.isTraceEnabled) {
             val real = this.getLogger(obj)
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             real.trace(message)
         }
     }
@@ -72,7 +72,7 @@ class Logger : ILogger {
     override fun trace(obj: Any, t: Throwable?, format: String, vararg args: Any) {
         if (this.logger.isTraceEnabled) {
             val real = this.getLogger(obj)
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             real.trace(message, t)
         }
     }
@@ -95,7 +95,7 @@ class Logger : ILogger {
 
     override fun debug(format: String, vararg args: Any) {
         if (this.logger.isDebugEnabled) {
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             this.logger.debug(message)
         }
     }
@@ -103,7 +103,7 @@ class Logger : ILogger {
 
     override fun debug(t: Throwable, format: String, vararg args: Any) {
         if (this.logger.isDebugEnabled) {
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             this.logger.debug(message, t)
         }
     }
@@ -111,7 +111,7 @@ class Logger : ILogger {
     override fun debug(obj: Any, format: String, vararg args: Any) {
         if (this.logger.isDebugEnabled) {
             val real = this.getLogger(obj)
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             real.debug(message)
         }
     }
@@ -119,7 +119,7 @@ class Logger : ILogger {
     override fun debug(obj: Any, t: Throwable?, format: String, vararg args: Any) {
         if (this.logger.isDebugEnabled) {
             val real = this.getLogger(obj)
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             real.debug(message, t)
         }
     }
@@ -140,7 +140,7 @@ class Logger : ILogger {
 
     override fun info(format: String, vararg args: Any) {
         if (this.logger.isInfoEnabled) {
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             this.logger.info(message)
         }
     }
@@ -148,7 +148,7 @@ class Logger : ILogger {
 
     override fun info(t: Throwable, format: String, vararg args: Any) {
         if (this.logger.isInfoEnabled) {
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             this.logger.info(message, t)
         }
     }
@@ -156,7 +156,7 @@ class Logger : ILogger {
     override fun info(obj: Any, format: String, vararg args: Any) {
         if (this.logger.isInfoEnabled) {
             val real = this.getLogger(obj)
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             real.info(message)
         }
     }
@@ -164,7 +164,7 @@ class Logger : ILogger {
     override fun info(obj: Any, t: Throwable?, format: String, vararg args: Any) {
         if (this.logger.isInfoEnabled) {
             val real = this.getLogger(obj)
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             real.info(message, t)
         }
     }
@@ -185,7 +185,7 @@ class Logger : ILogger {
 
     override fun warn(format: String, vararg args: Any) {
         if (this.logger.isWarnEnabled) {
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             this.logger.warn(message)
         }
     }
@@ -193,7 +193,7 @@ class Logger : ILogger {
 
     override fun warn(t: Throwable, format: String, vararg args: Any) {
         if (this.logger.isWarnEnabled) {
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             this.logger.warn(message, t)
         }
     }
@@ -201,7 +201,7 @@ class Logger : ILogger {
     override fun warn(obj: Any, format: String, vararg args: Any) {
         if (this.logger.isWarnEnabled) {
             val real = this.getLogger(obj)
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             real.warn(message)
         }
     }
@@ -209,7 +209,7 @@ class Logger : ILogger {
     override fun warn(obj: Any, t: Throwable?, format: String, vararg args: Any) {
         if (this.logger.isWarnEnabled) {
             val real = this.getLogger(obj)
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             real.warn(message, t)
         }
     }
@@ -232,7 +232,7 @@ class Logger : ILogger {
 
     override fun error(format: String, vararg args: Any) {
         if (this.logger.isErrorEnabled) {
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             this.logger.error(message)
         }
     }
@@ -240,7 +240,7 @@ class Logger : ILogger {
 
     override fun error(t: Throwable, format: String, vararg args: Any) {
         if (this.logger.isErrorEnabled) {
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             this.logger.error(message, t)
         }
     }
@@ -248,7 +248,7 @@ class Logger : ILogger {
     override fun error(obj: Any, format: String, vararg args: Any) {
         if (this.logger.isErrorEnabled) {
             val real = this.getLogger(obj)
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             real.error(message)
         }
     }
@@ -256,7 +256,7 @@ class Logger : ILogger {
     override fun error(obj: Any, t: Throwable?, format: String, vararg args: Any) {
         if (this.logger.isErrorEnabled) {
             val real = this.getLogger(obj)
-            val message = String.format(format, *args)
+            val message = if (args.isEmpty()) format else String.format(format, *args)
             real.error(message, t)
         }
     }

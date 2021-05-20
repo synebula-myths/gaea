@@ -34,17 +34,6 @@ abstract class AppAspect {
      */
     abstract fun func()
 
-    /**
-     * 后置异常通知
-     */
-    @AfterThrowing("func()", throwing = "ex")
-    fun throws(point: JoinPoint, ex: Throwable) {
-        val clazz = point.signature.declaringType
-        logger.error(
-                ex,
-                "${clazz.name}.${point.signature.name} exception：${ex.message}， args：${gson.toJson(point.args)}"
-        )
-    }
 
     /**
      * 环绕通知,环绕增强，相当于MethodInterceptor

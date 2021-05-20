@@ -4,14 +4,15 @@ import com.synebula.gaea.app.struct.ExcelData
 import org.apache.poi.hpsf.Decimal
 import org.apache.poi.hssf.usermodel.HSSFCell
 import org.apache.poi.hssf.usermodel.HSSFCellStyle
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
-import org.apache.poi.ss.usermodel.BorderStyle
-import org.apache.poi.ss.usermodel.HorizontalAlignment
-import org.apache.poi.ss.usermodel.Sheet
-import org.apache.poi.ss.usermodel.VerticalAlignment
+import org.apache.poi.ss.formula.BaseFormulaEvaluator
+import org.apache.poi.ss.usermodel.*
+import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
+
 
 /**
  * Excel操作对象
@@ -88,16 +89,16 @@ object Excel {
      *
      * @param file 上传文件流
      * @param columns 文件列名称、类型定义
-     * @param startRow 数据起始行，默认0
-     * @param startColumn 数据起始列，默认0
+     * @param rowStart 数据起始行，默认0
+     * @param columnStart 数据起始列，默认0
      *
      * @return ExcelData
      */
     fun import(
-            file: MultipartFile,
-            columns: List<Pair<String, String>>,
-            startRow: Int = 0,
-            startColumn: Int = 0
+        file: MultipartFile,
+        columns: List<Pair<String, String>>,
+        rowStart: Int = 0,
+        columnStart: Int = 0
     ): List<Map<String, Any>> {
         if (file.originalFilename?.endsWith(".xls") != true && file.originalFilename?.endsWith(".xlsx") != true)
             throw RuntimeException("无法识别的文件格式[${file.originalFilename}]")
@@ -109,34 +110,107 @@ object Excel {
         val sheet = workbook.getSheetAt(0)
 
         val data = mutableListOf<Map<String, Any>>()
-        for (i in startRow..sheet.lastRowNum) {
+        for (i in rowStart..sheet.lastRowNum) {
             val row = sheet.getRow(i) ?: continue
             val rowData = mutableMapOf<String, Any>()
-            for (c in startColumn until columns.size + startColumn) {
+            for (r in columnStart until columns.size + columnStart) {
                 try {
-                    val column = columns[c]
+                    val column = columns[r]
                     val value: Any = when (column.second) {
                         Int::class.java.name, Double::class.java.name,
                         Float::class.java.name, Decimal::class.java.name -> try {
-                            row.getCell(c).numericCellValue
+                            row.getCell(r).numericCellValue
                         } catch (ignored: Exception) {
-                            row.getCell(c).stringCellValue
+                            row.getCell(r).stringCellValue
                         }
                         Boolean::class.java.name -> try {
-                            row.getCell(c).booleanCellValue
+                            row.getCell(r).booleanCellValue
                         } catch (ignored: Exception) {
-                            row.getCell(c).stringCellValue
+                            row.getCell(r).stringCellValue
                         }
                         Date::class.java.name -> try {
-                            row.getCell(c).dateCellValue
+                            row.getCell(r).dateCellValue
                         } catch (ignored: Exception) {
-                            row.getCell(c).stringCellValue
+                            row.getCell(r).stringCellValue
                         }
-                        else -> row.getCell(c).stringCellValue
+                        else -> row.getCell(r).stringCellValue
                     }
-                    rowData.put(columns[c].first, value)
+                    rowData.put(columns[r].first, value)
                 } catch (ex: Exception) {
-                    throw RuntimeException("解析EXCEL文件${file.originalFilename}第${i}行第${c}列出错", ex)
+                    throw RuntimeException("解析EXCEL文件${file.originalFilename}第${r + 1}行第${r + 1}列出错", ex)
+                }
+            }
+            data.add(rowData)
+        }
+        workbook.close()
+        file.inputStream.close()
+        return data
+    }
+
+    /**
+     * 导入文件
+     *
+     * @param file 上传文件流
+     * @param rowStartIndex 数据起始行，默认0
+     * @param columnStartIndex 数据起始列，默认0
+     *
+     * @return ExcelData
+     */
+    fun import(
+        file: MultipartFile,
+        columnSize: Int = 0,
+        rowStartIndex: Int = 0,
+        columnStartIndex: Int = 0
+    ): List<Map<String, String>> {
+        if (file.originalFilename?.endsWith(".xls") != true && file.originalFilename?.endsWith(".xlsx") != true)
+            throw RuntimeException("无法识别的文件格式[${file.originalFilename}]")
+        val eva: BaseFormulaEvaluator
+        val workbook = if (file.originalFilename?.endsWith(".xls") == true) {
+            val wb = HSSFWorkbook(file.inputStream)
+            eva = HSSFFormulaEvaluator(wb)
+            wb
+        } else {
+            val wb = XSSFWorkbook(file.inputStream)
+            eva = XSSFFormulaEvaluator(wb)
+            wb
+        }
+        val sheet = workbook.getSheetAt(0)
+
+        val titles = mutableListOf<String>()
+        val titleRow = sheet.getRow(rowStartIndex)
+        val size = if (columnSize != 0) columnSize else titleRow.physicalNumberOfCells //列数
+        for (i in columnStartIndex until size) {
+            titles.add(titleRow.getCell(i).stringCellValue)
+        }
+
+        val data = mutableListOf<Map<String, String>>()
+        for (r in (rowStartIndex + 1)..sheet.lastRowNum) {
+            val row = sheet.getRow(r) ?: continue
+            val rowData = mutableMapOf<String, String>()
+            for (c in columnStartIndex until size + columnStartIndex) {
+                try {
+                    val title = titles[c]
+                    val cell = row.getCell(c)
+                    val value = when (cell.cellType) {
+                        CellType.BOOLEAN -> cell.booleanCellValue.toString()
+                        CellType.ERROR -> cell.errorCellValue.toString()
+                        CellType.NUMERIC -> {
+                            val numericCellValue: Double = cell.numericCellValue
+                            if (DateUtil.isCellDateFormatted(cell)) {
+                                DateUtil.getLocalDateTime(numericCellValue).toString()
+                            } else {
+                                numericCellValue.toString()
+                            }
+                        }
+                        CellType.STRING -> cell.richStringCellValue.string
+                        CellType.BLANK -> ""
+                        CellType.FORMULA -> eva.evaluate(cell).toString()
+                        else -> throw Exception("匹配类型错误")
+                    }
+
+                    rowData[title] = value
+                } catch (ex: Exception) {
+                    throw RuntimeException("解析EXCEL文件${file.originalFilename}第${r + 1}行第${c + 1}列出错", ex)
                 }
             }
             data.add(rowData)
