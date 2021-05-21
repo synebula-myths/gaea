@@ -1,6 +1,7 @@
 package com.synebula.gaea.app.component.poi
 
 import com.synebula.gaea.app.struct.ExcelData
+import com.synebula.gaea.data.date.DateTime
 import org.apache.poi.hpsf.Decimal
 import org.apache.poi.hssf.usermodel.HSSFCell
 import org.apache.poi.hssf.usermodel.HSSFCellStyle
@@ -98,46 +99,90 @@ object Excel {
         file: MultipartFile,
         columns: List<Pair<String, String>>,
         rowStart: Int = 0,
-        columnStart: Int = 0
-    ): List<Map<String, Any>> {
+        columnStart: Int = 0,
+        emptyRowFilter: (row: Row) -> Boolean =
+            { row ->
+                row.getCell(
+                    0,
+                    Row.MissingCellPolicy.RETURN_NULL_AND_BLANK
+                ) == null
+            }
+    ): List<Map<String, Any?>> {
         if (file.originalFilename?.endsWith(".xls") != true && file.originalFilename?.endsWith(".xlsx") != true)
             throw RuntimeException("无法识别的文件格式[${file.originalFilename}]")
 
-        val workbook = if (file.originalFilename?.endsWith(".xls") == true)
-            HSSFWorkbook(file.inputStream)
-        else
-            XSSFWorkbook(file.inputStream)
+        val evaluator: BaseFormulaEvaluator
+        val workbook = if (file.originalFilename?.endsWith(".xls") == true) {
+            val wb = HSSFWorkbook(file.inputStream)
+            evaluator = HSSFFormulaEvaluator(wb)
+            wb
+        } else {
+            val wb = XSSFWorkbook(file.inputStream)
+            evaluator = XSSFFormulaEvaluator(wb)
+            wb
+        }
+
         val sheet = workbook.getSheetAt(0)
 
-        val data = mutableListOf<Map<String, Any>>()
-        for (i in rowStart..sheet.lastRowNum) {
-            val row = sheet.getRow(i) ?: continue
-            val rowData = mutableMapOf<String, Any>()
-            for (r in columnStart until columns.size + columnStart) {
+        val data = mutableListOf<Map<String, Any?>>()
+        for (r in rowStart..sheet.lastRowNum) {
+            val row = sheet.getRow(r) ?: continue
+            if (emptyRowFilter(row)) continue //空行不处理
+            val rowData = mutableMapOf<String, Any?>()
+            for (c in columnStart until columns.size + columnStart) {
                 try {
-                    val column = columns[r]
-                    val value: Any = when (column.second) {
-                        Int::class.java.name, Double::class.java.name,
-                        Float::class.java.name, Decimal::class.java.name -> try {
-                            row.getCell(r).numericCellValue
-                        } catch (ignored: Exception) {
-                            row.getCell(r).stringCellValue
+                    val column = columns[c]
+                    val cell = row.getCell(c, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)
+                    if (cell == null) {
+                        rowData[columns[c].first] = ""
+                        continue
+                    }
+                    val value: Any? = when (column.second) {
+                        Int::class.java.name -> {
+                            if (cell.cellType == CellType.NUMERIC) {
+                                cell.numericCellValue.toInt()
+                            } else {
+                                this.getCellValue(cell, evaluator).toString().toIntOrNull()
+                            }
                         }
-                        Boolean::class.java.name -> try {
-                            row.getCell(r).booleanCellValue
-                        } catch (ignored: Exception) {
-                            row.getCell(r).stringCellValue
+                        Double::class.java.name -> {
+                            if (cell.cellType == CellType.NUMERIC) {
+                                cell.numericCellValue
+                            } else {
+                                this.getCellValue(cell, evaluator).toString().toDoubleOrNull()
+                            }
+                        }
+                        Float::class.java.name -> {
+                            if (cell.cellType == CellType.NUMERIC) {
+                                cell.numericCellValue.toFloat()
+                            } else {
+                                this.getCellValue(cell, evaluator).toString().toFloatOrNull()
+                            }
+                        }
+                        Decimal::class.java.name -> {
+                            if (cell.cellType == CellType.NUMERIC) {
+                                cell.numericCellValue.toBigDecimal()
+                            } else {
+                                this.getCellValue(cell, evaluator).toString().toBigDecimalOrNull()
+                            }
+                        }
+                        Boolean::class.java.name -> {
+                            if (cell.cellType == CellType.BOOLEAN) {
+                                cell.booleanCellValue
+                            } else {
+                                this.getCellValue(cell, evaluator).toString().toBoolean()
+                            }
                         }
                         Date::class.java.name -> try {
-                            row.getCell(r).dateCellValue
+                            cell.dateCellValue
                         } catch (ignored: Exception) {
-                            row.getCell(r).stringCellValue
+                            DateTime(cell.stringCellValue).date
                         }
-                        else -> row.getCell(r).stringCellValue
+                        else -> cell.stringCellValue
                     }
-                    rowData.put(columns[r].first, value)
+                    rowData[columns[c].first] = value
                 } catch (ex: Exception) {
-                    throw RuntimeException("解析EXCEL文件${file.originalFilename}第${r + 1}行第${r + 1}列出错", ex)
+                    throw RuntimeException("解析EXCEL文件${file.originalFilename}第${c + 1}行第${c + 1}列出错", ex)
                 }
             }
             data.add(rowData)
@@ -160,18 +205,24 @@ object Excel {
         file: MultipartFile,
         columnSize: Int = 0,
         rowStartIndex: Int = 0,
-        columnStartIndex: Int = 0
+        columnStartIndex: Int = 0,
+        emptyRowFilter: (row: Row) -> Boolean = { row ->
+            row.getCell(
+                0,
+                Row.MissingCellPolicy.RETURN_NULL_AND_BLANK
+            ) == null
+        }
     ): List<Map<String, String>> {
         if (file.originalFilename?.endsWith(".xls") != true && file.originalFilename?.endsWith(".xlsx") != true)
             throw RuntimeException("无法识别的文件格式[${file.originalFilename}]")
-        val eva: BaseFormulaEvaluator
+        val evaluator: BaseFormulaEvaluator
         val workbook = if (file.originalFilename?.endsWith(".xls") == true) {
             val wb = HSSFWorkbook(file.inputStream)
-            eva = HSSFFormulaEvaluator(wb)
+            evaluator = HSSFFormulaEvaluator(wb)
             wb
         } else {
             val wb = XSSFWorkbook(file.inputStream)
-            eva = XSSFFormulaEvaluator(wb)
+            evaluator = XSSFFormulaEvaluator(wb)
             wb
         }
         val sheet = workbook.getSheetAt(0)
@@ -186,29 +237,18 @@ object Excel {
         val data = mutableListOf<Map<String, String>>()
         for (r in (rowStartIndex + 1)..sheet.lastRowNum) {
             val row = sheet.getRow(r) ?: continue
+            if (emptyRowFilter(row)) continue //空行不处理
             val rowData = mutableMapOf<String, String>()
             for (c in columnStartIndex until size + columnStartIndex) {
                 try {
                     val title = titles[c]
-                    val cell = row.getCell(c)
-                    val value = when (cell.cellType) {
-                        CellType.BOOLEAN -> cell.booleanCellValue.toString()
-                        CellType.ERROR -> cell.errorCellValue.toString()
-                        CellType.NUMERIC -> {
-                            val numericCellValue: Double = cell.numericCellValue
-                            if (DateUtil.isCellDateFormatted(cell)) {
-                                DateUtil.getLocalDateTime(numericCellValue).toString()
-                            } else {
-                                numericCellValue.toString()
-                            }
-                        }
-                        CellType.STRING -> cell.richStringCellValue.string
-                        CellType.BLANK -> ""
-                        CellType.FORMULA -> eva.evaluate(cell).toString()
-                        else -> throw Exception("匹配类型错误")
+                    val cell = row.getCell(c, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL)
+                    if (cell == null) {
+                        rowData[title] = ""
+                        continue
                     }
-
-                    rowData[title] = value
+                    val value = getCellValue(cell, evaluator)
+                    rowData[title] = value.toString()
                 } catch (ex: Exception) {
                     throw RuntimeException("解析EXCEL文件${file.originalFilename}第${r + 1}行第${c + 1}列出错", ex)
                 }
@@ -242,5 +282,24 @@ object Excel {
         style.borderRight = borderStyle
         style.borderBottom = borderStyle
         style.borderLeft = borderStyle
+    }
+
+    private fun getCellValue(cell: Cell, evaluator: BaseFormulaEvaluator): Any {
+        return when (cell.cellType) {
+            CellType.BOOLEAN -> cell.booleanCellValue
+            CellType.ERROR -> cell.errorCellValue
+            CellType.NUMERIC -> {
+                val numericCellValue: Double = cell.numericCellValue
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    DateUtil.getLocalDateTime(numericCellValue)
+                } else {
+                    numericCellValue
+                }
+            }
+            CellType.STRING -> cell.richStringCellValue.string
+            CellType.BLANK -> ""
+            CellType.FORMULA -> evaluator.evaluate(cell).toString()
+            else -> throw Exception("匹配类型错误")
+        }
     }
 }
