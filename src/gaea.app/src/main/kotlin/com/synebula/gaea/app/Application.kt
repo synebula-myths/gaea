@@ -20,8 +20,8 @@ import javax.annotation.Resource
 open class Application<TCommand : ICommand, TView, TKey>(
     override var name: String,
     override var clazz: Class<TView>,
-    override var service: IService<TKey>?,
-    override var query: IQuery?,
+    override var service: IService<TKey>,
+    override var query: IQuery,
     override var logger: ILogger?
 ) : ICommandApp<TCommand, TKey>, IQueryApp<TView, TKey> {
 

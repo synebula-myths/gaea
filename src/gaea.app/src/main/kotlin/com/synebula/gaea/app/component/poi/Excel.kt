@@ -2,6 +2,7 @@ package com.synebula.gaea.app.component.poi
 
 import com.synebula.gaea.app.struct.ExcelData
 import com.synebula.gaea.data.date.DateTime
+import com.synebula.gaea.exception.NoticeUserException
 import org.apache.poi.hpsf.Decimal
 import org.apache.poi.hssf.usermodel.HSSFCell
 import org.apache.poi.hssf.usermodel.HSSFCellStyle
@@ -214,7 +215,7 @@ object Excel {
         }
     ): List<Map<String, String>> {
         if (file.originalFilename?.endsWith(".xls") != true && file.originalFilename?.endsWith(".xlsx") != true)
-            throw RuntimeException("无法识别的文件格式[${file.originalFilename}]")
+            throw NoticeUserException("无法识别的文件格式[${file.originalFilename}]")
         val evaluator: BaseFormulaEvaluator
         val workbook = if (file.originalFilename?.endsWith(".xls") == true) {
             val wb = HSSFWorkbook(file.inputStream)
@@ -250,7 +251,7 @@ object Excel {
                     val value = getCellValue(cell, evaluator)
                     rowData[title] = value.toString()
                 } catch (ex: Exception) {
-                    throw RuntimeException("解析EXCEL文件${file.originalFilename}第${r + 1}行第${c + 1}列出错", ex)
+                    throw NoticeUserException("解析EXCEL文件${file.originalFilename}第${r + 1}行第${c + 1}列出错", ex)
                 }
             }
             data.add(rowData)

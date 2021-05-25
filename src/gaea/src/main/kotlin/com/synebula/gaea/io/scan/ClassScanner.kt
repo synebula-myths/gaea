@@ -5,9 +5,7 @@ import java.io.FileFilter
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
 import java.nio.charset.Charset
-import java.util.Collections
-import java.util.HashSet
-import java.util.LinkedList
+import java.util.*
 import java.util.jar.JarFile
 
 /**

@@ -1,9 +1,8 @@
 package com.synebula.gaea.app.query
 
 import com.synebula.gaea.app.IApplication
-import com.synebula.gaea.app.struct.HttpMessage
 import com.synebula.gaea.app.component.aop.annotation.MethodName
-import com.synebula.gaea.data.message.Status
+import com.synebula.gaea.app.struct.HttpMessage
 import com.synebula.gaea.query.IQuery
 import com.synebula.gaea.query.Params
 import org.springframework.web.bind.annotation.GetMapping
@@ -14,7 +13,7 @@ interface IQueryApp<TView, TKey> : IApplication {
     /**
      * 查询服务
      */
-    var query: IQuery?
+    var query: IQuery
 
     /**
      * 查询的View类型
@@ -24,17 +23,17 @@ interface IQueryApp<TView, TKey> : IApplication {
     @MethodName("获取数据")
     @GetMapping("/{id:.+}")
     fun get(@PathVariable id: TKey): HttpMessage {
-        return this.doQuery {
-            this.query!!.get(id, clazz)
-        }
+        val data = this.query.get(id, clazz)
+        val msg = HttpMessage()
+        msg.data = data
+        return msg
     }
 
     @MethodName("获取列表数据")
     @GetMapping
     fun list(@RequestParam params: LinkedHashMap<String, Any>): HttpMessage {
-        return this.doQuery {
-            this.query!!.list(params, clazz)
-        }
+        val data = this.query.list(params, clazz)
+        return HttpMessage(data)
     }
 
     @MethodName("获取分页数据")
@@ -44,26 +43,8 @@ interface IQueryApp<TView, TKey> : IApplication {
         @PathVariable page: Int,
         @RequestParam parameters: LinkedHashMap<String, Any>
     ): HttpMessage {
-        return this.doQuery {
-            val data = Params(page, size, parameters)
-            this.query!!.paging(data, clazz)
-        }
-    }
-
-
-    /**
-     * 抽取查询业务判断功能
-     *
-     * @param biz 业务执行逻辑
-     */
-    fun doQuery(biz: (() -> Any?)): HttpMessage {
-        val msg = HttpMessage()
-        if (this.query != null) {
-            msg.data = biz()
-        } else {
-            msg.status = Status.Error
-            msg.message = "没有对应服务，无法执行该操作"
-        }
-        return msg
+        val params = Params(page, size, parameters)
+        val data = this.query.paging(params, clazz)
+        return HttpMessage(data)
     }
 }

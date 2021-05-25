@@ -1,6 +1,6 @@
 package com.synebula.gaea.data.code
 
-import java.util.UUID
+import java.util.*
 
 /**
  * 全球唯一编号生成。

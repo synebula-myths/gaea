@@ -1,8 +1,8 @@
 package com.synebula.gaea.app.cmd
 
 import com.synebula.gaea.app.IApplication
-import com.synebula.gaea.app.struct.HttpMessage
 import com.synebula.gaea.app.component.aop.annotation.MethodName
+import com.synebula.gaea.app.struct.HttpMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.data.serialization.json.IJsonSerializer
 import com.synebula.gaea.domain.service.ICommand
@@ -19,33 +19,21 @@ import org.springframework.web.bind.annotation.*
 interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
     var jsonSerializer: IJsonSerializer?
 
-    var service: IService<TKey>?
+    var service: IService<TKey>
 
 
     @PostMapping
     @MethodName("添加")
     fun add(@RequestBody command: TCommand): HttpMessage {
-        val msg = HttpMessage()
-        if (this.service != null) {
-            msg.load(this.service!!.add(command))
-        } else {
-            msg.status = Status.Error
-            msg.message = "没有对应服务，无法执行该操作"
-        }
+        val msg = HttpMessage(this.service.add(command))
         return msg
     }
 
     @PutMapping("/{id:.+}")
     @MethodName("更新")
     fun update(@PathVariable id: TKey, @RequestBody command: TCommand): HttpMessage {
-        val msg = HttpMessage()
-        if (this.service != null)
-            this.service!!.update(id, command)
-        else {
-            msg.status = Status.Error
-            msg.message = "没有对应服务，无法执行该操作"
-        }
-        return msg
+        this.service.update(id, command)
+        return HttpMessage()
     }
 
 
@@ -53,17 +41,13 @@ interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
     @MethodName("删除")
     fun remove(@PathVariable id: TKey): HttpMessage {
         val msg = HttpMessage()
-        if (this.service != null)
-            try {
-                msg.data = this.service!!.remove(id)
-            } catch (ex: IllegalStateException) {
-                msg.status = Status.Error
-                msg.message = ex.message ?: ""
-            }
-        else {
+        try {
+            msg.data = this.service.remove(id)
+        } catch (ex: IllegalStateException) {
             msg.status = Status.Error
-            msg.message = "没有对应服务，无法执行该操作"
+            msg.message = ex.message ?: ""
         }
+
         return msg
     }
 }

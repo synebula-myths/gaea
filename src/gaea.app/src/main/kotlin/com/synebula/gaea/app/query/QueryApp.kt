@@ -13,6 +13,6 @@ import com.synebula.gaea.query.IQuery
 open class QueryApp<TView, TKey>(
     override var name: String,
     override var clazz: Class<TView>,
-    override var query: IQuery?,
+    override var query: IQuery,
     override var logger: ILogger?
 ) : IQueryApp<TView, TKey>

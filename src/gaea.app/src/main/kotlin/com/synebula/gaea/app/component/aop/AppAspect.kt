@@ -1,22 +1,19 @@
 package com.synebula.gaea.app.component.aop
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.synebula.gaea.app.IApplication
-import com.synebula.gaea.app.struct.HttpMessage
-import com.synebula.gaea.app.component.aop.annotation.MethodName
 import com.synebula.gaea.app.component.aop.annotation.Handler
+import com.synebula.gaea.app.component.aop.annotation.MethodName
 import com.synebula.gaea.app.component.aop.annotation.ModuleName
+import com.synebula.gaea.app.struct.HttpMessage
 import com.synebula.gaea.data.message.Status
+import com.synebula.gaea.exception.NoticeUserException
 import com.synebula.gaea.log.ILogger
-import org.aspectj.lang.JoinPoint
 import org.aspectj.lang.ProceedingJoinPoint
-import org.aspectj.lang.annotation.AfterThrowing
 import org.aspectj.lang.annotation.Around
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.core.DefaultParameterNameDiscoverer
-import org.springframework.web.multipart.MultipartFile
 
 abstract class AppAspect {
     private var paramDiscover = DefaultParameterNameDiscoverer()
@@ -74,11 +71,20 @@ abstract class AppAspect {
                     moduleName = name.value
                 }
             }
-            val message = "$moduleName - $funcName 异常"
-            logger.error(ex,
-                    "$message。Method args ${
-                    paramDiscover.getParameterNames(func)?.contentToString()} values is ${
-                    gson.toJson(point.args)}"
+            var message = "$moduleName - $funcName 异常"
+            if (ex is NoticeUserException) {
+                message = "$message: ${ex.message}"
+            } else {
+                message = "$message。如多次遇到，请联系开发人员。"
+
+            }
+            logger.error(
+                ex,
+                "$message。Method args ${
+                    paramDiscover.getParameterNames(func)?.contentToString()
+                } values is ${
+                    gson.toJson(point.args)
+                }"
             )
             return HttpMessage(Status.Error, message)
         }

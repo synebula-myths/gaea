@@ -2,8 +2,7 @@ package com.synebula.gaea.io.scan
 
 import java.io.IOException
 import java.net.URL
-import java.util.Enumeration
-import java.util.HashSet
+import java.util.*
 
 /**
  *

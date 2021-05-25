@@ -1,6 +1,6 @@
 package com.synebula.gaea.data.code
 
-import java.util.Random
+import java.util.*
 
 /**
  * 固定长度随机编号生成。

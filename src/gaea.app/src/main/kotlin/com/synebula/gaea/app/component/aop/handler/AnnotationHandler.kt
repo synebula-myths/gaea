@@ -1,6 +1,5 @@
 package com.synebula.gaea.app.component.aop.handler
 
-import java.lang.Exception
 import java.lang.reflect.Method
 
 interface AnnotationHandler {
