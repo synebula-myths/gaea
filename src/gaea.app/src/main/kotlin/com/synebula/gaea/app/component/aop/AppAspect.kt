@@ -75,7 +75,7 @@ abstract class AppAspect {
             if (ex is NoticeUserException) {
                 message = "$message: ${ex.message}"
             } else {
-                message = "$message。如多次遇到，请联系开发人员。"
+                message = "$message。"
 
             }
             logger.error(
