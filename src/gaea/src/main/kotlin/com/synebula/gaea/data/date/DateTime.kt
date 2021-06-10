@@ -272,9 +272,9 @@ class DateTime() : Comparable<DateTime> {
      * 比较当前时间是否在目标时间范围内。
      * @param start 目标开始时间。
      * @param end 目标结束时间。
-     * @return 是否。
+     * @return true or false
      */
-    fun between(start: DateTime, end: DateTime): Boolean {
+    fun isBetween(start: DateTime, end: DateTime): Boolean {
         //return this in start..end
         return start.dateNoTime.compareTo(this.dateNoTime) * this.dateNoTime.compareTo(end.dateNoTime) >= 0
     }
@@ -284,9 +284,9 @@ class DateTime() : Comparable<DateTime> {
      * @param start 目标开始时间。
      * @param end 目标结束时间。
      * @param level 比较时间的最小级别。
-     * @return 是否。
+     * @return true or false
      */
-    fun between(start: DateTime, end: DateTime, level: TimeUnit): Boolean {
+    fun isBetween(start: DateTime, end: DateTime, level: TimeUnit): Boolean {
         return this.compareTo(start, level) >= 0 && this.compareTo(end, level) <= 0
     }
 
@@ -295,9 +295,9 @@ class DateTime() : Comparable<DateTime> {
      * 判断当前时间是否在某时间后
      *
      * @param other 另一时间
-     * @return new DateTime object
+     * @return true or false
      */
-    fun after(other: DateTime): Boolean {
+    fun isAfter(other: DateTime): Boolean {
         return this.date.after(other.date)
     }
 
@@ -305,10 +305,22 @@ class DateTime() : Comparable<DateTime> {
      * 判断当前时间是否在某时间前
      *
      * @param other 另一时间
-     * @return new DateTime object
+     * @return true or false
      */
-    fun before(other: DateTime): Boolean {
+    fun isBefore(other: DateTime): Boolean {
         return this.date.before(other.date)
+    }
+
+    /**
+     * 判断当前时间是否同一天
+     *
+     * @param other 另一时间
+     * @return true or false
+     */
+    fun isSameDay(other: DateTime): Boolean {
+        return this.calendar.get(Calendar.ERA) == other.calendar.get(Calendar.ERA)
+                && this.calendar.get(Calendar.YEAR) == other.calendar.get(Calendar.YEAR)
+                && this.calendar.get(Calendar.DAY_OF_YEAR) == other.calendar.get(Calendar.DAY_OF_YEAR)
     }
 
 
