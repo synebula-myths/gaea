@@ -506,7 +506,7 @@ class DateTime() : Comparable<DateTime> {
      * @return 返回新的DateTime对象
      */
     fun clone(): DateTime {
-        return DateTime(this.calendar)
+        return DateTime(this.calendar.clone() as Calendar)
     }
 
     /**
