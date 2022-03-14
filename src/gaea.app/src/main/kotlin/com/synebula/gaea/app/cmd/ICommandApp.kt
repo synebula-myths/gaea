@@ -21,12 +21,10 @@ interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
 
     var service: IService<TKey>
 
-
     @PostMapping
     @MethodName("添加")
     fun add(@RequestBody command: TCommand): HttpMessage {
-        val msg = HttpMessage(this.service.add(command))
-        return msg
+        return HttpMessage(service.add(command))
     }
 
     @PutMapping("/{id:.+}")
@@ -35,7 +33,6 @@ interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
         this.service.update(id, command)
         return HttpMessage()
     }
-
 
     @DeleteMapping("/{id:.+}")
     @MethodName("删除")
