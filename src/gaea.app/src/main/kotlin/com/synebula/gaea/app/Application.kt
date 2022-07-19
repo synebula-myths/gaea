@@ -22,7 +22,7 @@ open class Application<TCommand : ICommand, TView, TKey>(
     override var clazz: Class<TView>,
     override var service: IService<TKey>,
     override var query: IQuery,
-    override var logger: ILogger?
+    override var logger: ILogger,
 ) : ICommandApp<TCommand, TKey>, IQueryApp<TView, TKey> {
 
     @Resource

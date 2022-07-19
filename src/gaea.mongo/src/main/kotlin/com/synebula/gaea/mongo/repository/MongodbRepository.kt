@@ -8,18 +8,18 @@ import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Query
 
 /**
- * 实现ITypedRepository的mongo仓储类
- * @param repo MongoRepo对象
+ * 实现ITypedRepository的Mongodb仓储类
+ * @param repo MongodbRepo对象
  */
-open class MongoRepository(private var repo: MongoTemplate) : IRepository {
+open class MongodbRepository(private var repo: MongoTemplate) : IRepository {
 
     override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> remove(id: TKey, clazz: Class<TAggregateRoot>) {
         this.repo.remove(whereId(id), clazz)
     }
 
     override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> get(
-            id: TKey,
-            clazz: Class<TAggregateRoot>
+        id: TKey,
+        clazz: Class<TAggregateRoot>,
     ): TAggregateRoot? {
         return this.repo.findOne(whereId(id), clazz)
     }

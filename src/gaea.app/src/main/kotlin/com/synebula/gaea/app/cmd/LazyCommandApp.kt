@@ -16,7 +16,7 @@ import javax.annotation.Resource
 open class LazyCommandApp<TRoot : IAggregateRoot<TKey>, TKey>(
     override var name: String,
     override var service: ILazyService<TRoot, TKey>,
-    override var logger: ILogger?
+    override var logger: ILogger,
 ) : ILazyCommandApp<TRoot, TKey> {
     @Resource
     override var jsonSerializer: IJsonSerializer? = null

@@ -14,5 +14,5 @@ open class QueryApp<TView, TKey>(
     override var name: String,
     override var clazz: Class<TView>,
     override var query: IQuery,
-    override var logger: ILogger?
+    override var logger: ILogger,
 ) : IQueryApp<TView, TKey>

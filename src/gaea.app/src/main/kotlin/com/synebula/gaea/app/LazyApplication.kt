@@ -22,7 +22,7 @@ open class LazyApplication<TRoot : IAggregateRoot<TKey>, TKey>(
     override var clazz: Class<TRoot>, //view class type
     override var service: ILazyService<TRoot, TKey>,
     override var query: IQuery,
-    override var logger: ILogger?
+    override var logger: ILogger,
 ) : ILazyCommandApp<TRoot, TKey>, IQueryApp<TRoot, TKey> {
 
     @Resource

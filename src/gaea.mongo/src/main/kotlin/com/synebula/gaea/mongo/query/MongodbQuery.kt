@@ -16,11 +16,11 @@ import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 
 /**
- * 实现IQuery的Mongo查询类
- * @param template MongoRepo对象
+ * 实现IQuery的Mongodb查询类
+ * @param template MongodbRepo对象
  */
 
-open class MongoQuery(var template: MongoTemplate, var logger: ILogger? = null) : IQuery {
+open class MongodbQuery(var template: MongoTemplate, var logger: ILogger) : IQuery {
 
     /**
      * 使用View解析是collection时是否校验存在，默认不校验
@@ -87,7 +87,7 @@ open class MongoQuery(var template: MongoTemplate, var logger: ILogger? = null) 
         return if (table != null)
             return table.name
         else {
-            this.logger?.info(this, "视图类没有标记[Collection]注解，无法获取Collection名称。尝试使用View<${clazz.name}>名称解析集合")
+            this.logger.info(this, "视图类没有标记[Collection]注解，无法获取Collection名称。尝试使用View<${clazz.name}>名称解析集合")
             val name = clazz.simpleName.removeSuffix("View").firstCharLowerCase()
             if (!validViewCollection || this.template.collectionExists(name))
                 name
