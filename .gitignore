@@ -1,6 +1,5 @@
 .*
 gradlew*
 build
-gradle
 
 !.gitignore

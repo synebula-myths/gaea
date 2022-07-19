@@ -275,7 +275,6 @@ class DateTime() : Comparable<DateTime> {
      * @return true or false
      */
     fun isBetween(start: DateTime, end: DateTime): Boolean {
-        //return this in start..end
         return start.dateNoTime.compareTo(this.dateNoTime) * this.dateNoTime.compareTo(end.dateNoTime) >= 0
     }
 

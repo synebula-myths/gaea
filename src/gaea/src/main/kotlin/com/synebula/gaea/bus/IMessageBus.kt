@@ -1,6 +1,6 @@
-package com.synebula.gaea.event
+package com.synebula.gaea.bus
 
-interface IEventBus {
+interface IMessageBus {
 
     /**
      * 注册事件Listener
@@ -16,13 +16,13 @@ interface IEventBus {
 
     /**
      * 同步发布事件
-     * @param event 事件
+     * @param message 事件
      */
-    fun publish(event: IEvent)
+    fun publish(message: IMessage)
 
     /**
      * 异步发布事件
-     * @param event 事件
+     * @param message 事件
      */
-    fun publishAsync(event: IEvent)
+    fun publishAsync(message: IMessage)
 }

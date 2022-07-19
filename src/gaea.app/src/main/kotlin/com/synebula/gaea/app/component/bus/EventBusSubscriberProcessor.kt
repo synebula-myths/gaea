@@ -1,7 +1,7 @@
-package com.synebula.gaea.app.component
+package com.synebula.gaea.app.component.bus
 
 import com.google.common.eventbus.Subscribe
-import com.synebula.gaea.event.IEventBus
+import com.synebula.gaea.bus.IMessageBus
 import org.springframework.beans.BeansException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.config.BeanPostProcessor
@@ -14,7 +14,7 @@ class EventBusSubscriberProcessor : BeanPostProcessor {
 
     // 事件总线bean由Spring IoC容器负责创建，这里只需要通过@Autowired注解注入该bean即可使用事件总线
     @Autowired
-    var eventBus: IEventBus? = null
+    var messageBus: IMessageBus? = null
 
     @Throws(BeansException::class)
     override fun postProcessBeforeInitialization(bean: Any, beanName: String): Any {
@@ -28,13 +28,13 @@ class EventBusSubscriberProcessor : BeanPostProcessor {
         val methods: Array<Method> = bean.javaClass.methods
         for (method in methods) {
             // check the annotations on that method
-            val annotations: Array<Annotation> = method.getAnnotations()
+            val annotations: Array<Annotation> = method.annotations
             for (annotation in annotations) {
-                // if it contains the Subscribe annotation
+                // if it contains Subscribe annotation
                 if (annotation.annotationClass == Subscribe::class) {
                     // 如果这是一个Guava @Subscribe注解的事件监听器方法，说明所在bean实例
                     // 对应一个Guava事件监听器类，将该bean实例注册到Guava事件总线
-                    eventBus?.register(bean)
+                    messageBus?.register(bean)
                     return bean
                 }
             }

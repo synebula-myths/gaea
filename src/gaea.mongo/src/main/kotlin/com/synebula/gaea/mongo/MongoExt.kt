@@ -55,7 +55,7 @@ fun Query.where(
                 list.add(tryRangeWhere(param.key, value, onFieldType))
             } else {
                 //判断执行查询子元素还是本字段
-                val field = if (where.children.isEmpty()) key else where.children
+                val field = where.children.ifEmpty { key }
                 var criteria = Criteria.where(field)
                 criteria = when (where.operator) {
                     Operator.eq -> criteria.`is`(value)

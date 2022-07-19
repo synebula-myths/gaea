@@ -1,6 +1,6 @@
 dependencies {
-    compile project(":src:gaea")
-    compile("org.springframework.boot:spring-boot-starter-data-mongodb:$spring_version")
+    api project(":src:gaea")
+    api("org.springframework.boot:spring-boot-starter-data-mongodb:$spring_version")
 }
 
 publishing {

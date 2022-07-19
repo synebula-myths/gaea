@@ -11,13 +11,13 @@ import java.util.*
  * 参数：年=y，月=M，日=d，时=H，分=m，秒=s，毫秒=S。位数最好使用默认最大长度。
  */
 class DateCode(pattern: String = "yyyyMMdd") : ICodeGenerator<Long> {
-    var formator = SimpleDateFormat()
+    var formatter = SimpleDateFormat()
 
     init {
-        formator.applyPattern(pattern)
+        formatter.applyPattern(pattern)
     }
 
     override fun generate(): Long {
-        return java.lang.Long.parseLong(formator.format(Date()))
+        return java.lang.Long.parseLong(formatter.format(Date()))
     }
 }

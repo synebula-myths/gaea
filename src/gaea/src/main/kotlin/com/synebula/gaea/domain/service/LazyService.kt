@@ -1,6 +1,5 @@
 package com.synebula.gaea.domain.service
 
-import com.synebula.gaea.data.IObjectConverter
 import com.synebula.gaea.data.message.DataMessage
 import com.synebula.gaea.data.message.Message
 import com.synebula.gaea.domain.model.IAggregateRoot

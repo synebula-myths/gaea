@@ -2,7 +2,6 @@ package com.synebula.gaea.log.logger
 
 /**
  * ERROR级别日志接口
- * @author Looly
  */
 interface IErrorLogger {
     /**

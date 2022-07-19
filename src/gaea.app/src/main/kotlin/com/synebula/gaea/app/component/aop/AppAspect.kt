@@ -72,11 +72,10 @@ abstract class AppAspect {
                 }
             }
             var message = "$moduleName - $funcName 异常"
-            if (ex is NoticeUserException) {
-                message = "$message: ${ex.message}"
+            message = if (ex is NoticeUserException) {
+                "$message: ${ex.message}"
             } else {
-                message = "$message。"
-
+                "$message。"
             }
             logger.error(
                 ex,

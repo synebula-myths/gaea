@@ -34,10 +34,11 @@ object ClassPath {
         // 判断路径最后一个字符是不是"/"，如果不是加上
         path = if (path.lastIndexOf("/") != path.length - 1) "$path/" else path
 
-        var resources: Enumeration<URL>? = null
+        val resources: Enumeration<URL>?
         try {
             resources = ClassLoaderContext.get().getResources(path)
-        } catch (e: IOException) {
+        } catch (ex: IOException) {
+            throw RuntimeException(ex)
         }
 
         while (resources!!.hasMoreElements()) {

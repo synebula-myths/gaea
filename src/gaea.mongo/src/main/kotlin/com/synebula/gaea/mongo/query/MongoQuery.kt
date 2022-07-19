@@ -92,7 +92,7 @@ open class MongoQuery(var template: MongoTemplate, var logger: ILogger? = null) 
             if (!validViewCollection || this.template.collectionExists(name))
                 name
             else {
-                throw RuntimeException("找不到名为[$table]的集合")
+                throw RuntimeException("找不到名为[${clazz.name}]的集合")
             }
         }
     }

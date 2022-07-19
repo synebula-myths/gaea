@@ -2,9 +2,7 @@ package com.synebula.gaea.app.cmd
 
 import com.synebula.gaea.data.serialization.json.IJsonSerializer
 import com.synebula.gaea.domain.model.IAggregateRoot
-import com.synebula.gaea.domain.service.ICommand
 import com.synebula.gaea.domain.service.ILazyService
-import com.synebula.gaea.domain.service.IService
 import com.synebula.gaea.log.ILogger
 import javax.annotation.Resource
 

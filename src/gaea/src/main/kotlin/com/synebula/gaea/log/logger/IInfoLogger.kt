@@ -2,7 +2,6 @@ package com.synebula.gaea.log.logger
 
 /**
  * INFO级别日志接口
- * @author Looly
  */
 interface IInfoLogger {
     /**
