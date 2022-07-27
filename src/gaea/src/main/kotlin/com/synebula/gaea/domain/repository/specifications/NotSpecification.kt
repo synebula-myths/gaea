@@ -5,7 +5,7 @@ package com.synebula.gaea.domain.repository.specifications
  *
  * @author alex
  *
- * @param <T> 规约对象的类型。
+ * @param T 规约对象的类型。
  *
  * @param spec 需要逆反的规约对象。
  *

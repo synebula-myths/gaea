@@ -38,7 +38,7 @@ class ClassScanner(private var packageName: String) {
      * 构造方法。
      *
      * @param packageName 需要扫描的包名。
-     * @param classFilter
+     * @param classFilter 过滤器
      */
     constructor(packageName: String, vararg classFilter: IClassFilter) : this(packageName) {
         this.classFilters = classFilter

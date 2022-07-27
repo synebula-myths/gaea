@@ -10,21 +10,21 @@ import com.synebula.gaea.domain.model.IAggregateRoot
 interface IContext : IUnitOfWork {
     /**
      * 将指定的聚合根标注为“新建”状态。
-     * @param obj
+     * @param obj 聚合根
      */
-    fun <TType : IAggregateRoot<ID>, ID> add(obj: TType)
+    fun <T : IAggregateRoot<ID>, ID> add(obj: T)
 
     /**
      * 将指定的聚合根标注为“更改”状态。
      *
-     * @param obj
+     * @param obj 聚合根
      */
-    fun <TType : IAggregateRoot<ID>, ID> update(obj: TType)
+    fun <T : IAggregateRoot<ID>, ID> update(obj: T)
 
     /**
      * 将指定的聚合根标注为“删除”状态。
      *
-     * @param obj
+     * @param obj 聚合根
      */
-    fun <TType : IAggregateRoot<ID>, ID> remove(obj: TType)
+    fun <T : IAggregateRoot<ID>, ID> remove(obj: T)
 }

@@ -36,7 +36,7 @@ interface ISpecificRepository<TAggregateRoot : IAggregateRoot<ID>, ID> {
     /**
      * 通过id删除该条数据
      *
-     * @param id
+     * @param id 对象ID。
      * @return
      */
     fun remove(id: ID)
