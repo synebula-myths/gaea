@@ -1,6 +1,6 @@
 package com.synebula.gaea.data.message
 
-open class Message {
+open class StatusMessage {
     /**
      * 状态。200成功，400错误，500异常
      */

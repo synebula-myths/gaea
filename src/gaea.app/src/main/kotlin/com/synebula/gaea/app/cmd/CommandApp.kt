@@ -13,11 +13,11 @@ import javax.annotation.Resource
  * @param service 业务domain服务
  * @param logger 日志组件
  */
-open class CommandApp<TCommand : ICommand, TKey>(
+open class CommandApp<TCommand : ICommand, ID>(
     override var name: String,
-    override var service: IService<TKey>,
+    override var service: IService<ID>,
     override var logger: ILogger,
-) : ICommandApp<TCommand, TKey> {
+) : ICommandApp<TCommand, ID> {
     @Resource
     override var jsonSerializer: IJsonSerializer? = null
 }

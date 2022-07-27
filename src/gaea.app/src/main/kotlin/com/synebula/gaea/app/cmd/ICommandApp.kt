@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.*
  * @version 0.1
  * @since 2020-05-15
  */
-interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
+interface ICommandApp<TCommand : ICommand, ID> : IApplication {
     var jsonSerializer: IJsonSerializer?
 
-    var service: IService<TKey>
+    var service: IService<ID>
 
     @PostMapping
     @MethodName("添加")
@@ -29,14 +29,14 @@ interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
 
     @PutMapping("/{id:.+}")
     @MethodName("更新")
-    fun update(@PathVariable id: TKey, @RequestBody command: TCommand): HttpMessage {
+    fun update(@PathVariable id: ID, @RequestBody command: TCommand): HttpMessage {
         this.service.update(id, command)
         return HttpMessage()
     }
 
     @DeleteMapping("/{id:.+}")
     @MethodName("删除")
-    fun remove(@PathVariable id: TKey): HttpMessage {
+    fun remove(@PathVariable id: ID): HttpMessage {
         val msg = HttpMessage()
         try {
             msg.data = this.service.remove(id)

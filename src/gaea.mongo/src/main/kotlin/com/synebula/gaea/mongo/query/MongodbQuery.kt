@@ -27,7 +27,7 @@ open class MongodbQuery(var template: MongoTemplate, var logger: ILogger) : IQue
      */
     var validViewCollection = false
 
-    override fun <TView, TKey> get(id: TKey, clazz: Class<TView>): TView? {
+    override fun <TView, ID> get(id: ID, clazz: Class<TView>): TView? {
         return this.template.findOne(whereId(id), clazz, this.collection(clazz))
     }
 

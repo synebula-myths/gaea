@@ -10,9 +10,9 @@ import com.synebula.gaea.query.IQuery
  * @param query 业务查询服务
  * @param logger 日志组件
  */
-open class QueryApp<TView, TKey>(
+open class QueryApp<TView, ID>(
     override var name: String,
     override var clazz: Class<TView>,
     override var query: IQuery,
     override var logger: ILogger,
-) : IQueryApp<TView, TKey>
+) : IQueryApp<TView, ID>

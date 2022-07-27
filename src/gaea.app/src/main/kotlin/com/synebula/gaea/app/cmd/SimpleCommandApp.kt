@@ -2,7 +2,7 @@ package com.synebula.gaea.app.cmd
 
 import com.synebula.gaea.data.serialization.json.IJsonSerializer
 import com.synebula.gaea.domain.model.IAggregateRoot
-import com.synebula.gaea.domain.service.ILazyService
+import com.synebula.gaea.domain.service.ISimpleService
 import com.synebula.gaea.log.ILogger
 import javax.annotation.Resource
 
@@ -13,11 +13,11 @@ import javax.annotation.Resource
  * @param service 业务domain服务
  * @param logger 日志组件
  */
-open class LazyCommandApp<TRoot : IAggregateRoot<TKey>, TKey>(
+open class SimpleCommandApp<TRoot : IAggregateRoot<ID>, ID>(
     override var name: String,
-    override var service: ILazyService<TRoot, TKey>,
+    override var service: ISimpleService<TRoot, ID>,
     override var logger: ILogger,
-) : ILazyCommandApp<TRoot, TKey> {
+) : ISimpleCommandApp<TRoot, ID> {
     @Resource
     override var jsonSerializer: IJsonSerializer? = null
 }

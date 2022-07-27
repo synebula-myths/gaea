@@ -116,7 +116,7 @@ fun Query.where(params: Map<String, Any>?, clazz: Class<*>): Query {
  *
  * @param id 业务ID
  */
-fun <TKey> whereId(id: TKey): Query = Query.query(Criteria.where("_id").`is`(id))
+fun <ID> whereId(id: ID): Query = Query.query(Criteria.where("_id").`is`(id))
 
 /**
  * 获取排序对象

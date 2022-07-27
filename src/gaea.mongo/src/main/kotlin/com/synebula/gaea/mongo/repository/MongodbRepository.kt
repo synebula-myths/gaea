@@ -13,29 +13,32 @@ import org.springframework.data.mongodb.core.query.Query
  */
 open class MongodbRepository(private var repo: MongoTemplate) : IRepository {
 
-    override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> remove(id: TKey, clazz: Class<TAggregateRoot>) {
+    override fun <TAggregateRoot : IAggregateRoot<ID>, ID> remove(id: ID, clazz: Class<TAggregateRoot>) {
         this.repo.remove(whereId(id), clazz)
     }
 
-    override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> get(
-        id: TKey,
+    override fun <TAggregateRoot : IAggregateRoot<ID>, ID> get(
+        id: ID,
         clazz: Class<TAggregateRoot>,
     ): TAggregateRoot? {
         return this.repo.findOne(whereId(id), clazz)
     }
 
-    override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> update(
-            obj: TAggregateRoot,
-            clazz: Class<TAggregateRoot>
+    override fun <TAggregateRoot : IAggregateRoot<ID>, ID> update(
+        obj: TAggregateRoot,
+        clazz: Class<TAggregateRoot>,
     ) {
         this.repo.save(obj)
     }
 
-    override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> add(obj: TAggregateRoot, clazz: Class<TAggregateRoot>) {
+    override fun <TAggregateRoot : IAggregateRoot<ID>, ID> add(obj: TAggregateRoot, clazz: Class<TAggregateRoot>) {
         this.repo.save(obj)
     }
 
-    override fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> add(obj: List<TAggregateRoot>, clazz: Class<TAggregateRoot>) {
+    override fun <TAggregateRoot : IAggregateRoot<ID>, ID> add(
+        obj: List<TAggregateRoot>,
+        clazz: Class<TAggregateRoot>,
+    ) {
         this.repo.insert(obj, clazz)
     }
 

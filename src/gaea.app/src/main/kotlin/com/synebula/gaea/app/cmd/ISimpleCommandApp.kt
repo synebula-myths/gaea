@@ -6,7 +6,7 @@ import com.synebula.gaea.app.struct.HttpMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.data.serialization.json.IJsonSerializer
 import com.synebula.gaea.domain.model.IAggregateRoot
-import com.synebula.gaea.domain.service.ILazyService
+import com.synebula.gaea.domain.service.ISimpleService
 import org.springframework.web.bind.annotation.*
 
 /**
@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.*
  * @version 0.1
  * @since 2020-05-15
  */
-interface ILazyCommandApp<TRoot : IAggregateRoot<TKey>, TKey> : IApplication {
+interface ISimpleCommandApp<TRoot : IAggregateRoot<ID>, ID> : IApplication {
     var jsonSerializer: IJsonSerializer?
 
-    var service: ILazyService<TRoot, TKey>
+    var service: ISimpleService<TRoot, ID>
 
     @PostMapping
     @MethodName("添加")
@@ -29,14 +29,14 @@ interface ILazyCommandApp<TRoot : IAggregateRoot<TKey>, TKey> : IApplication {
 
     @PutMapping("/{id:.+}")
     @MethodName("更新")
-    fun update(@PathVariable id: TKey, @RequestBody entity: TRoot): HttpMessage {
+    fun update(@PathVariable id: ID, @RequestBody entity: TRoot): HttpMessage {
         this.service.update(id, entity)
         return HttpMessage()
     }
 
     @DeleteMapping("/{id:.+}")
     @MethodName("删除")
-    fun remove(@PathVariable id: TKey): HttpMessage {
+    fun remove(@PathVariable id: ID): HttpMessage {
         val msg = HttpMessage()
         try {
             msg.data = this.service.remove(id)

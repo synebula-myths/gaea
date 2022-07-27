@@ -8,7 +8,7 @@ import java.util.*
  *
  * @param T 消息数据类型
  */
-open class DataMessage<T>() : Message() {
+open class DataMessage<T>() : StatusMessage() {
 
     /**
      * 传递的业务数据

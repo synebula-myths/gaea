@@ -10,7 +10,7 @@ import com.synebula.gaea.domain.model.IAggregateRoot
  * @param <TAggregateRoot> this T is the parameter
  * @author alex
  */
-interface ISpecificRepository<TAggregateRoot : IAggregateRoot<TKey>, TKey> {
+interface ISpecificRepository<TAggregateRoot : IAggregateRoot<ID>, ID> {
 
     /**
      * 仓储的对象类
@@ -39,7 +39,7 @@ interface ISpecificRepository<TAggregateRoot : IAggregateRoot<TKey>, TKey> {
      * @param id
      * @return
      */
-    fun remove(id: TKey)
+    fun remove(id: ID)
 
     /**
      * 根据ID获取对象。
@@ -47,16 +47,7 @@ interface ISpecificRepository<TAggregateRoot : IAggregateRoot<TKey>, TKey> {
      * @param id 对象ID。
      * @return
      */
-    fun get(id: TKey): TAggregateRoot
-
-    /**
-     * 根据ID获取对象。
-     *
-     * @param id    id
-     * @param clazz 操作数据的类型
-     * @return 聚合根
-     */
-    fun <T : IAggregateRoot<TKey>, TKey> get(id: TKey, clazz: Class<T>): T
+    fun get(id: ID): TAggregateRoot
 
 
     /**

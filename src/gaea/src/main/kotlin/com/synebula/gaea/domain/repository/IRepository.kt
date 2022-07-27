@@ -13,7 +13,7 @@ interface IRepository {
      * @param obj 需要插入的对象。
      * @return 返回原对象，如果对象ID为自增，则补充自增ID。
      */
-    fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> add(obj: TAggregateRoot, clazz: Class<TAggregateRoot>)
+    fun <TAggregateRoot : IAggregateRoot<ID>, ID> add(obj: TAggregateRoot, clazz: Class<TAggregateRoot>)
 
     /**
      * 插入多个个对象。
@@ -21,7 +21,7 @@ interface IRepository {
      * @param obj 需要插入的对象。
      * @return 返回原对象，如果对象ID为自增，则补充自增ID。
      */
-    fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> add(obj: List<TAggregateRoot>, clazz: Class<TAggregateRoot>)
+    fun <TAggregateRoot : IAggregateRoot<ID>, ID> add(obj: List<TAggregateRoot>, clazz: Class<TAggregateRoot>)
 
     /**
      * 更新对象。
@@ -29,7 +29,7 @@ interface IRepository {
      * @param obj 需要更新的对象。
      * @return
      */
-    fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> update(obj: TAggregateRoot, clazz: Class<TAggregateRoot>)
+    fun <TAggregateRoot : IAggregateRoot<ID>, ID> update(obj: TAggregateRoot, clazz: Class<TAggregateRoot>)
 
     /**
      * 通过id删除该条数据
@@ -37,7 +37,7 @@ interface IRepository {
      * @param id    id
      * @param clazz 操作数据的类型
      */
-    fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> remove(id: TKey, clazz: Class<TAggregateRoot>)
+    fun <TAggregateRoot : IAggregateRoot<ID>, ID> remove(id: ID, clazz: Class<TAggregateRoot>)
 
     /**
      * 根据ID获取对象。
@@ -46,7 +46,7 @@ interface IRepository {
      * @param clazz 操作数据的类型
      * @return 聚合根
      */
-    fun <TAggregateRoot : IAggregateRoot<TKey>, TKey> get(id: TKey, clazz: Class<TAggregateRoot>): TAggregateRoot?
+    fun <TAggregateRoot : IAggregateRoot<ID>, ID> get(id: ID, clazz: Class<TAggregateRoot>): TAggregateRoot?
 
 
     /**

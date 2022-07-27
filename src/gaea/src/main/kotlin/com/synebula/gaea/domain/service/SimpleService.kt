@@ -1,7 +1,7 @@
 package com.synebula.gaea.domain.service
 
 import com.synebula.gaea.data.message.DataMessage
-import com.synebula.gaea.data.message.Message
+import com.synebula.gaea.data.message.StatusMessage
 import com.synebula.gaea.domain.model.IAggregateRoot
 import com.synebula.gaea.domain.repository.IRepository
 import com.synebula.gaea.log.ILogger
@@ -18,23 +18,23 @@ import com.synebula.gaea.log.ILogger
  * @version 0.1
  * @since 2020-05-17
  */
-open class LazyService<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
+open class SimpleService<TAggregateRoot : IAggregateRoot<ID>, ID>(
     protected open var clazz: Class<TAggregateRoot>,
     protected open var repository: IRepository,
-    override var logger: ILogger
-) : ILazyService<TAggregateRoot, TKey> {
+    override var logger: ILogger,
+) : ISimpleService<TAggregateRoot, ID> {
 
     /**
      * 删除对象前执行监听器。
      */
-    protected val beforeRemoveListeners = mutableMapOf<String, (id: TKey) -> Message>()
+    protected val beforeRemoveListeners = mutableMapOf<String, (id: ID) -> StatusMessage>()
 
     /**
      * 添加一个删除对象前执行监听器。
      * @param key 监听器标志。
      * @param func 监听方法。
      */
-    override fun addBeforeRemoveListener(key: String, func: (id: TKey) -> Message) {
+    override fun addBeforeRemoveListener(key: String, func: (id: ID) -> StatusMessage) {
         this.beforeRemoveListeners[key] = func
     }
 
@@ -46,21 +46,21 @@ open class LazyService<TAggregateRoot : IAggregateRoot<TKey>, TKey>(
         this.beforeRemoveListeners.remove(key)
     }
 
-    override fun add(root: TAggregateRoot): DataMessage<TKey> {
-        val msg = DataMessage<TKey>()
+    override fun add(root: TAggregateRoot): DataMessage<ID> {
+        val msg = DataMessage<ID>()
         this.repository.add(root, this.clazz)
         msg.data = root.id
         return msg
     }
 
-    override fun update(id: TKey, root: TAggregateRoot) {
+    override fun update(id: ID, root: TAggregateRoot) {
         root.id = id
         this.repository.update(root, this.clazz)
     }
 
-    override fun remove(id: TKey) {
+    override fun remove(id: ID) {
         val functions = this.beforeRemoveListeners.values
-        var msg: Message
+        var msg: StatusMessage
         for (func in functions) {
             msg = func(id)
             if (!msg.success()) {

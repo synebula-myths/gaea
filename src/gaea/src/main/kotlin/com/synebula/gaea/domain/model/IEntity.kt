@@ -5,13 +5,13 @@ package com.synebula.gaea.domain.model
  *
  * @author alex
  *
- * @param <TKey> 主键的类型。
+ * @param <ID> 主键的类型。
  **/
-interface IEntity<TKey> {
+interface IEntity<ID> {
 
     /**
      * 实体ID
      */
-    var id: TKey?
+    var id: ID?
 
 }

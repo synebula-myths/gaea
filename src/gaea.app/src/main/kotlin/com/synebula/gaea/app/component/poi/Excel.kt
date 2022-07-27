@@ -45,7 +45,7 @@ object Excel {
         //声明列对象
         // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制
         var row = sheet.createRow(0)
-        row.height = 25 * 20
+        row.height = (25 * 20).toShort()
         var cell: HSSFCell
         //创建标题
         for (col in data.columnNames.indices) {
@@ -69,7 +69,7 @@ object Excel {
         for (i in data.data.indices) {
             try {
                 row = sheet.createRow(i + 1)
-                row.height = 20 * 20
+                row.height = (20 * 20).toShort()
                 col = 0
                 while (col < data.data[i].size) {
                     cell = row.createCell(col)

@@ -7,7 +7,7 @@ import java.util.*
  * 记录信息
  * 添加了创建和修改的人\时间信息
  */
-abstract class Record<TKey> {
+abstract class Record<ID> {
 
     //记录增加信息
     var creator: String? = null

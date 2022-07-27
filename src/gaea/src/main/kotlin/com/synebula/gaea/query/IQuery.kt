@@ -12,7 +12,7 @@ interface IQuery {
      * @param id 对象Key。
      * @return 视图结果
      */
-    fun <TView, TKey> get(id: TKey, clazz: Class<TView>): TView?
+    fun <TView, ID> get(id: ID, clazz: Class<TView>): TView?
 
     /**
      * 根据实体类条件查询所有符合条件记录

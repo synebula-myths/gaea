@@ -12,19 +12,19 @@ interface IContext : IUnitOfWork {
      * 将指定的聚合根标注为“新建”状态。
      * @param obj
      */
-    fun <TType : IAggregateRoot<TKey>, TKey> add(obj: TType)
+    fun <TType : IAggregateRoot<ID>, ID> add(obj: TType)
 
     /**
      * 将指定的聚合根标注为“更改”状态。
      *
      * @param obj
      */
-    fun <TType : IAggregateRoot<TKey>, TKey> update(obj: TType)
+    fun <TType : IAggregateRoot<ID>, ID> update(obj: TType)
 
     /**
      * 将指定的聚合根标注为“删除”状态。
      *
      * @param obj
      */
-    fun <TType : IAggregateRoot<TKey>, TKey> remove(obj: TType)
+    fun <TType : IAggregateRoot<ID>, ID> remove(obj: TType)
 }

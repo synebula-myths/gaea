@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 
-interface IQueryApp<TView, TKey> : IApplication {
+interface IQueryApp<TView, ID> : IApplication {
     /**
      * 查询服务
      */
@@ -22,7 +22,7 @@ interface IQueryApp<TView, TKey> : IApplication {
 
     @MethodName("获取数据")
     @GetMapping("/{id:.+}")
-    fun get(@PathVariable id: TKey): HttpMessage {
+    fun get(@PathVariable id: ID): HttpMessage {
         val data = this.query.get(id, clazz)
         val msg = HttpMessage()
         msg.data = data
