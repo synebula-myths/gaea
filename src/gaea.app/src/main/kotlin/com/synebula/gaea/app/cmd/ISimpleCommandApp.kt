@@ -1,7 +1,7 @@
 package com.synebula.gaea.app.cmd
 
 import com.synebula.gaea.app.IApplication
-import com.synebula.gaea.app.component.aop.annotation.MethodName
+import com.synebula.gaea.app.component.aop.annotation.Method
 import com.synebula.gaea.app.struct.HttpMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.data.serialization.json.IJsonSerializer
@@ -22,20 +22,20 @@ interface ISimpleCommandApp<TRoot : IAggregateRoot<ID>, ID> : IApplication {
     var service: ISimpleService<TRoot, ID>
 
     @PostMapping
-    @MethodName("添加")
+    @Method("添加")
     fun add(@RequestBody entity: TRoot): HttpMessage {
         return HttpMessage(service.add(entity))
     }
 
     @PutMapping("/{id:.+}")
-    @MethodName("更新")
+    @Method("更新")
     fun update(@PathVariable id: ID, @RequestBody entity: TRoot): HttpMessage {
         this.service.update(id, entity)
         return HttpMessage()
     }
 
     @DeleteMapping("/{id:.+}")
-    @MethodName("删除")
+    @Method("删除")
     fun remove(@PathVariable id: ID): HttpMessage {
         val msg = HttpMessage()
         try {

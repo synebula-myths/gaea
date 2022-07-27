@@ -2,7 +2,8 @@ package com.synebula.gaea.app.component.aop.annotation
 
 /**
  * 模块的业务名称
+ * @param name 模块名称
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ModuleName(val value: String)
+annotation class Module(val name: String)

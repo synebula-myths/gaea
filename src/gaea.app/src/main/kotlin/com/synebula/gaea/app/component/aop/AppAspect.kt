@@ -3,8 +3,8 @@ package com.synebula.gaea.app.component.aop
 import com.google.gson.Gson
 import com.synebula.gaea.app.IApplication
 import com.synebula.gaea.app.component.aop.annotation.Handler
-import com.synebula.gaea.app.component.aop.annotation.MethodName
-import com.synebula.gaea.app.component.aop.annotation.ModuleName
+import com.synebula.gaea.app.component.aop.annotation.Method
+import com.synebula.gaea.app.component.aop.annotation.Module
 import com.synebula.gaea.app.struct.HttpMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.exception.NoticeUserException
@@ -54,7 +54,7 @@ abstract class AppAspect {
                 val handleClazz = applicationContext.getBean(handler.value.java)
                 handleClazz.handle(clazz, func, point.args)
             }
-            if (funcAnnotation is MethodName)
+            if (funcAnnotation is Method)
                 funcName = funcAnnotation.name
         }
 
@@ -66,9 +66,9 @@ abstract class AppAspect {
             if (IApplication::class.java.isAssignableFrom(clazz)) {
                 moduleName = (point.`this` as IApplication).name
             } else {
-                val name = clazz.annotations.find { it is ModuleName }
-                if (name != null && name is ModuleName) {
-                    moduleName = name.value
+                val name = clazz.annotations.find { it is Module }
+                if (name != null && name is Module) {
+                    moduleName = name.name
                 }
             }
             var message = "$moduleName - $funcName 异常"

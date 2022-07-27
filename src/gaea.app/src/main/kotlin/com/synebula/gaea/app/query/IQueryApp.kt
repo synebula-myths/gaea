@@ -1,7 +1,7 @@
 package com.synebula.gaea.app.query
 
 import com.synebula.gaea.app.IApplication
-import com.synebula.gaea.app.component.aop.annotation.MethodName
+import com.synebula.gaea.app.component.aop.annotation.Method
 import com.synebula.gaea.app.struct.HttpMessage
 import com.synebula.gaea.query.IQuery
 import com.synebula.gaea.query.Params
@@ -20,7 +20,7 @@ interface IQueryApp<TView, ID> : IApplication {
      */
     var clazz: Class<TView>
 
-    @MethodName("获取数据")
+    @Method("获取数据")
     @GetMapping("/{id:.+}")
     fun get(@PathVariable id: ID): HttpMessage {
         val data = this.query.get(id, clazz)
@@ -29,14 +29,14 @@ interface IQueryApp<TView, ID> : IApplication {
         return msg
     }
 
-    @MethodName("获取列表数据")
+    @Method("获取列表数据")
     @GetMapping
     fun list(@RequestParam params: LinkedHashMap<String, Any>): HttpMessage {
         val data = this.query.list(params, clazz)
         return HttpMessage(data)
     }
 
-    @MethodName("获取分页数据")
+    @Method("获取分页数据")
     @GetMapping("/segments/{size}/pages/{page}")
     fun paging(
         @PathVariable size: Int,
