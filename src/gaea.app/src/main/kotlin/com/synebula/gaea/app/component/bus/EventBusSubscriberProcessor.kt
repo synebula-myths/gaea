@@ -1,7 +1,7 @@
 package com.synebula.gaea.app.component.bus
 
-import com.google.common.eventbus.Subscribe
-import com.synebula.gaea.bus.IMessageBus
+import com.synebula.gaea.bus.IBus
+import com.synebula.gaea.bus.Subscribe
 import org.springframework.beans.BeansException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.config.BeanPostProcessor
@@ -14,7 +14,7 @@ class EventBusSubscriberProcessor : BeanPostProcessor {
 
     // 事件总线bean由Spring IoC容器负责创建，这里只需要通过@Autowired注解注入该bean即可使用事件总线
     @Autowired
-    var messageBus: IMessageBus? = null
+    var messageBus: IBus<Any>? = null
 
     @Throws(BeansException::class)
     override fun postProcessBeforeInitialization(bean: Any, beanName: String): Any {

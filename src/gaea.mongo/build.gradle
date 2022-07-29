@@ -6,9 +6,6 @@ dependencies {
 publishing {
     publications {
         publish(MavenPublication) {
-            group 'com.synebula'
-            artifactId 'gaea.mongo'
-            version "$version"
             from components.java
         }
     }

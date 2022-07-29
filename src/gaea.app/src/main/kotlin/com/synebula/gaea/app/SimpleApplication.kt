@@ -1,10 +1,8 @@
 package com.synebula.gaea.app
 
-import com.google.common.reflect.TypeToken
 import com.synebula.gaea.app.cmd.ISimpleCommandApp
 import com.synebula.gaea.app.query.IQueryApp
 import com.synebula.gaea.data.serialization.json.IJsonSerializer
-import com.synebula.gaea.domain.model.AggregateRoot
 import com.synebula.gaea.domain.model.IAggregateRoot
 import com.synebula.gaea.domain.service.ISimpleService
 import com.synebula.gaea.log.ILogger
@@ -30,9 +28,4 @@ open class SimpleApplication<TRoot : IAggregateRoot<ID>, ID>(
 
     @Resource
     override var jsonSerializer: IJsonSerializer? = null
-}
-
-fun main() {
-    val rawType = TypeToken.of(AggregateRoot::class.java).types.rawTypes()
-    println(rawType)
 }
