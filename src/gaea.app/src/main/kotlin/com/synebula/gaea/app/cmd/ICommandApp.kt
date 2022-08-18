@@ -1,12 +1,12 @@
 package com.synebula.gaea.app.cmd
 
 import com.synebula.gaea.app.IApplication
-import com.synebula.gaea.app.component.aop.annotation.Method
 import com.synebula.gaea.app.struct.HttpMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.data.serialization.json.IJsonSerializer
 import com.synebula.gaea.domain.service.ICommand
 import com.synebula.gaea.domain.service.IService
+import com.synebula.gaea.spring.aop.annotation.Method
 import org.springframework.web.bind.annotation.*
 
 /**

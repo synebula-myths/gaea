@@ -11,7 +11,6 @@ dependencies {
     api project(":src:gaea.spring")
 
     api("org.springframework.boot:spring-boot-starter-web:$spring_version")
-    api("org.springframework.boot:spring-boot-starter-aop:$spring_version")
     api("org.springframework.boot:spring-boot-starter-mail:$spring_version")
     api("org.springframework.boot:spring-boot-starter-security:$spring_version")
     api group: 'net.sf.dozer', name: 'dozer', version: '5.5.1'

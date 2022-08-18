@@ -1,4 +1,4 @@
-package com.synebula.gaea.app.component.aop.annotation
+package com.synebula.gaea.spring.aop.annotation
 
 import java.lang.annotation.Inherited
 

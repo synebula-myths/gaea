@@ -1,14 +1,13 @@
-package com.synebula.gaea.app.component.aop
+package com.synebula.gaea.spring.aop
 
 import com.google.gson.Gson
-import com.synebula.gaea.app.IApplication
-import com.synebula.gaea.app.component.aop.annotation.Handler
-import com.synebula.gaea.app.component.aop.annotation.Method
-import com.synebula.gaea.app.component.aop.annotation.Module
-import com.synebula.gaea.app.struct.HttpMessage
+import com.synebula.gaea.data.message.DataMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.exception.NoticeUserException
 import com.synebula.gaea.log.ILogger
+import com.synebula.gaea.spring.aop.annotation.Handler
+import com.synebula.gaea.spring.aop.annotation.Method
+import com.synebula.gaea.spring.aop.annotation.Module
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,7 +15,7 @@ import org.springframework.context.ApplicationContext
 import org.springframework.core.DefaultParameterNameDiscoverer
 
 abstract class AppAspect {
-    private var paramDiscover = DefaultParameterNameDiscoverer()
+    private var parameterNameDiscoverer = DefaultParameterNameDiscoverer()
 
     private val gson = Gson()
 
@@ -63,13 +62,9 @@ abstract class AppAspect {
         } catch (ex: Throwable) {
             //找到类的模块名称，否则使用类名
             var moduleName = clazz.name
-            if (IApplication::class.java.isAssignableFrom(clazz)) {
-                moduleName = (point.`this` as IApplication).name
-            } else {
-                val name = clazz.annotations.find { it is Module }
-                if (name != null && name is Module) {
-                    moduleName = name.name
-                }
+            val module = clazz.annotations.find { it is Module }
+            if (module != null && module is Module) {
+                moduleName = module.name
             }
             var message = "$moduleName - $funcName 异常"
             message = if (ex is NoticeUserException) {
@@ -80,12 +75,12 @@ abstract class AppAspect {
             logger.error(
                 ex,
                 "$message。Method args ${
-                    paramDiscover.getParameterNames(func)?.contentToString()
+                    parameterNameDiscoverer.getParameterNames(func)?.contentToString()
                 } values is ${
                     gson.toJson(point.args)
                 }"
             )
-            return HttpMessage(Status.Error, message)
+            return gson.toJson(DataMessage<Any>(Status.Error, message))
         }
     }
 }

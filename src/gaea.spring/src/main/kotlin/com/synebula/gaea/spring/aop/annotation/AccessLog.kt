@@ -1,6 +1,6 @@
-package com.synebula.gaea.app.component.aop.annotation
+package com.synebula.gaea.spring.aop.annotation
 
-import com.synebula.gaea.app.component.aop.handler.AccessLogHandler
+import com.synebula.gaea.spring.aop.handler.AccessLogHandler
 
 @Target(AnnotationTarget.FUNCTION)
 @Handler(AccessLogHandler::class)

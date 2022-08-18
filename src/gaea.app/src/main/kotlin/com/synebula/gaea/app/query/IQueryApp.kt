@@ -1,10 +1,10 @@
 package com.synebula.gaea.app.query
 
 import com.synebula.gaea.app.IApplication
-import com.synebula.gaea.app.component.aop.annotation.Method
 import com.synebula.gaea.app.struct.HttpMessage
 import com.synebula.gaea.query.IQuery
 import com.synebula.gaea.query.Params
+import com.synebula.gaea.spring.aop.annotation.Method
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam

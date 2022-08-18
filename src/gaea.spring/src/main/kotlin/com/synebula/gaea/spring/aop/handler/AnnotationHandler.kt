@@ -1,4 +1,4 @@
-package com.synebula.gaea.app.component.aop.handler
+package com.synebula.gaea.spring.aop.handler
 
 import java.lang.reflect.Method
 

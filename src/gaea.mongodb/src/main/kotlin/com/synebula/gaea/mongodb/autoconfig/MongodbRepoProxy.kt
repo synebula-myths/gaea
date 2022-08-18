@@ -71,7 +71,7 @@ class MongodbRepoProxy(
         } else if (this.query != null) {
             this.query!!.javaClass
         } else
-            throw InvalidClassException("class ${this.supertype.name} property repo and query are both null")
+            throw InvalidClassException("class [${this.supertype.name}] proxy object property [repo] and [query] are both null")
 
         try {
             val proxyMethod: Method = proxyClazz.getDeclaredMethod(method.name, *method.parameterTypes)
