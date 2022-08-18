@@ -8,6 +8,8 @@ apply plugin: 'kotlin-spring'
 
 dependencies {
     api project(":src:gaea")
+    api project(":src:gaea.spring")
+
     api("org.springframework.boot:spring-boot-starter-web:$spring_version")
     api("org.springframework.boot:spring-boot-starter-aop:$spring_version")
     api("org.springframework.boot:spring-boot-starter-mail:$spring_version")

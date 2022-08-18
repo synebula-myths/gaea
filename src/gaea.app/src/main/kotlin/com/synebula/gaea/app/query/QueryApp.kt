@@ -12,7 +12,6 @@ import com.synebula.gaea.query.IQuery
  */
 open class QueryApp<TView, ID>(
     override var name: String,
-    override var clazz: Class<TView>,
-    override var query: IQuery,
+    override var query: IQuery<TView, ID>,
     override var logger: ILogger,
 ) : IQueryApp<TView, ID>

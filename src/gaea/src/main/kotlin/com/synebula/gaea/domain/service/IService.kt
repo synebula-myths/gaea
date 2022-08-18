@@ -1,8 +1,6 @@
 package com.synebula.gaea.domain.service
 
 import com.synebula.gaea.data.message.DataMessage
-import com.synebula.gaea.data.message.StatusMessage
-import com.synebula.gaea.log.ILogger
 
 
 /**
@@ -12,27 +10,39 @@ import com.synebula.gaea.log.ILogger
  * @since 2016年9月18日 下午2:23:15
  */
 interface IService<ID> {
-    /**
-     * 日志组件。
-     */
-    var logger: ILogger
 
+    /**
+     * 增加对象
+     *
+     * @param command 增加对象命令
+     */
     fun add(command: ICommand): DataMessage<ID>
 
+    /**
+     * 增加对象
+     *
+     * @param commands 增加对象命令列表
+     */
+    fun add(commands: List<ICommand>)
+
+    /**
+     * 更新对象
+     *
+     * @param id 对象ID
+     * @param command 更新对象命令
+     */
     fun update(id: ID, command: ICommand)
 
+    /**
+     * 批量更新对象
+     *
+     * @param commands 更新对象命令列表
+     */
+    fun update(commands: List<ICommand>)
+
+    /**
+     * 增加对象
+     * @param id 对象ID
+     */
     fun remove(id: ID)
-
-    /**
-     * 添加一个删除对象前执行监听器。
-     * @param key 监听器标志。
-     * @param func 监听方法。
-     */
-    fun addBeforeRemoveListener(key: String, func: (id: ID) -> StatusMessage)
-
-    /**
-     * 移除一个删除对象前执行监听器。
-     * @param key 监听器标志。
-     */
-    fun removeBeforeRemoveListener(key: String)
 }

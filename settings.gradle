@@ -1,4 +1,8 @@
 rootProject.name = 'gaea'
 include 'src:gaea'
 include 'src:gaea.app'
-include 'src:gaea.mongo'
+include 'src:gaea.mongodb'
+include 'src:gaea.spring'
+include 'src:gaea.spring'
+findProject(':src:gaea.spring')?.name = 'gaea.spring'
+

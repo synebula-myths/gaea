@@ -5,27 +5,22 @@ package com.synebula.gaea.query
  *
  * @author alex
  */
-interface IQuery<TView, ID> {
-    /**
-     * 仓储的视图类
-     */
-    var clazz: Class<TView>
-
+interface IUniversalQuery {
     /**
      * 根据Key获取对象。
      *
      * @param id 对象Key。
      * @return 视图结果
      */
-    fun get(id: ID): TView?
+    fun <TView, ID> get(id: ID, clazz: Class<TView>): TView?
 
     /**
      * 根据实体类条件查询所有符合条件记录
-     *`
+     *
      * @param params 查询条件。
      * @return 视图列表
      */
-    fun list(params: Map<String, Any>?): List<TView>
+    fun <TView> list(params: Map<String, Any>?, clazz: Class<TView>): List<TView>
 
     /**
      * 根据条件查询符合条件记录的数量
@@ -33,7 +28,7 @@ interface IQuery<TView, ID> {
      * @param params 查询条件。
      * @return 数量
      */
-    fun count(params: Map<String, Any>?): Int
+    fun <TView> count(params: Map<String, Any>?, clazz: Class<TView>): Int
 
     /**
      * 根据实体类条件查询所有符合条件记录（分页查询）
@@ -41,7 +36,7 @@ interface IQuery<TView, ID> {
      * @param params 分页条件
      * @return 分页数据
      */
-    fun paging(params: Params): Page<TView>
+    fun <TView> paging(params: Params, clazz: Class<TView>): Page<TView>
 
     /**
      * 查询条件范围内数据。
@@ -50,5 +45,5 @@ interface IQuery<TView, ID> {
      *
      * @return 视图列表
      */
-    fun range(field: String, params: List<Any>): List<TView>
+    fun <TView> range(field: String, params: List<Any>, clazz: Class<TView>): List<TView>
 }
