@@ -13,7 +13,7 @@
  */
 package com.synebula.gaea.bus
 
-import com.synebula.gaea.reflect.Types
+import com.synebula.gaea.reflect.supertypes
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArraySet
@@ -184,7 +184,7 @@ open class SubscriberRegistry<T : Any>(private val bus: IBus<T>) {
         fun flattenHierarchy(clazz: Class<*>): Set<Class<*>> {
             var supertypes = flattenHierarchyCache[clazz]
             if (supertypes == null) {
-                supertypes = Types.supertypes(clazz)
+                supertypes = clazz.supertypes()
                 flattenHierarchyCache[clazz] = supertypes
             }
             return supertypes

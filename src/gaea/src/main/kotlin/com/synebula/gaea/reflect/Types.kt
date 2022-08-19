@@ -1,21 +1,28 @@
 package com.synebula.gaea.reflect
 
-object Types {
-    /**
-     * 获取类的所有父类型。
-     */
-    fun supertypes(clazz: Class<*>): Set<Class<*>> {
-        val supertypes = mutableSetOf<Class<*>>()
-        supertypes.add(clazz)
-        if (clazz.interfaces.isNotEmpty()) {
-            supertypes.addAll(clazz.interfaces.map { supertypes(it) }.reduce { r, c ->
-                val all = r.toMutableSet()
-                all.addAll(c)
-                all
-            })
-        }
-        if (clazz.superclass != null)
-            supertypes.addAll(supertypes(clazz.superclass))
-        return supertypes
+import java.lang.reflect.ParameterizedType
+
+/**
+ * 获取类的所有父类型。
+ */
+fun Class<*>.supertypes(): Set<Class<*>> {
+    val supertypes = mutableSetOf<Class<*>>()
+    supertypes.add(this)
+    if (this.interfaces.isNotEmpty()) {
+        supertypes.addAll(this.interfaces.map { it.supertypes() }.reduce { r, c ->
+            val all = r.toMutableSet()
+            all.addAll(c)
+            all
+        })
     }
+    if (this.superclass != null)
+        supertypes.addAll(this.superclass.supertypes())
+    return supertypes
+}
+
+fun Class<*>.getGenericInterface(interfaceClazz: Class<*>): ParameterizedType? {
+    val type = this.genericInterfaces.find { it.typeName.startsWith(interfaceClazz.typeName) }
+    return if (type == null) null
+    else type as ParameterizedType
+
 }

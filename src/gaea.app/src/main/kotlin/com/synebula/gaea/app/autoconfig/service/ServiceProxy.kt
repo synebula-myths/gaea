@@ -47,7 +47,7 @@ class ServiceProxy(
      */
     override fun exec(proxy: Any, method: Method, args: Array<Any>): Any? {
         try {
-            val proxyMethod = this.service.javaClass.getDeclaredMethod(method.name, *method.parameterTypes)
+            val proxyMethod = this.service.javaClass.getMethod(method.name, *method.parameterTypes)
             return proxyMethod.invoke(this.service, *args)
         } catch (ex: NoSuchMethodException) {
             throw NoSuchMethodException("method [${method.toGenericString()}] not implements in class [${this.service::class.java}], you must implements interface [${this.supertype.name}] ")

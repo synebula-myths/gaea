@@ -11,7 +11,7 @@ import com.synebula.gaea.domain.repository.IRepository
  * 该类依赖仓储接口 @see IGenericsRepository, 需要显式提供聚合根的class对象
  *
  * @param clazz 聚合根类对象
- * @param repo 仓储对象
+ * @param repository 仓储对象
  * @param mapper 对象转换组件
  * @author alex
  * @version 0.1
@@ -19,10 +19,9 @@ import com.synebula.gaea.domain.repository.IRepository
  */
 open class Service<TRoot : IAggregateRoot<ID>, ID>(
     protected open var clazz: Class<TRoot>,
-    protected open var repo: IRepository<TRoot, ID>,
+    protected open var repository: IRepository<TRoot, ID>,
     protected open var mapper: IObjectMapper,
 ) : IService<ID> {
-
 
     /**
      * 增加对象
@@ -32,7 +31,7 @@ open class Service<TRoot : IAggregateRoot<ID>, ID>(
     override fun add(command: ICommand): DataMessage<ID> {
         val msg = DataMessage<ID>()
         val root = this.map(command)
-        this.repo.add(root)
+        this.repository.add(root)
         msg.data = root.id
         return msg
     }
@@ -44,7 +43,7 @@ open class Service<TRoot : IAggregateRoot<ID>, ID>(
      */
     override fun add(commands: List<ICommand>) {
         val roots = commands.map { this.map(it) }
-        this.repo.add(roots)
+        this.repository.add(roots)
     }
 
     /**
@@ -56,7 +55,7 @@ open class Service<TRoot : IAggregateRoot<ID>, ID>(
     override fun update(id: ID, command: ICommand) {
         val root = this.map(command)
         root.id = id
-        this.repo.update(root)
+        this.repository.update(root)
     }
 
     /**
@@ -66,7 +65,7 @@ open class Service<TRoot : IAggregateRoot<ID>, ID>(
      */
     override fun update(commands: List<ICommand>) {
         val roots = commands.map { this.map(it) }
-        this.repo.update(roots)
+        this.repository.update(roots)
     }
 
     /**
@@ -74,7 +73,7 @@ open class Service<TRoot : IAggregateRoot<ID>, ID>(
      * @param id 对象ID
      */
     override fun remove(id: ID) {
-        this.repo.remove(id)
+        this.repository.remove(id)
     }
 
     /**

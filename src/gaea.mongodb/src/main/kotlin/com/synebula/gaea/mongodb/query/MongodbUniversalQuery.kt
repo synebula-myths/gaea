@@ -3,7 +3,6 @@ package com.synebula.gaea.mongodb.query
 
 import com.synebula.gaea.ext.fieldNames
 import com.synebula.gaea.ext.firstCharLowerCase
-import com.synebula.gaea.log.ILogger
 import com.synebula.gaea.mongodb.order
 import com.synebula.gaea.mongodb.select
 import com.synebula.gaea.mongodb.where
@@ -20,7 +19,7 @@ import org.springframework.data.mongodb.core.query.Query
  * 实现IQuery的Mongodb查询类
  * @param template MongodbRepo对象
  */
-open class MongodbUniversalQuery(var template: MongoTemplate, var logger: ILogger) : IUniversalQuery {
+open class MongodbUniversalQuery(var template: MongoTemplate) : IUniversalQuery {
 
     /**
      * 使用View解析是collection时是否校验存在，默认不校验
@@ -85,19 +84,12 @@ open class MongodbUniversalQuery(var template: MongoTemplate, var logger: ILogge
      * 获取collection
      */
     fun <TView> collection(clazz: Class<TView>): String {
-        val table: Table? = clazz.getDeclaredAnnotation(
-            Table::class.java
-        )
-        return if (table != null)
-            return table.name
+        val table = clazz.getDeclaredAnnotation(Table::class.java)
+        return if (table != null) table.name
         else {
-            this.logger.info(this, "视图类没有标记[Collection]注解，无法获取Collection名称。尝试使用View<${clazz.name}>名称解析集合")
             val name = clazz.simpleName.removeSuffix("View").firstCharLowerCase()
-            if (!validViewCollection || this.template.collectionExists(name))
-                name
-            else {
-                throw RuntimeException("找不到名为[${clazz.name}]的集合")
-            }
+            if (!validViewCollection || this.template.collectionExists(name)) name
+            else throw RuntimeException("找不到名为[${clazz.name}]的集合")
         }
     }
 }

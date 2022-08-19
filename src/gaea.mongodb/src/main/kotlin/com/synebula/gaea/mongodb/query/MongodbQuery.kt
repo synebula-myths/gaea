@@ -2,7 +2,6 @@ package com.synebula.gaea.mongodb.query
 
 import com.synebula.gaea.ext.fieldNames
 import com.synebula.gaea.ext.firstCharLowerCase
-import com.synebula.gaea.log.ILogger
 import com.synebula.gaea.mongodb.order
 import com.synebula.gaea.mongodb.select
 import com.synebula.gaea.mongodb.where
@@ -20,7 +19,7 @@ import org.springframework.data.mongodb.core.query.Query
  * @param template MongodbRepo对象
  */
 
-open class MongodbQuery<TView, ID>(override var clazz: Class<TView>, var template: MongoTemplate, var logger: ILogger) :
+open class MongodbQuery<TView, ID>(override var clazz: Class<TView>, var template: MongoTemplate) :
     IQuery<TView, ID> {
 
     /**
@@ -85,18 +84,13 @@ open class MongodbQuery<TView, ID>(override var clazz: Class<TView>, var templat
     /**
      * 获取collection
      */
-    protected fun collection(clazz: Class<TView>): String {
-        val table: Table? = clazz.getDeclaredAnnotation(
-            Table::class.java
-        )
-        return if (table != null) return table.name
+    fun <TView> collection(clazz: Class<TView>): String {
+        val table = clazz.getDeclaredAnnotation(Table::class.java)
+        return if (table != null) table.name
         else {
-            this.logger.info(this, "视图类没有标记[Collection]注解，无法获取Collection名称。尝试使用View<${clazz.name}>名称解析集合")
             val name = clazz.simpleName.removeSuffix("View").firstCharLowerCase()
             if (!validViewCollection || this.template.collectionExists(name)) name
-            else {
-                throw RuntimeException("找不到名为[${clazz.name}]的集合")
-            }
+            else throw RuntimeException("找不到名为[${clazz.name}]的集合")
         }
     }
 }
