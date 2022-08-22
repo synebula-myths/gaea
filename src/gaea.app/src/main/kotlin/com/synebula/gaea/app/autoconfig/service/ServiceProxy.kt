@@ -2,16 +2,18 @@ package com.synebula.gaea.app.autoconfig.service
 
 import com.synebula.gaea.data.serialization.IObjectMapper
 import com.synebula.gaea.domain.repository.IRepository
+import com.synebula.gaea.domain.repository.IRepositoryFactory
+import com.synebula.gaea.domain.service.Domain
 import com.synebula.gaea.domain.service.IService
 import com.synebula.gaea.domain.service.Service
-import com.synebula.gaea.domain.service.ServiceDependency
 import com.synebula.gaea.spring.autoconfig.Proxy
 import org.springframework.beans.factory.BeanFactory
 import java.io.InvalidClassException
 import java.lang.reflect.Method
 
 class ServiceProxy(
-    private var supertype: Class<*>, private var beanFactory: BeanFactory, implementBeanNames: Array<String> = arrayOf()
+    private var supertype: Class<*>,
+    private var beanFactory: BeanFactory, implementBeanNames: Array<String> = arrayOf()
 ) : Proxy() {
 
     private var service: IService<*>
@@ -20,18 +22,26 @@ class ServiceProxy(
         // 如果没有实现类, 使用Service类代理
         if (implementBeanNames.isEmpty()) {
             // 如果没有实现类并且没有ServiceDependency注解, 则抛出异常
-            if (!this.supertype.declaredAnnotations.any { it.annotationClass == ServiceDependency::class }) {
+            if (!this.supertype.declaredAnnotations.any { it.annotationClass == Domain::class }) {
                 throw InvalidClassException(
-                    "interface ${this.supertype.name} must has implementation class or annotation by ${ServiceDependency::class.qualifiedName}"
+                    "interface ${this.supertype.name} must has implementation class or annotation by ${Domain::class.qualifiedName}"
                 )
             }
-            val serviceDependency = this.supertype.getDeclaredAnnotation(ServiceDependency::class.java)
-            val repo = this.beanFactory.getBean(serviceDependency.repo.java)
+            val domain = this.supertype.getDeclaredAnnotation(Domain::class.java)
+
+            // repository工厂对象
+            val defaultRepositoryFactory = this.beanFactory.getBean(IRepositoryFactory::class.java)
             val mapper = this.beanFactory.getBean(IObjectMapper::class.java)
+
             val constructor = Service::class.java.getConstructor(
                 Class::class.java, IRepository::class.java, IObjectMapper::class.java
             )
-            this.service = constructor.newInstance(serviceDependency.clazz.java, repo, mapper)
+            this.service =
+                constructor.newInstance(
+                    domain.clazz.java,
+                    defaultRepositoryFactory.createRawRepository(domain.clazz.java),
+                    mapper
+                )
         } else {
             this.service = this.beanFactory.getBean(implementBeanNames[0]) as IService<*>
         }

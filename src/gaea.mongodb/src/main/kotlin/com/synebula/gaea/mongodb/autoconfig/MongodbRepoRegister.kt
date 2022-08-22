@@ -51,4 +51,16 @@ class MongodbRepoRegister : Register() {
         }
         return result
     }
+
+    private fun addDefaultProxyBean(result: MutableMap<String, BeanDefinition>) {
+        // IRepository proxy
+        val builder = BeanDefinitionBuilder.genericBeanDefinition(IRepository::class.java)
+        builder.addConstructorArgValue(IRepository::class.java)
+        builder.addConstructorArgValue(this._beanFactory)
+        builder.addConstructorArgValue(emptyArray<String>())
+        val definition = builder.rawBeanDefinition as GenericBeanDefinition
+        definition.beanClass = MongodbRepoFactory::class.java
+        definition.autowireMode = GenericBeanDefinition.AUTOWIRE_BY_TYPE
+        result[IRepository::class.java.name] = definition
+    }
 }
