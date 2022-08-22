@@ -1,7 +1,5 @@
 package com.synebula.gaea.domain.service
 
-import java.util.*
-
 /**
  * 命令基础实现类，发给service的命令。
  *

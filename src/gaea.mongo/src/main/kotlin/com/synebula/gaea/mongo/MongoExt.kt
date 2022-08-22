@@ -42,8 +42,12 @@ fun Query.where(
 
             //日期类型特殊处理为String类型
             val fieldType = onFieldType(key)
-            if (fieldType != null && value.javaClass != fieldType && fieldType == Date::class.java) {
-                value = DateTime(value.toString(), "yyyy-MM-dd HH:mm:ss").date
+            if (fieldType != null && value.javaClass != fieldType) {
+                when (fieldType) {
+                    Date::class.java -> value = DateTime(value.toString(), "yyyy-MM-ddTHH:mm:ss").date
+                    Int::class.java -> value = value.toString().toInt()
+                    Integer::class.java -> value = value.toString().toInt()
+                }
             }
 
             val where = onWhere(key)

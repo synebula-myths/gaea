@@ -7,9 +7,19 @@ object Status {
     const val Success = 200
 
     /**
+     * 重新授权
+     */
+    const val Reauthorize = 205
+
+    /**
      * 失败
      */
     const val Failure = 400
+
+    /**
+     * 未授权
+     */
+    const val Unauthorized = 401
 
     /**
      * 错误

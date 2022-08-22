@@ -21,14 +21,14 @@ allprojects {
 
 subprojects {
     ext {
-        version '0.6.1'
+        version '0.13.1'
         spring_version = "2.3.0.RELEASE"
     }
 
     buildscript {
         repositories {
             mavenLocal()
-            maven { url 'http://maven.aliyuMongoRepositoryn.com/nexus/content/groups/public/' }
+            maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
             mavenCentral()
         }
     }

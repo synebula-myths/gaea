@@ -11,24 +11,21 @@ import org.springframework.stereotype.Component
 import java.io.File
 
 @Component
-class EmailMessenger : IEmailMessenger {
+class EmailMessenger(var mailSender: JavaMailSender?) : IEmailMessenger {
 
-    @Autowired
-    private lateinit var mailSender: JavaMailSender
-
-    @Value("\${spring.mail.host}")
+    @Value("\${spring.mail.host:}")
     var host = ""
 
-    @Value("\${spring.mail.port}")
+    @Value("\${spring.mail.port:}")
     var port = ""
 
-    @Value("\${spring.mail.sender}")
+    @Value("\${spring.mail.sender:}")
     var sender = ""
 
-    @Value("\${spring.mail.username}")
+    @Value("\${spring.mail.username:}")
     var username = ""
 
-    @Value("\${spring.mail.password}")
+    @Value("\${spring.mail.password:}")
     var password = ""
 
     @Autowired
@@ -42,13 +39,20 @@ class EmailMessenger : IEmailMessenger {
      * @param receivers 邮件接受者
      * @param files 附件
      */
-    override fun sendMessage(subject: String, content: String, receivers: List<String>, files: Map<String, String>): Map<String, Boolean> {
+    override fun sendMessage(
+        subject: String,
+        content: String,
+        receivers: List<String>,
+        files: Map<String, String>
+    ): Map<String, Boolean> {
         val result = mutableMapOf<String, Boolean>()
         this.check()
         receivers.forEach { receiver ->
             result[receiver] = true
+            if (this.mailSender == null)
+                throw Exception("没有配置JavaMailSender的实现实例，请重新配置")
             try {
-                val mail = mailSender.createMimeMessage()
+                val mail = this.mailSender!!.createMimeMessage()
                 val mimeMessageHelper = MimeMessageHelper(mail, true, "utf-8")
                 mimeMessageHelper.setFrom(sender)
                 mimeMessageHelper.setTo(receiver)
@@ -59,7 +63,7 @@ class EmailMessenger : IEmailMessenger {
                     val file = FileSystemResource(File(path))
                     mimeMessageHelper.addAttachment(name, file)
                 }
-                mailSender.send(mail) //发送
+                this.mailSender!!.send(mail) //发送
             } catch (e: Exception) {
                 logger.error(e, "发送邮件[$subject]至地址[$receiver]失败")
                 result[receiver] = false

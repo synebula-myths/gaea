@@ -5,32 +5,32 @@ import com.synebula.gaea.app.component.aop.annotation.MethodName
 import com.synebula.gaea.app.struct.HttpMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.data.serialization.json.IJsonSerializer
-import com.synebula.gaea.domain.service.ICommand
-import com.synebula.gaea.domain.service.IService
+import com.synebula.gaea.domain.model.IAggregateRoot
+import com.synebula.gaea.domain.service.ILazyService
 import org.springframework.web.bind.annotation.*
 
 /**
- * 应用类接口，提供向Command服务的接口
+ * 直接使用实体对象提供服务的api
  *
  * @author alex
  * @version 0.1
  * @since 2020-05-15
  */
-interface ICommandApp<TCommand : ICommand, TKey> : IApplication {
+interface ILazyCommandApp<TRoot : IAggregateRoot<TKey>, TKey> : IApplication {
     var jsonSerializer: IJsonSerializer?
 
-    var service: IService<TKey>
+    var service: ILazyService<TRoot, TKey>
 
     @PostMapping
     @MethodName("添加")
-    fun add(@RequestBody command: TCommand): HttpMessage {
-        return HttpMessage(service.add(command))
+    fun add(@RequestBody entity: TRoot): HttpMessage {
+        return HttpMessage(service.add(entity))
     }
 
     @PutMapping("/{id:.+}")
     @MethodName("更新")
-    fun update(@PathVariable id: TKey, @RequestBody command: TCommand): HttpMessage {
-        this.service.update(id, command)
+    fun update(@PathVariable id: TKey, @RequestBody entity: TRoot): HttpMessage {
+        this.service.update(id, entity)
         return HttpMessage()
     }
 

@@ -11,8 +11,8 @@ import com.synebula.gaea.query.type.Order
  */
 data class Params(var page: Int = 1, var size: Int = 10) {
 
-    private var _parameters = mutableMapOf<String, Any>()
-    private var _orders = mutableMapOf<String, Order>()
+    private var _parameters = linkedMapOf<String, Any>()
+    private var _orders = linkedMapOf<String, Order>()
 
     /**
      * 数据索引，从0开始。表示数据在总量的第几条。（index = (page - 1) * size）
@@ -24,13 +24,13 @@ data class Params(var page: Int = 1, var size: Int = 10) {
     /**
      * 排序条件。
      */
-    var orders: Map<String, Order>
+    var orders: LinkedHashMap<String, Order>
         set(value) {
-            this._orders = value.toMutableMap()
+            this._orders = value
         }
         get() {
             if (this._parameters.keys.count { it.startsWith("@") } > 0) {
-                val params = mutableMapOf<String, Any>()
+                val params = linkedMapOf<String, Any>()
                 this._parameters.forEach {
                     if (it.key.startsWith("@")) {
                         this._orders[it.key.removePrefix("@")] = Order.valueOf(it.value.toString())
@@ -45,13 +45,13 @@ data class Params(var page: Int = 1, var size: Int = 10) {
     /**
      * 查询条件。
      */
-    var parameters: Map<String, Any>
+    var parameters: LinkedHashMap<String, Any>
         set(value) {
-            this._parameters = value.toMutableMap()
+            this._parameters = value
         }
         get() {
             if (this._parameters.keys.count { it.startsWith("@") } > 0) {
-                val params = mutableMapOf<String, Any>()
+                val params = linkedMapOf<String, Any>()
                 this._parameters.forEach {
                     if (it.key.startsWith("@")) {
                         this._orders[it.key.removePrefix("@")] = Order.valueOf(it.value.toString())
