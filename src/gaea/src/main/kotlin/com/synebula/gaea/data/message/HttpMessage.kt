@@ -1,9 +1,11 @@
-package com.synebula.gaea.app.struct
+package com.synebula.gaea.data.message
 
-import com.google.gson.Gson
-import com.synebula.gaea.data.message.DataMessage
+import com.synebula.gaea.data.serialization.json.IJsonSerializer
+
 
 class HttpMessage() : DataMessage<Any>() {
+
+    var serializer: IJsonSerializer? = null
 
     constructor(data: Any) : this() {
         this.data = data
@@ -25,6 +27,6 @@ class HttpMessage() : DataMessage<Any>() {
     }
 
     override fun toString(): String {
-        return Gson().toJson(this)
+        return serializer?.serialize(this) ?: super.toString()
     }
 }

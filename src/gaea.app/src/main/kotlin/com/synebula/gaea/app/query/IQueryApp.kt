@@ -1,7 +1,7 @@
 package com.synebula.gaea.app.query
 
 import com.synebula.gaea.app.IApplication
-import com.synebula.gaea.app.struct.HttpMessage
+import com.synebula.gaea.data.message.HttpMessage
 import com.synebula.gaea.query.IQuery
 import com.synebula.gaea.query.Params
 import com.synebula.gaea.spring.aop.annotation.Method

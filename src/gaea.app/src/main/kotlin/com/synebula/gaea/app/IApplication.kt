@@ -1,7 +1,7 @@
 package com.synebula.gaea.app
 
 import com.google.gson.Gson
-import com.synebula.gaea.app.struct.HttpMessage
+import com.synebula.gaea.data.message.HttpMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.log.ILogger
 import org.springframework.security.core.context.SecurityContextHolder

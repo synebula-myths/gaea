@@ -1,6 +1,6 @@
 package com.synebula.gaea.app.component.security
 
-import com.synebula.gaea.app.struct.HttpMessage
+import com.synebula.gaea.data.message.HttpMessage
 import com.synebula.gaea.data.message.Status
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
