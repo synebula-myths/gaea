@@ -37,7 +37,7 @@ import java.util.logging.Logger
  *
  * To react to messages, we recommend a reactive-streams framework like [RxJava](https://github.com/ReactiveX/RxJava/wiki) (supplemented with its [RxAndroid](https://github.com/ReactiveX/RxAndroid) extension if you are building for
  * Android) or [Project Reactor](https://projectreactor.io/). (For the basics of
- * translating code from using an message bus to using a reactive-streams framework, see these two
+ * translating code from using a message bus to using a reactive-streams framework, see these two
  * guides: [1](https://blog.jkl.gg/implementing-an-message-bus-with-rxjava-rxbus/), [2](https://lorentzos.com/rxjava-as-message-bus-the-right-way-10a36bdd49ba).) Some usages
  * of MessageBus may be better written using [Kotlin coroutines](https://kotlinlang.org/docs/coroutines-guide.html), including [Flow](https://kotlinlang.org/docs/flow.html) and [Channels](https://kotlinlang.org/docs/channels.html). Yet other usages are better served
  * by individual libraries that provide specialized support for particular use cases.
@@ -60,12 +60,10 @@ import java.util.logging.Logger
  *  * It doesn't propagate exceptions, so apps don't have a way to react to them.
  *  * It doesn't interoperate well with RxJava, coroutines, and other more commonly used
  * alternatives.
- *  * It imposes requirements on the lifecycle of its subscribers. For example, if an message
+ *  * It imposes requirements on the lifecycle of its subscribers. For example, if a message
  * occurs between when one subscriber is removed and the next subscriber is added, the message
  * is dropped.
  *  * Its performance is suboptimal, especially under Android.
- *  * It [doesn't support parameterized
- * types](https://github.com/google/guava/issues/1431).
  *  * With the introduction of lambdas in Java 8, MessageBus went from less verbose than listeners
  * to [more verbose](https://github.com/google/guava/issues/3311).
  *
@@ -94,19 +92,15 @@ import java.util.logging.Logger
  * <h2>Posting Messages</h2>
  *
  *
- * To post an message, simply provide the message object to the [.post] method. The
+ * To post a message, simply provide the message object to the [.post] method. The
  * MessageBus instance will determine the type of message and route it to all registered listeners.
  *
  *
- * Messages are routed based on their type  an message will be delivered to any subscriber for
+ * Messages are routed based on their type  a message will be delivered to any subscriber for
  * any type to which the message is *assignable.* This includes implemented interfaces, all
- * superclasses, and all interfaces implemented by superclasses.
+ * thisclasses, and all interfaces implemented by thisclasses.
  *
  *
- * When `post` is called, all registered subscribers for an message are run in sequence, so
- * subscribers should be reasonably quick. If an message may trigger an extended process (such as a
- * database load), spawn a thread or queue it for later. (For a convenient way to do this, use an
- * [AsyncBus].)
  *
  * <h2>Subscriber Methods</h2>
  *
@@ -126,12 +120,12 @@ import java.util.logging.Logger
  * <h2>Dead Messages</h2>
  *
  *
- * If an message is posted, but no registered subscribers can accept it, it is considered "dead."
+ * If a message is posted, but no registered subscribers can accept it, it is considered "dead."
  * To give the system a second chance to handle dead messages, they are wrapped in an instance of
  * [DeadMessage] and reposted.
  *
  *
- * If a subscriber for a supertype of all messages (such as Object) is registered, no message will
+ * If a subscriber for this type of all messages (such as Object) is registered, no message will
  * ever be considered dead, and no DeadMessages will be generated. Accordingly, while DeadMessage
  * extends [Object], a subscriber registered to receive any Object will never receive a
  * DeadMessage.
@@ -140,8 +134,6 @@ import java.util.logging.Logger
  * This class is safe for concurrent use.
  *
  *
- * See the Guava User Guide article on [`MessageBus`](https://github.com/google/guava/wiki/MessageBusExplained).
- *
  * @author Cliff
  * @since 10.0
  * @param identifier a brief name for this bus, for logging purposes. Should/home/alex/privacy/project/myths/gaea be a valid Java
@@ -149,14 +141,16 @@ import java.util.logging.Logger
  * @param dispatcher message dispatcher.
  * @param exceptionHandler Handler for subscriber exceptions.
  */
-open class Bus(
+open class Bus<T : Any>(
     override val identifier: String,
     override val executor: Executor,
-    val dispatcher: Dispatcher<Any>,
-    val exceptionHandler: SubscriberExceptionHandler<Any>,
-) : IBus<Any> {
+    val dispatcher: Dispatcher<T>,
+    val exceptionHandler: SubscriberExceptionHandler<T>,
+) : IBus<T> {
 
-    private val subscribers: SubscriberRegistry<Any> = SubscriberRegistry(this)
+    val DEAD_TOPIC = "DEAD_TOPIC"
+
+    private val subscribers: SubscriberRegistry<T> = SubscriberRegistry(this)
 
     /**
      * Creates a new MessageBus with the given `identifier`.
@@ -178,18 +172,76 @@ open class Bus(
      * @param exceptionHandler Handler for subscriber exceptions.
      * @since 16.0
      */
-    constructor(exceptionHandler: SubscriberExceptionHandler<Any>) : this(
+    constructor(exceptionHandler: SubscriberExceptionHandler<T>) : this(
         "default",
         Executor { it.run() },
         Dispatcher.perThreadDispatchQueue(),
         exceptionHandler
     )
 
+    /**
+     * Creates a new AsyncMessageBus that will use `executor` to dispatch messages. Assigns `identifier` as the bus's name for logging purposes.
+     *
+     * @param identifier short name for the bus, for logging purposes.
+     * @param executor Executor to use to dispatch messages. It is the caller's responsibility to shut
+     * down the executor after the last message has been posted to this message bus.
+     */
+    constructor(identifier: String, executor: Executor) : this(
+        identifier,
+        executor,
+        Dispatcher.legacyAsync(),
+        LoggingHandler()
+    )
+
+    /**
+     * Creates a new AsyncMessageBus that will use `executor` to dispatch messages.
+     *
+     * @param executor Executor to use to dispatch messages. It is the caller's responsibility to shut
+     * down the executor after the last message has been posted to this message bus.
+     * @param subscriberExceptionHandler Handler used to handle exceptions thrown from subscribers.
+     * See [SubscriberExceptionHandler] for more information.
+     * @since 16.0
+     */
+    constructor(executor: Executor, subscriberExceptionHandler: SubscriberExceptionHandler<T>) : this(
+        "default",
+        executor,
+        Dispatcher.legacyAsync(),
+        subscriberExceptionHandler
+    )
+
+    /**
+     * Creates a new AsyncMessageBus that will use `executor` to dispatch messages.
+     *
+     * @param executor Executor to use to dispatch messages. It is the caller's responsibility to shut
+     * down the executor after the last message has been posted to this message bus.
+     */
+    constructor(executor: Executor) : this(
+        "default",
+        executor,
+        Dispatcher.legacyAsync(),
+        LoggingHandler()
+    )
+
+    override fun register(topics: Array<String>, subscriber: Any) {
+        subscribers.register(topics, subscriber)
+    }
+
+    /**
+     * Registers subscriber method on `object` to receive messages.
+     *
+     * @param topics method subscribe topic.
+     * @param subscriber  subscriber method declare object.
+     * @param method subscriber method should be registered.
+     */
+    override fun register(topics: Array<String>, subscriber: Any, method: Method) {
+        subscribers.register(topics, subscriber, method)
+    }
+
 
     /**
      * Registers all subscriber methods on `object` to receive messages.
      *
-     * @param subscriber object whose subscriber methods should be registered.
+     * @param subscriber  object whose subscriber methods should be registered.
      */
     override fun register(subscriber: Any) {
         subscribers.register(subscriber)
@@ -202,37 +254,73 @@ open class Bus(
     /**
      * Unregisters all subscriber methods on a registered `object`.
      *
-     * @param subscriber object whose subscriber methods should be unregistered.
+     * @param subscriber  object whose subscriber methods should be unregistered.
      * @throws IllegalArgumentException if the object was not previously registered.
      */
     override fun unregister(subscriber: Any) {
         subscribers.unregister(subscriber)
     }
 
+    override fun unregister(topic: String, subscriber: Any) {
+        subscribers.unregister(topic, subscriber)
+    }
+
     /**
-     * Posts an message to all registered subscribers. This method will return successfully after the
+     * Posts a message to all registered subscribers. This method will return successfully after the
      * message has been posted to all subscribers, and regardless of any exceptions thrown by
      * subscribers.
      *
-     *
-     * If no subscribers have been subscribed for `message`'s class, and `message` is not
-     * already a [DeadMessage], it will be wrapped in a DeadMessage and reposted.
-     *
      * @param message message to post.
      */
-    override fun publish(message: Any) {
-        val messageSubscribers = subscribers.getSubscribers(message)
+    override fun publish(message: T) {
+        val messageSubscribers = subscribers.getSubscribers(message::class.java.name)
         if (messageSubscribers.hasNext()) {
             dispatcher.dispatch(message, messageSubscribers)
-        } else if (message !is DeadMessage) {
+        } else {
             // the message had no subscribers and was not itself a DeadMessage
-            publish(DeadMessage(this, message))
+            publish(DEAD_TOPIC, message)
         }
     }
 
+    /**
+     * Posts a message to all registered subscribers. This method will return successfully after the
+     * message has been posted to all subscribers, and regardless of any exceptions thrown by
+     * subscribers.
+     *
+     * @param message message to post.
+     */
+    override fun publishAsync(message: T) {
+        val messageSubscribers = subscribers.getSubscribers(message::class.java.name)
+        if (messageSubscribers.hasNext()) {
+            dispatcher.dispatchAsync(message, messageSubscribers)
+        } else {
+            // the message had no subscribers and was not itself a DeadMessage
+            publishAsync(DEAD_TOPIC, message)
+        }
+    }
+
+    override fun publish(topic: String, message: T) {
+        val messageSubscribers = subscribers.getSubscribers(topic)
+        if (messageSubscribers.hasNext()) {
+            dispatcher.dispatch(message, messageSubscribers)
+        } else if (topic != DEAD_TOPIC) {
+            // the message had no subscribers and was not itself a DeadMessage
+            publish(DEAD_TOPIC, message)
+        }
+    }
+
+    override fun publishAsync(topic: String, message: T) {
+        val messageSubscribers = subscribers.getSubscribers(topic)
+        if (messageSubscribers.hasNext()) {
+            dispatcher.dispatchAsync(message, messageSubscribers)
+        } else if (topic != DEAD_TOPIC) {
+            // the message had no subscribers and was not itself a DeadMessage
+            publishAsync(DEAD_TOPIC, message)
+        }
+    }
 
     /** Handles the given exception thrown by a subscriber with the given context.  */
-    override fun handleException(cause: Throwable?, context: SubscriberExceptionContext<Any>) {
+    override fun handleException(cause: Throwable?, context: SubscriberExceptionContext<T>) {
         try {
             exceptionHandler.handleException(cause, context)
         } catch (e2: Throwable) {

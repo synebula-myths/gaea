@@ -61,13 +61,13 @@ abstract class AppAspect {
             point.proceed()
         } catch (ex: Throwable) {
             //找到类的模块名称，否则使用类名
-            var moduleName = clazz.name
+            var moduleName = clazz.simpleName
             val module = clazz.annotations.find { it is Module }
             if (module != null && module is Module) {
                 moduleName = module.name
             }
             var message = "$moduleName - $funcName 异常"
-            message = if (ex is NoticeUserException) {
+            message = if (ex is NoticeUserException || ex is Error) {
                 "$message: ${ex.message}"
             } else {
                 "$message。"

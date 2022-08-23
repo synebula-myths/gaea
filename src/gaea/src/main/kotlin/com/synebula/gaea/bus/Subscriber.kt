@@ -13,6 +13,7 @@
  */
 package com.synebula.gaea.bus
 
+import com.synebula.gaea.exception.NoticeUserException
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.util.concurrent.Executor
@@ -44,8 +45,13 @@ open class Subscriber<T : Any> private constructor(
         executor = bus.executor
     }
 
+    /** Dispatches `message` to this subscriber .  */
+    fun dispatch(message: Any) {
+        invokeSubscriberMethod(message)
+    }
+
     /** Dispatches `message` to this subscriber using the proper executor.  */
-    fun dispatchMessage(message: Any) {
+    fun dispatchAsync(message: Any) {
         executor!!.execute {
             try {
                 invokeSubscriberMethod(message)
@@ -68,8 +74,8 @@ open class Subscriber<T : Any> private constructor(
         } catch (e: IllegalAccessException) {
             throw Error("Method became inaccessible: $message", e)
         } catch (e: InvocationTargetException) {
-            if (e.cause is Error) {
-                throw (e.cause as Error?)!!
+            if (e.cause is Error || e.cause is NoticeUserException) {
+                throw e.cause!!
             }
             throw e
         }

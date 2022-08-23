@@ -4,5 +4,5 @@ import com.synebula.gaea.bus.Bus
 import org.springframework.stereotype.Component
 
 @Component
-class EventBus : Bus()
+class EventBus : Bus<Any>()
 

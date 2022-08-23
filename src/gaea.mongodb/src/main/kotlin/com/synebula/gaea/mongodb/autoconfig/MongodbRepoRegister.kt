@@ -34,20 +34,20 @@ class MongodbRepoRegister : Register() {
 
             // 尝试获取实际继承类型
             val implBeanDefinitions = this.doScan(basePackages, arrayOf(this.interfaceFilter(arrayOf(beanClazz))))
-            implBeanDefinitions.forEach {
-                it.isAutowireCandidate = false
-                result[it.beanClassName!!] = it
-            }
 
-            // 构造BeanDefinition
-            val builder = BeanDefinitionBuilder.genericBeanDefinition(beanClazz)
-            builder.addConstructorArgValue(beanClazz)
-            builder.addConstructorArgValue(this._beanFactory)
-            builder.addConstructorArgValue(implBeanDefinitions.map { it.beanClassName })
-            val definition = builder.rawBeanDefinition as GenericBeanDefinition
-            definition.beanClass = MongodbRepoFactory::class.java
-            definition.autowireMode = GenericBeanDefinition.AUTOWIRE_BY_TYPE
-            result[beanClazz.name] = definition
+            if (implBeanDefinitions.isNotEmpty()) {
+                implBeanDefinitions.forEach {
+                    result[it.beanClassName!!] = it
+                }
+            } else { // 构造BeanDefinition
+                val builder = BeanDefinitionBuilder.genericBeanDefinition(beanClazz)
+                builder.addConstructorArgValue(beanClazz)
+                builder.addConstructorArgValue(this._beanFactory)
+                val definition = builder.rawBeanDefinition as GenericBeanDefinition
+                definition.beanClass = MongodbRepoFactory::class.java
+                definition.autowireMode = GenericBeanDefinition.AUTOWIRE_BY_TYPE
+                result[beanClazz.name] = definition
+            }
         }
         return result
     }

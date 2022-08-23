@@ -14,7 +14,7 @@
 package com.synebula.gaea.bus
 
 /**
- * Marks an message subscriber method as being thread-safe. This annotation indicates that MessageBus
+ * Marks a message subscriber method as being thread-safe. This annotation indicates that MessageBus
  * may invoke the message subscriber simultaneously from multiple threads.
  *
  *

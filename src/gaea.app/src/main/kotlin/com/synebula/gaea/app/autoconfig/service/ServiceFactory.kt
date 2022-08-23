@@ -7,9 +7,8 @@ import org.springframework.beans.factory.BeanFactory
 class ServiceFactory(
     supertype: Class<*>,
     var beanFactory: BeanFactory,
-    var implementBeanNames: Array<String> = arrayOf()
 ) : Factory(supertype) {
     override fun createProxy(): Proxy {
-        return ServiceProxy(supertype, this.beanFactory, this.implementBeanNames)
+        return ServiceProxy(supertype, this.beanFactory)
     }
 }

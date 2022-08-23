@@ -14,7 +14,7 @@ class EventBusSubscriberProcessor : BeanPostProcessor {
 
     // 事件总线bean由Spring IoC容器负责创建，这里只需要通过@Autowired注解注入该bean即可使用事件总线
     @Autowired
-    var messageBus: IBus<Any>? = null
+    var bus: IBus<Any>? = null
 
     @Throws(BeansException::class)
     override fun postProcessBeforeInitialization(bean: Any, beanName: String): Any {
@@ -34,12 +34,15 @@ class EventBusSubscriberProcessor : BeanPostProcessor {
                 if (annotation.annotationClass == Subscribe::class) {
                     // 如果这是一个Guava @Subscribe注解的事件监听器方法，说明所在bean实例
                     // 对应一个Guava事件监听器类，将该bean实例注册到Guava事件总线
-                    messageBus?.register(bean)
+                    val subscribe = annotation as Subscribe
+                    if (subscribe.topics.isEmpty())
+                        bus?.register(bean, method)
+                    else
+                        bus?.register(subscribe.topics, bean, method)
                     return bean
                 }
             }
         }
         return bean
     }
-
 }

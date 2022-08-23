@@ -23,13 +23,20 @@ import java.util.concurrent.ConcurrentLinkedQueue
  *
  * **Note:** The dispatcher is orthogonal to the subscriber's `Executor`. The dispatcher
  * controls the order in which messages are dispatched, while the executor controls how (i.e. on which
- * thread) the subscriber is actually called when an message is dispatched to it.
+ * thread) the subscriber is actually called when a message is dispatched to it.
  *
  * @author Colin Decker
  */
 abstract class Dispatcher<T : Any> {
     /** Dispatches the given `message` to the given `subscribers`.  */
-    abstract fun dispatch(message: T, subscribers: Iterator<Subscriber<T>>?)
+    fun dispatch(message: T, subscribers: Iterator<Subscriber<T>>?) {
+        while (subscribers!!.hasNext()) {
+            subscribers.next().dispatch(message)
+        }
+    }
+
+    /** Dispatches the given `message` to the given `subscribers`.  */
+    abstract fun dispatchAsync(message: T, subscribers: Iterator<Subscriber<T>>?)
 
     /** Implementation of a [.perThreadDispatchQueue] dispatcher.  */
     private class PerThreadQueuedDispatcher<T : Any> : Dispatcher<T>() {
@@ -48,7 +55,7 @@ abstract class Dispatcher<T : Any> {
             }
         }
 
-        override fun dispatch(message: T, subscribers: Iterator<Subscriber<T>>?) {
+        override fun dispatchAsync(message: T, subscribers: Iterator<Subscriber<T>>?) {
             val queueForThread = queue.get()
             queueForThread.offer(Message(message, subscribers))
             if (!dispatching.get()) {
@@ -57,7 +64,7 @@ abstract class Dispatcher<T : Any> {
                     var nextMessage: Message<T>?
                     while (queueForThread.poll().also { nextMessage = it } != null) {
                         while (nextMessage!!.subscribers!!.hasNext()) {
-                            nextMessage!!.subscribers!!.next().dispatchMessage(nextMessage!!.message)
+                            nextMessage!!.subscribers!!.next().dispatchAsync(nextMessage!!.message)
                         }
                     }
                 } finally {
@@ -91,32 +98,23 @@ abstract class Dispatcher<T : Any> {
         // in some cases.
         /** Global message queue.  */
         private val queue = ConcurrentLinkedQueue<MessageWithSubscriber<T>>()
-        override fun dispatch(message: T, subscribers: Iterator<Subscriber<T>>?) {
+        override fun dispatchAsync(message: T, subscribers: Iterator<Subscriber<T>>?) {
             while (subscribers!!.hasNext()) {
                 queue.add(MessageWithSubscriber(message, subscribers.next()))
             }
             var e: MessageWithSubscriber<T>?
             while (queue.poll().also { e = it } != null) {
-                e!!.subscriber!!.dispatchMessage(e!!.message)
+                e!!.subscriber!!.dispatchAsync(e!!.message)
             }
         }
 
         private class MessageWithSubscriber<T : Any>(val message: T, val subscriber: Subscriber<T>?)
     }
 
-    /** Implementation of [.immediate].  */
-    private class ImmediateDispatcher<T : Any> : Dispatcher<T>() {
-        override fun dispatch(message: T, subscribers: Iterator<Subscriber<T>>?) {
-            while (subscribers!!.hasNext()) {
-                subscribers.next().dispatchMessage(message)
-            }
-        }
-    }
-
     companion object {
         /**
          * Returns a dispatcher that queues messages that are posted reentrantly on a thread that is already
-         * dispatching an message, guaranteeing that all messages posted on a single thread are dispatched to
+         * dispatching a message, guaranteeing that all messages posted on a single thread are dispatched to
          * all subscribers in the order they are posted.
          *
          *
@@ -137,15 +135,6 @@ abstract class Dispatcher<T : Any> {
          */
         fun <T : Any> legacyAsync(): Dispatcher<T> {
             return LegacyAsyncDispatcher()
-        }
-
-        /**
-         * Returns a dispatcher that dispatches messages to subscribers immediately as they're posted
-         * without using an intermediate queue to change the dispatch order. This is effectively a
-         * depth-first dispatch order, vs. breadth-first when using a queue.
-         */
-        fun <T : Any> immediate(): Dispatcher<T> {
-            return ImmediateDispatcher()
         }
     }
 }

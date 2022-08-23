@@ -1,9 +1,14 @@
 package com.synebula.gaea.domain.service
 
+import com.synebula.gaea.bus.IBus
 import com.synebula.gaea.data.message.DataMessage
 import com.synebula.gaea.data.serialization.IObjectMapper
+import com.synebula.gaea.domain.event.AfterRemoveEvent
+import com.synebula.gaea.domain.event.BeforeRemoveEvent
 import com.synebula.gaea.domain.model.IAggregateRoot
 import com.synebula.gaea.domain.repository.IRepository
+import com.synebula.gaea.ext.firstCharLowerCase
+import javax.annotation.Resource
 
 
 /**
@@ -22,6 +27,8 @@ open class Service<TRoot : IAggregateRoot<ID>, ID>(
     protected open var repository: IRepository<TRoot, ID>,
     protected open var mapper: IObjectMapper,
 ) : IService<ID> {
+    @Resource
+    protected open var bus: IBus<Any>? = null
 
     /**
      * 增加对象
@@ -73,7 +80,17 @@ open class Service<TRoot : IAggregateRoot<ID>, ID>(
      * @param id 对象ID
      */
     override fun remove(id: ID) {
+        val beforeRemoveEvent = BeforeRemoveEvent<TRoot, ID>(id)
+        this.bus?.publish(
+            "${this.clazz.simpleName.firstCharLowerCase()}${BeforeRemoveEvent::class.java.simpleName}",
+            beforeRemoveEvent
+        )
         this.repository.remove(id)
+        val afterRemoveEvent = AfterRemoveEvent<TRoot, ID>(id)
+        this.bus?.publish(
+            "${this.clazz.simpleName.firstCharLowerCase()}${AfterRemoveEvent::class.java.simpleName}",
+            afterRemoveEvent
+        )
     }
 
     /**

@@ -1,8 +1,5 @@
 package com.synebula.gaea.bus
 
-import com.synebula.gaea.bus.messagebus.AsyncMessageBus
-import com.synebula.gaea.bus.messagebus.IMessageBus
-import com.synebula.gaea.bus.messagebus.MessageBus
 import org.junit.Test
 import java.util.concurrent.Executors
 
@@ -21,36 +18,36 @@ class BusTest {
 
     @Test
     fun testAsyncBus() {
-        val bus: IBus<Any> = AsyncBus(Executors.newFixedThreadPool(10))
+        val bus: IBus<Any> = Bus(Executors.newFixedThreadPool(10))
         val subscriber = TestSubscriber()
         bus.register(subscriber, subscriber.javaClass.declaredMethods[0])
         bus.register(subscriber, subscriber.javaClass.declaredMethods[1])
-        bus.publish("Hello world")
-        bus.publish(subscriber)
+        bus.publishAsync("Hello world")
+        bus.publishAsync(subscriber)
     }
 
     @Test
-    fun testMessageBus() {
-        val bus: IMessageBus<Any> = MessageBus()
+    fun testTopicBus() {
+        val bus: IBus<Any> = Bus()
         val subscriber = TestTopicSubscriber()
         bus.register(subscriber)
         bus.publish("hello", "Hello world")
-        bus.publish("whoami", subscriber)
+        bus.publishAsync("whoami", subscriber)
     }
 
     @Test
-    fun testMessageBus2() {
-        val bus: IMessageBus<Any> = AsyncMessageBus(Executors.newFixedThreadPool(10))
+    fun testAsyncTopicBus() {
+        val bus: IBus<Any> = Bus(Executors.newFixedThreadPool(10))
         val subscriber = TestTopicSubscriber()
         val subscriber2 = TestTopicSubscriber2()
         bus.register(subscriber)
         bus.register(subscriber2)
-        bus.publish("hello", "Hello world")
-        bus.publish("whoami", subscriber)
+        bus.publishAsync("hello", "Hello world")
+        bus.publishAsync("whoami", subscriber)
 
         bus.unregister(subscriber2)
-        bus.publish("hello", "Hello world")
-        bus.publish("whoami", subscriber)
+        bus.publishAsync("hello", "Hello world")
+        bus.publishAsync("whoami", subscriber)
     }
 
     internal class TestSubscriber {

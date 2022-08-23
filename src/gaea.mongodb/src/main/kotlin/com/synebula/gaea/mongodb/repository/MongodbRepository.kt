@@ -40,7 +40,7 @@ open class MongodbRepository<TAggregateRoot : IAggregateRoot<ID>, ID>(
         this.repo.save(list)
     }
 
-    override fun <TAggregateRoot> count(params: Map<String, Any>?): Int {
+    override fun count(params: Map<String, Any>?): Int {
         val query = Query()
         return this.repo.count(query.where(params, clazz), clazz).toInt()
     }

@@ -14,7 +14,7 @@
 package com.synebula.gaea.bus
 
 /**
- * Wraps an message that was posted, but which had no subscribers and thus could not be delivered.
+ * Wraps a message that was posted, but which had no subscribers and thus could not be delivered.
  *
  *
  * Registering a DeadMessage subscriber is useful for debugging or logging, as it can detect

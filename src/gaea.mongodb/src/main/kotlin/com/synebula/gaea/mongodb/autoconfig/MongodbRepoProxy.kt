@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.MongoTemplate
 import java.lang.reflect.Method
 
 class MongodbRepoProxy(
-    private var supertype: Class<*>, private var beanFactory: BeanFactory, implementBeanNames: Array<String> = arrayOf()
+    private var supertype: Class<*>, private var beanFactory: BeanFactory
 ) : Proxy() {
 
     private var mongodbRepo: Any
@@ -28,15 +28,11 @@ class MongodbRepoProxy(
             interfaceClazz = IQuery::class.java
         }
 
-        if (implementBeanNames.isEmpty()) {
-            val constructor = clazz.getConstructor(Class::class.java, MongoTemplate::class.java)
-            this.mongodbRepo = constructor.newInstance(
-                this.supertype.getGenericInterface(interfaceClazz)!!.actualTypeArguments[0],
-                this.beanFactory.getBean(MongoTemplate::class.java)
-            )
-        } else {
-            this.mongodbRepo = this.beanFactory.getBean(implementBeanNames[0])
-        }
+        val constructor = clazz.getConstructor(Class::class.java, MongoTemplate::class.java)
+        this.mongodbRepo = constructor.newInstance(
+            this.supertype.getGenericInterface(interfaceClazz)!!.actualTypeArguments[0],
+            this.beanFactory.getBean(MongoTemplate::class.java)
+        )
     }
 
     /**
