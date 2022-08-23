@@ -15,11 +15,11 @@ class AccessLogHandler : AnnotationHandler {
     @Autowired
     lateinit var logger: ILogger
 
-    override fun handle(clazz: Class<Any>, func: Method, args: Array<Any>, exception: Exception?) {
+    override fun handle(obj: Any, func: Method, args: Array<Any>, exception: Exception?) {
         val attributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes
         val request = attributes.request
         logger.info(
-            "${request.method} ${request.requestURL} from ${request.remoteAddr}, call function ${clazz.name}.${func.name}, args: ${
+            "${request.method} ${request.requestURL} from ${request.remoteAddr}, call function ${func.toGenericString()}, args: ${
                 mapper.writeValueAsString(
                     args
                 )
