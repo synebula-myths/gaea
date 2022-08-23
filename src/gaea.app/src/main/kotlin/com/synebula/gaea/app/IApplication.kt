@@ -1,7 +1,7 @@
 package com.synebula.gaea.app
 
 import com.google.gson.Gson
-import com.synebula.gaea.app.struct.HttpMessage
+import com.synebula.gaea.data.message.HttpMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.log.ILogger
 import org.springframework.security.core.context.SecurityContextHolder
@@ -16,7 +16,7 @@ interface IApplication {
     /**
      * 日志组件
      */
-    var logger: ILogger?
+    var logger: ILogger
 
 
     /**
@@ -26,11 +26,11 @@ interface IApplication {
         val msg = HttpMessage()
         try {
             process(msg)
-            logger?.debug(this, "$name business execute success")
+            logger.debug(this, "$name business execute success")
         } catch (ex: Exception) {
             msg.status = Status.Error
             msg.message = if (error.isEmpty()) ex.message ?: "" else "$error: ${ex.message}"
-            logger?.error(this, ex, "[$name]$error: ${ex.message}")
+            logger.error(this, ex, "[$name]$error: ${ex.message}")
         }
         return msg
     }
@@ -42,9 +42,9 @@ interface IApplication {
         val msg = HttpMessage()
         try {
             process(msg)
-            logger?.debug(this, "$name business execute success")
+            logger.debug(this, "$name business execute success")
         } catch (ex: Exception) {
-            logger?.error(this, ex, "[$name]$error。异常消息将抛出！: ${ex.message}")
+            logger.error(this, ex, "[$name]$error。异常消息将抛出！: ${ex.message}")
             throw RuntimeException(error, ex)
         }
         return msg
@@ -59,12 +59,12 @@ interface IApplication {
             val authentication = SecurityContextHolder.getContext().authentication.principal.toString()
             try {
                 val gson = Gson()
-                return gson.fromJson<T>(authentication, clazz)
+                return gson.fromJson(authentication, clazz)
             } catch (ex: Exception) {
-                logger?.error(this, ex, "[$name]解析用户信息异常！用户信息：$authentication: ${ex.message}")
+                logger.error(this, ex, "[$name]解析用户信息异常！用户信息：$authentication: ${ex.message}")
             }
         } catch (ex: Exception) {
-            logger?.error(this, ex, "[$name]获取用户信息异常！${ex.message}")
+            logger.error(this, ex, "[$name]获取用户信息异常！${ex.message}")
         }
         return null
     }

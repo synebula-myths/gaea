@@ -1,5 +1,5 @@
 package com.synebula.gaea.domain.model
 
-abstract class AggregateRoot<TKey> : Entity<TKey>(), IAggregateRoot<TKey> {
+abstract class AggregateRoot<ID> : Entity<ID>(), IAggregateRoot<ID> {
     override var alive: Boolean = true
 }

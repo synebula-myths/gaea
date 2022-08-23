@@ -30,14 +30,15 @@ class ClassScanner(private var packageName: String) {
     /**
      * 文件过滤器
      */
-    private val fileFilter = FileFilter { file -> file.isDirectory || file.name.endsWith(".class") || file.name.endsWith(".jar") }
+    private val fileFilter =
+        FileFilter { file -> file.isDirectory || file.name.endsWith(".class") || file.name.endsWith(".jar") }
 
 
     /**
      * 构造方法。
      *
      * @param packageName 需要扫描的包名。
-     * @param classFilter
+     * @param classFilter 过滤器
      */
     constructor(packageName: String, vararg classFilter: IClassFilter) : this(packageName) {
         this.classFilters = classFilter
@@ -81,12 +82,15 @@ class ClassScanner(private var packageName: String) {
                 val files = scanDirectory(realPath)
                 for (file in files) {
                     val fileName = file.toString()
-                    if (fileName.contains(".jar") && !fileName.endsWith(".class"))
+                    if (fileName.contains(".jar") && !fileName.endsWith(".class")) {
                         scanJar(file)
-                    else if (fileName.endsWith(".class"))
-                        scanClass(realPath, file)
+                    }
+//                    else if (fileName.endsWith(".class")) {
+//                    }
+                    scanClass(realPath, file)
                 }
-            } catch (e: UnsupportedEncodingException) {
+            } catch (ex: UnsupportedEncodingException) {
+                throw ex
             }
         }
     }
@@ -145,6 +149,7 @@ class ClassScanner(private var packageName: String) {
             }
             jar.close()
         } catch (ex: Throwable) {
+            throw ex
         }
 
     }
@@ -191,7 +196,7 @@ class ClassScanner(private var packageName: String) {
                     }
                 }
             } catch (ex: Throwable) {
-
+                throw ex
             }
 
         }

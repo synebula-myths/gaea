@@ -3,7 +3,6 @@ package com.synebula.gaea.log.logger
 /**
  * TRACE级别日志接口
  *
- * @author Looly
  */
 interface ITraceLogger {
     /**

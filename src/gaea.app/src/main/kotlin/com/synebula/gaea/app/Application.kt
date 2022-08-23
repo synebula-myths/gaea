@@ -17,13 +17,12 @@ import javax.annotation.Resource
  * @param query 业务查询服务
  * @param logger 日志组件
  */
-open class Application<TCommand : ICommand, TView, TKey>(
+open class Application<TCommand : ICommand, TView, ID>(
     override var name: String,
-    override var clazz: Class<TView>,
-    override var service: IService<TKey>,
-    override var query: IQuery,
-    override var logger: ILogger?
-) : ICommandApp<TCommand, TKey>, IQueryApp<TView, TKey> {
+    override var service: IService<ID>,
+    override var query: IQuery<TView, ID>,
+    override var logger: ILogger,
+) : ICommandApp<TCommand, ID>, IQueryApp<TView, ID> {
 
     @Resource
     override var jsonSerializer: IJsonSerializer? = null

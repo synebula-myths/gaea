@@ -8,5 +8,6 @@ package com.synebula.gaea.domain.service
  * @since 2020-05-15
  */
 open class Command : ICommand {
+    override var payload = ""
     override var timestamp = 0L
 }

@@ -8,6 +8,12 @@ package com.synebula.gaea.domain.service
  * @since 2020-05-15
  */
 interface ICommand {
+
+    /**
+     * 命令载荷, 实际的业务数据
+     */
+    var payload: String
+
     /**
      * 时间戳。
      */

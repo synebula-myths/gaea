@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * 使用 log4j進行日志记录。
  *
- * @author reize
+ * @author alex
  * @version 0.0.1
  * @since 2016年9月18日 下午2:13:43
  */

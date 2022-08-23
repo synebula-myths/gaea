@@ -1,6 +1,7 @@
 package com.synebula.gaea.data.code
 
 import java.util.*
+import kotlin.math.pow
 
 /**
  * 固定长度随机编号生成。
@@ -9,8 +10,8 @@ import java.util.*
  * @since 2016年10月24日 上午10:58:05
  */
 class FixedRandomCode(
-        //生成的随机编号长度。
-        var length: Int
+    //生成的随机编号长度。
+    var length: Int,
 ) : ICodeGenerator<String> {
 
     /**
@@ -32,12 +33,12 @@ class FixedRandomCode(
         var format = String.format("%s%d%dd", "%", 0, calcMaxLength)
         val count = this.length / calcMaxLength
         for (i in 0 until count) {
-            buffer.append(String.format(format, (random.nextDouble() * Math.pow(10.0, calcMaxLength.toDouble())).toInt()))
+            buffer.append(String.format(format, (random.nextDouble() * 10.0.pow(calcMaxLength.toDouble())).toInt()))
         }
         val last = this.length % calcMaxLength
         if (last != 0) {
             format = String.format("%s%d%dd", "%", 0, last)
-            buffer.append(String.format(format, (random.nextDouble() * Math.pow(10.0, last.toDouble())).toInt()))
+            buffer.append(String.format(format, (random.nextDouble() * 10.0.pow(last.toDouble())).toInt()))
         }
         return buffer.toString()
     }

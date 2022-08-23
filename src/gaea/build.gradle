@@ -1,8 +1,8 @@
 publishing {
     publications {
         publish(MavenPublication) {
-            group 'com.synebula'
-            artifactId 'gaea'
+            group "${project.group}"
+            artifactId "${project.name}"
             version "$version"
             from components.java
         }

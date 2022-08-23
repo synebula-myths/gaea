@@ -2,7 +2,6 @@ package com.synebula.gaea.log.logger
 
 /**
  * WARN级别日志接口
- * @author Looly
  */
 interface IWarnLogger {
     /**

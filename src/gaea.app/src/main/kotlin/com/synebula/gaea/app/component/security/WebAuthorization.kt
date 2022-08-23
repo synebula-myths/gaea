@@ -1,7 +1,7 @@
 package com.synebula.gaea.app.component.security
 
-import com.synebula.gaea.app.struct.HttpMessage
 import com.synebula.gaea.app.struct.exception.TokenCloseExpireException
+import com.synebula.gaea.data.message.HttpMessage
 import com.synebula.gaea.data.message.Status
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken

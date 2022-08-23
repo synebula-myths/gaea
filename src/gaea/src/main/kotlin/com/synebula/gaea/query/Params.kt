@@ -1,7 +1,5 @@
 package com.synebula.gaea.query
 
-import com.synebula.gaea.query.type.Order
-
 /**
  * class 分页参数信息
  *

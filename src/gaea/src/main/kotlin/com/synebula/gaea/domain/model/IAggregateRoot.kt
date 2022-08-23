@@ -5,7 +5,7 @@ package com.synebula.gaea.domain.model
  *
  * @author alex
  **/
-interface IAggregateRoot<TKey> : IEntity<TKey> {
+interface IAggregateRoot<ID> : IEntity<ID> {
 
     /**
      * 实体对象是否有效。
