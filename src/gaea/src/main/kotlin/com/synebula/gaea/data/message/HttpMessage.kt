@@ -7,17 +7,24 @@ class HttpMessage() : DataMessage<Any>() {
 
     var serializer: IJsonSerializer? = null
 
-    constructor(data: Any) : this() {
+    constructor(data: Any, serializer: IJsonSerializer? = null) : this() {
         this.data = data
+        this.serializer = serializer
     }
 
-    constructor(status: Int, message: String) : this() {
+    constructor(status: Int, message: String, serializer: IJsonSerializer? = null) : this() {
         this.status = status
         this.message = message
+        this.serializer = serializer
     }
 
-    constructor(status: Int, data: Any, message: String) : this(status, message) {
+    constructor(status: Int, data: Any, message: String, serializer: IJsonSerializer? = null) : this(
+        status,
+        message,
+        serializer
+    ) {
         this.data = data
+        this.serializer = serializer
     }
 
     fun load(msg: DataMessage<*>) {
