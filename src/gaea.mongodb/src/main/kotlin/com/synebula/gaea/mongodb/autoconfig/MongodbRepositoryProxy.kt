@@ -10,7 +10,7 @@ import org.springframework.beans.factory.BeanFactory
 import org.springframework.data.mongodb.core.MongoTemplate
 import java.lang.reflect.Method
 
-class MongodbRepoProxy(
+class MongodbRepositoryProxy(
     private var supertype: Class<*>, private var beanFactory: BeanFactory
 ) : Proxy() {
 

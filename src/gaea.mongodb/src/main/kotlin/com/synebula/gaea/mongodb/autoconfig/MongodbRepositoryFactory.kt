@@ -4,11 +4,11 @@ import com.synebula.gaea.spring.autoconfig.Factory
 import com.synebula.gaea.spring.autoconfig.Proxy
 import org.springframework.beans.factory.BeanFactory
 
-class MongodbRepoFactory(
+class MongodbRepositoryFactory(
     supertype: Class<*>,
     var beanFactory: BeanFactory,
 ) : Factory(supertype) {
     override fun createProxy(): Proxy {
-        return MongodbRepoProxy(supertype, this.beanFactory)
+        return MongodbRepositoryProxy(supertype, this.beanFactory)
     }
 }

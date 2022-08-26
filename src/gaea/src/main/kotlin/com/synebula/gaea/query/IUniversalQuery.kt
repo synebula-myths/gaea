@@ -20,7 +20,7 @@ interface IUniversalQuery {
      * @param params 查询条件。
      * @return 视图列表
      */
-    fun <TView> list(params: Map<String, Any>?, clazz: Class<TView>): List<TView>
+    fun <TView> list(params: Map<String, String>?, clazz: Class<TView>): List<TView>
 
     /**
      * 根据条件查询符合条件记录的数量
@@ -28,7 +28,7 @@ interface IUniversalQuery {
      * @param params 查询条件。
      * @return 数量
      */
-    fun <TView> count(params: Map<String, Any>?, clazz: Class<TView>): Int
+    fun <TView> count(params: Map<String, String>?, clazz: Class<TView>): Int
 
     /**
      * 根据实体类条件查询所有符合条件记录（分页查询）

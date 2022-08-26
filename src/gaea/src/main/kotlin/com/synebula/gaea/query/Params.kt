@@ -9,7 +9,7 @@ package com.synebula.gaea.query
  */
 data class Params(var page: Int = 1, var size: Int = 10) {
 
-    private var _parameters = linkedMapOf<String, Any>()
+    private var _parameters = linkedMapOf<String, String>()
     private var _orders = linkedMapOf<String, Order>()
 
     /**
@@ -27,41 +27,23 @@ data class Params(var page: Int = 1, var size: Int = 10) {
             this._orders = value
         }
         get() {
-            if (this._parameters.keys.count { it.startsWith("@") } > 0) {
-                val params = linkedMapOf<String, Any>()
-                this._parameters.forEach {
-                    if (it.key.startsWith("@")) {
-                        this._orders[it.key.removePrefix("@")] = Order.valueOf(it.value.toString())
-                    } else
-                        params[it.key] = it.value
-                }
-                this._parameters = params
-            }
+            this.filterOrderParams()
             return this._orders
         }
 
     /**
      * 查询条件。
      */
-    var parameters: LinkedHashMap<String, Any>
+    var parameters: LinkedHashMap<String, String>
         set(value) {
             this._parameters = value
         }
         get() {
-            if (this._parameters.keys.count { it.startsWith("@") } > 0) {
-                val params = linkedMapOf<String, Any>()
-                this._parameters.forEach {
-                    if (it.key.startsWith("@")) {
-                        this._orders[it.key.removePrefix("@")] = Order.valueOf(it.value.toString())
-                    } else
-                        params[it.key] = it.value
-                }
-                this._parameters = params
-            }
+            this.filterOrderParams()
             return this._parameters
         }
 
-    constructor(page: Int, size: Int, parameters: LinkedHashMap<String, Any>) : this(page, size) {
+    constructor(page: Int, size: Int, parameters: LinkedHashMap<String, String>) : this(page, size) {
         this.page = page
         this.size = size
         this._parameters = parameters
@@ -70,7 +52,7 @@ data class Params(var page: Int = 1, var size: Int = 10) {
     /**
      * 添加查询条件
      */
-    fun where(field: String, value: Any): Params {
+    fun where(field: String, value: String): Params {
         _parameters[field] = value
         return this
     }
@@ -81,5 +63,21 @@ data class Params(var page: Int = 1, var size: Int = 10) {
     fun order(field: String, order: Order = Order.ASC): Params {
         _orders[field] = order
         return this
+    }
+
+    /**
+     * 过滤参数中的排序字段
+     */
+    private fun filterOrderParams() {
+        if (this._parameters.keys.count { it.startsWith("@") } > 0) {
+            val params = linkedMapOf<String, String>()
+            this._parameters.forEach {
+                if (it.key.startsWith("@")) {
+                    this._orders[it.key.removePrefix("@")] = Order.valueOf(it.value)
+                } else
+                    params[it.key] = it.value
+            }
+            this._parameters = params
+        }
     }
 }

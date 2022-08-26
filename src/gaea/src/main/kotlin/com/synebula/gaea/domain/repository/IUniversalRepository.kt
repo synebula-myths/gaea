@@ -61,5 +61,5 @@ interface IUniversalRepository {
      * @param params 查询条件。
      * @return int
      */
-    fun <TAggregateRoot> count(params: Map<String, Any>?, clazz: Class<TAggregateRoot>): Int
+    fun <TAggregateRoot> count(params: Map<String, String>?, clazz: Class<TAggregateRoot>): Int
 }

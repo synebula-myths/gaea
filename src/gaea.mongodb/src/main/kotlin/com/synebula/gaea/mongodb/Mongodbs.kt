@@ -30,7 +30,7 @@ fun Query.select(fields: Array<String>): Query {
  * @param onWhere 获取字段查询方式的方法
  */
 fun Query.where(
-    params: Map<String, Any>?,
+    params: Map<String, String>?,
     onWhere: ((v: String) -> Where?) = { null },
     onFieldType: ((v: String) -> Class<*>?) = { null }
 ): Query {
@@ -38,15 +38,15 @@ fun Query.where(
     if (params != null) {
         for (param in params) {
             val key = param.key
-            var value = param.value
+            var value: Any = param.value
 
             //日期类型特殊处理为String类型
             val fieldType = onFieldType(key)
             if (fieldType != null && value.javaClass != fieldType) {
                 when (fieldType) {
-                    Date::class.java -> value = DateTime(value.toString(), "yyyy-MM-ddTHH:mm:ss").date
-                    Int::class.java -> value = value.toString().toInt()
-                    Integer::class.java -> value = value.toString().toInt()
+                    Date::class.java -> value = DateTime(param.value, "yyyy-MM-ddTHH:mm:ss").date
+                    Int::class.java -> value = param.value.toInt()
+                    Integer::class.java -> value = param.value.toInt()
                 }
             }
 
@@ -58,14 +58,15 @@ fun Query.where(
                 val field = where.children.ifEmpty { key }
                 var criteria = Criteria.where(field)
                 criteria = when (where.operator) {
-                    Operator.eq -> criteria.`is`(value)
-                    Operator.ne -> criteria.ne(value)
-                    Operator.lt -> criteria.lt(value)
-                    Operator.gt -> criteria.gt(value)
-                    Operator.lte -> criteria.lte(value)
-                    Operator.gte -> criteria.gte(value)
-                    Operator.like -> criteria.regex(value.toString(), if (where.sensitiveCase) "" else "i")
-                    Operator.default -> tryRangeWhere(param.key, value, onFieldType)
+                    Operator.Eq -> criteria.`is`(value)
+                    Operator.Ne -> criteria.ne(value)
+                    Operator.Lt -> criteria.lt(value)
+                    Operator.Gt -> criteria.gt(value)
+                    Operator.Lte -> criteria.lte(value)
+                    Operator.Gte -> criteria.gte(value)
+                    Operator.Like -> criteria.regex(value.toString(), if (where.sensitiveCase) "" else "i")
+                    Operator.Range -> tryRangeWhere(param.key, value, onFieldType)
+                    Operator.Default -> tryRangeWhere(param.key, value, onFieldType)
                 }
                 list.add(if (where.children.isEmpty()) criteria else Criteria.where(key).elemMatch(criteria))
             }
@@ -103,7 +104,7 @@ private fun tryRangeWhere(key: String, value: Any, onFieldType: ((v: String) -> 
  *
  * @param params 参数列表
  */
-fun Query.where(params: Map<String, Any>?, clazz: Class<*>): Query {
+fun Query.where(params: Map<String, String>?, clazz: Class<*>): Query {
     var field: Field?
     return this.where(params, { name ->
         field = clazz.declaredFields.find { it.name == name }

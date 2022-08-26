@@ -25,7 +25,7 @@ interface IQuery<TView, ID> {
      * @param params 查询条件。
      * @return 视图列表
      */
-    fun list(params: Map<String, Any>?): List<TView>
+    fun list(params: Map<String, String>?): List<TView>
 
     /**
      * 根据条件查询符合条件记录的数量
@@ -33,7 +33,7 @@ interface IQuery<TView, ID> {
      * @param params 查询条件。
      * @return 数量
      */
-    fun count(params: Map<String, Any>?): Int
+    fun count(params: Map<String, String>?): Int
 
     /**
      * 根据实体类条件查询所有符合条件记录（分页查询）

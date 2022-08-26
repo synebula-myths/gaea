@@ -35,7 +35,7 @@ import java.util.logging.Logger
  * them together as a set ([Dagger](https://dagger.dev/dev-guide/multibindings), [Guice](https://github.com/google/guice/wiki/Multibindings), [Spring](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-autowired-annotation)).
  *
  *
- * To react to messages, we recommend a reactive-streams framework like [RxJava](https://github.com/ReactiveX/RxJava/wiki) (supplemented with its [RxAndroid](https://github.com/ReactiveX/RxAndroid) extension if you are building for
+ * To react to messages, we recommend a reactive-streams framework Like [RxJava](https://github.com/ReactiveX/RxJava/wiki) (supplemented with its [RxAndroid](https://github.com/ReactiveX/RxAndroid) extension if you are building for
  * Android) or [Project Reactor](https://projectreactor.io/). (For the basics of
  * translating code from using a message bus to using a reactive-streams framework, see these two
  * guides: [1](https://blog.jkl.gg/implementing-an-message-bus-with-rxjava-rxbus/), [2](https://lorentzos.com/rxjava-as-message-bus-the-right-way-10a36bdd49ba).) Some usages
@@ -49,7 +49,7 @@ import java.util.logging.Logger
  *  * It makes the cross-references between producer and subscriber harder to find. This can
  * complicate debugging, lead to unintentional reentrant calls, and force apps to eagerly
  * initialize all possible subscribers at startup time.
- *  * It uses reflection in ways that break when code is processed by optimizers/minimizer like
+ *  * It uses reflection in ways that break when code is processed by optimizers/minimizer Like
  * [R8 and Proguard](https://developer.android.com/studio/build/shrink-code).
  *  * It doesn't offer a way to wait for multiple messages before taking action. For example, it
  * doesn't offer a way to wait for multiple producers to all report that they're "ready," nor
@@ -137,7 +137,7 @@ import java.util.logging.Logger
  * @author Cliff
  * @since 10.0
  * @param identifier a brief name for this bus, for logging purposes. Should/home/alex/privacy/project/myths/gaea be a valid Java
- * @param executor the default executor this event bus uses for dispatching events to subscribers.
+ * @param executor the Default executor this event bus uses for dispatching events to subscribers.
  * @param dispatcher message dispatcher.
  * @param exceptionHandler Handler for subscriber exceptions.
  */
@@ -159,7 +159,7 @@ open class Bus<T : Any>(
      * identifier.
      */
     @JvmOverloads
-    constructor(identifier: String = "default") : this(
+    constructor(identifier: String = "Default") : this(
         identifier,
         Executor { it.run() },
         Dispatcher.perThreadDispatchQueue(),
@@ -173,7 +173,7 @@ open class Bus<T : Any>(
      * @since 16.0
      */
     constructor(exceptionHandler: SubscriberExceptionHandler<T>) : this(
-        "default",
+        "Default",
         Executor { it.run() },
         Dispatcher.perThreadDispatchQueue(),
         exceptionHandler
@@ -203,7 +203,7 @@ open class Bus<T : Any>(
      * @since 16.0
      */
     constructor(executor: Executor, subscriberExceptionHandler: SubscriberExceptionHandler<T>) : this(
-        "default",
+        "Default",
         executor,
         Dispatcher.legacyAsync(),
         subscriberExceptionHandler
@@ -216,7 +216,7 @@ open class Bus<T : Any>(
      * down the executor after the last message has been posted to this message bus.
      */
     constructor(executor: Executor) : this(
-        "default",
+        "Default",
         executor,
         Dispatcher.legacyAsync(),
         LoggingHandler()

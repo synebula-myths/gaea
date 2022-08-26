@@ -17,7 +17,7 @@ buildscript {
 
 subprojects {
     group 'com.synebula'
-    version '1.3.0'
+    version '1.4.0'
 
     buildscript {
         repositories {
@@ -52,5 +52,24 @@ subprojects {
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
+    }
+
+    publishing {
+//    repositories {
+//        maven {
+//            allowInsecureProtocol = true
+//            url = "$nexus_url"
+//            credentials {
+//                username = "$nexus_usr"
+//                password = "$nexus_pwd"
+//            }
+//        }
+//    }
+
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
     }
 }

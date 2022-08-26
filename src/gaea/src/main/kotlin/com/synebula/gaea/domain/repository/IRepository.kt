@@ -68,7 +68,7 @@ interface IRepository<TAggregateRoot : IAggregateRoot<ID>, ID> {
      * @param params 查询条件。
      * @return int
      */
-    fun count(params: Map<String, Any>?): Int
+    fun count(params: Map<String, String>?): Int
 
 }
 

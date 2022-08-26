@@ -9,14 +9,14 @@ import org.springframework.beans.factory.support.GenericBeanDefinition
 import org.springframework.core.annotation.AnnotationAttributes
 import org.springframework.core.type.AnnotationMetadata
 
-class MongodbRepoRegister : Register() {
+class MongodbRepositoryRegister : Register() {
     override fun scan(metadata: AnnotationMetadata): Map<String, BeanDefinition> {
         val result = mutableMapOf<String, BeanDefinition>()
 
         // 获取注解参数信息:basePackages
         val attributes = AnnotationAttributes(
             metadata.getAnnotationAttributes(
-                MongodbRepoScan::class.java.name
+                MongodbRepositoryScan::class.java.name
             ) ?: mapOf()
         )
         val basePackages = attributes.getStringArray("basePackages")
@@ -44,7 +44,7 @@ class MongodbRepoRegister : Register() {
                 builder.addConstructorArgValue(beanClazz)
                 builder.addConstructorArgValue(this._beanFactory)
                 val definition = builder.rawBeanDefinition as GenericBeanDefinition
-                definition.beanClass = MongodbRepoFactory::class.java
+                definition.beanClass = MongodbRepositoryFactory::class.java
                 definition.autowireMode = GenericBeanDefinition.AUTOWIRE_BY_TYPE
                 result[beanClazz.name] = definition
             }
@@ -59,7 +59,7 @@ class MongodbRepoRegister : Register() {
         builder.addConstructorArgValue(this._beanFactory)
         builder.addConstructorArgValue(emptyArray<String>())
         val definition = builder.rawBeanDefinition as GenericBeanDefinition
-        definition.beanClass = MongodbRepoFactory::class.java
+        definition.beanClass = MongodbRepositoryFactory::class.java
         definition.autowireMode = GenericBeanDefinition.AUTOWIRE_BY_TYPE
         result[IRepository::class.java.name] = definition
     }

@@ -30,7 +30,7 @@ open class MongodbUniversalQuery(var template: MongoTemplate) : IUniversalQuery 
         return this.template.findOne(whereId(id), clazz, this.collection(clazz))
     }
 
-    override fun <TView> list(params: Map<String, Any>?, clazz: Class<TView>): List<TView> {
+    override fun <TView> list(params: Map<String, String>?, clazz: Class<TView>): List<TView> {
         val fields = this.fields(clazz)
         val query = Query()
         query.where(params, clazz)
@@ -38,7 +38,7 @@ open class MongodbUniversalQuery(var template: MongoTemplate) : IUniversalQuery 
         return this.find(query, clazz)
     }
 
-    override fun <TView> count(params: Map<String, Any>?, clazz: Class<TView>): Int {
+    override fun <TView> count(params: Map<String, String>?, clazz: Class<TView>): Int {
         val query = Query()
         return this.template.count(query.where(params, clazz), this.collection(clazz)).toInt()
     }

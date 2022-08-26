@@ -8,5 +8,5 @@ import java.lang.annotation.Inherited
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 @Inherited
-@Import(MongodbRepoRegister::class)
-annotation class MongodbRepoScan(val basePackages: Array<String> = [])
+@Import(MongodbRepositoryRegister::class)
+annotation class MongodbRepositoryScan(val basePackages: Array<String> = [])

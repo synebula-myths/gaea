@@ -19,11 +19,3 @@ dependencies {
     api group: 'com.auth0', name: 'java-jwt', version: '3.14.0'
 }
 
-publishing {
-    publications {
-        publish(MavenPublication) {
-            from components.java
-        }
-    }
-}
-

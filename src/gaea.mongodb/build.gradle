@@ -3,11 +3,3 @@ dependencies {
     api project(":src:gaea.spring")
     api("org.springframework.boot:spring-boot-starter-data-mongodb:$spring_version")
 }
-
-publishing {
-    publications {
-        publish(MavenPublication) {
-            from components.java
-        }
-    }
-}

@@ -1,0 +1,11 @@
+ext {
+    jassist_version = '3.29.0-GA'
+}
+
+dependencies {
+    api project(":src:gaea")
+
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:$spring_version")
+    implementation("org.javassist:javassist:$jassist_version")
+}
+

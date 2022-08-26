@@ -31,7 +31,7 @@ open class MongodbQuery<TView, ID>(override var clazz: Class<TView>, var templat
         return this.template.findOne(whereId(id), clazz, this.collection(clazz))
     }
 
-    override fun list(params: Map<String, Any>?): List<TView> {
+    override fun list(params: Map<String, String>?): List<TView> {
         val fields = this.fields(clazz)
         val query = Query()
         query.where(params, clazz)
@@ -39,7 +39,7 @@ open class MongodbQuery<TView, ID>(override var clazz: Class<TView>, var templat
         return this.find(query, clazz)
     }
 
-    override fun count(params: Map<String, Any>?): Int {
+    override fun count(params: Map<String, String>?): Int {
         val query = Query()
         return this.template.count(query.where(params, clazz), this.collection(clazz)).toInt()
     }

@@ -26,7 +26,7 @@ interface IQueryApp<TView, ID> : IApplication {
 
     @Method("获取列表数据")
     @GetMapping
-    fun list(@RequestParam params: LinkedHashMap<String, Any>): HttpMessage {
+    fun list(@RequestParam params: LinkedHashMap<String, String>): HttpMessage {
         val data = this.query.list(params)
         return HttpMessage(data)
     }
@@ -36,7 +36,7 @@ interface IQueryApp<TView, ID> : IApplication {
     fun paging(
         @PathVariable size: Int,
         @PathVariable page: Int,
-        @RequestParam parameters: LinkedHashMap<String, Any>
+        @RequestParam parameters: LinkedHashMap<String, String>
     ): HttpMessage {
         val params = Params(page, size, parameters)
         val data = this.query.paging(params)

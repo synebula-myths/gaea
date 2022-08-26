@@ -54,7 +54,7 @@ open class MongodbUniversalRepository(private var repo: MongoTemplate) : IUniver
         this.repo.insert(roots, clazz)
     }
 
-    override fun <TAggregateRoot> count(params: Map<String, Any>?, clazz: Class<TAggregateRoot>): Int {
+    override fun <TAggregateRoot> count(params: Map<String, String>?, clazz: Class<TAggregateRoot>): Int {
         val query = Query()
         return this.repo.count(query.where(params, clazz), clazz).toInt()
     }
