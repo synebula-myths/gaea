@@ -89,12 +89,13 @@ abstract class AppAspect {
         val module = clazz.annotations.find { it is Module }
         if (module != null && module is Module) {
             moduleName = module.name
-        }
-        // 3.尝试找类的name字段作为模块名称
-        try {
-            val nameGetter = clazz.getMethod("getName")
-            moduleName = nameGetter.invoke(obj).toString()
-        } catch (_: NoSuchMethodException) {
+        } else {
+            // 3.尝试找类的name字段作为模块名称
+            try {
+                val nameGetter = clazz.getMethod("getName")
+                moduleName = nameGetter.invoke(obj).toString()
+            } catch (_: NoSuchMethodException) {
+            }
         }
 
         return moduleName
