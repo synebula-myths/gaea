@@ -1,6 +1,8 @@
 package com.synebula.gaea.data.message
 
-open class StatusMessage {
+import java.util.*
+
+open class StatusMessage : IMessage {
     /**
      * 状态。200成功，400错误，500异常
      */
@@ -14,6 +16,10 @@ open class StatusMessage {
     /**
      * 附带提示消息
      */
-    var message = ""
+    override var message = ""
 
+    /**
+     * 时间戳。
+     */
+    override var timestamp = Date().time
 }

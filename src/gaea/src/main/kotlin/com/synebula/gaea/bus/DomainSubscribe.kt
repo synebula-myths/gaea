@@ -13,6 +13,8 @@
  */
 package com.synebula.gaea.bus
 
+import kotlin.reflect.KClass
+
 /**
  * Marks a method as a message subscriber.
  *
@@ -29,8 +31,14 @@ package com.synebula.gaea.bus
  * @author Cliff
  * @since 10.0
  *
- * @param topics method subscribe topics
+ * @param messageClass class of message
+ * @param domainClass subscriber for class of domain
+ * @param domain subscriber for domain
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
-annotation class Subscribe(val topics: Array<String> = [])
+annotation class DomainSubscribe(
+    val messageClass: KClass<*>,
+    val domainClass: KClass<*> = Nothing::class,
+    val domain: String = ""
+)

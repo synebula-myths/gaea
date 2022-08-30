@@ -1,7 +1,6 @@
 package com.synebula.gaea.mongodb.query
 
 
-import com.synebula.gaea.ext.fieldNames
 import com.synebula.gaea.ext.firstCharLowerCase
 import com.synebula.gaea.mongodb.order
 import com.synebula.gaea.mongodb.select
@@ -11,6 +10,7 @@ import com.synebula.gaea.query.IUniversalQuery
 import com.synebula.gaea.query.Page
 import com.synebula.gaea.query.Params
 import com.synebula.gaea.query.Table
+import com.synebula.gaea.reflect.fieldNames
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -70,14 +70,7 @@ open class MongodbUniversalQuery(var template: MongoTemplate) : IUniversalQuery 
     }
 
     fun <TView> fields(clazz: Class<TView>): Array<String> {
-        val fields = mutableListOf<String>()
-        fields.addAll(clazz.fieldNames())
-        var parent = clazz.superclass
-        while (parent != Any::class.java) {
-            fields.addAll(clazz.superclass.fieldNames())
-            parent = parent.superclass
-        }
-        return fields.toTypedArray()
+        return clazz.fieldNames().toTypedArray()
     }
 
     /**

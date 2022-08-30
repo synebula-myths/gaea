@@ -13,6 +13,7 @@
  */
 package com.synebula.gaea.bus
 
+import com.synebula.gaea.data.message.messageTopic
 import com.synebula.gaea.reflect.supertypes
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
@@ -143,7 +144,16 @@ open class SubscriberRegistry<T : Any>(private val bus: IBus<T>) {
         val methodsInListener = mutableMapOf<String, MutableList<Subscriber<T>>>()
         val clazz: Class<*> = subscriber.javaClass
         for (method in getAnnotatedMethods(clazz)) {
-            var topics = method.getAnnotation(Subscribe::class.java).topics
+            var topics: Array<String>
+            if (method.isAnnotationPresent(Subscribe::class.java))
+                topics = method.getAnnotation(Subscribe::class.java).topics
+            else {
+                val domainSubscribe = method.getAnnotation(DomainSubscribe::class.java)
+                var topic = messageTopic(domainSubscribe.domain, domainSubscribe.messageClass.java)
+                if (domainSubscribe.domainClass != Nothing::class)
+                    topic = messageTopic(domainSubscribe.domainClass.java, domainSubscribe.messageClass.java)
+                topics = arrayOf(topic)
+            }
 
             //如果没有定义topic，则使用消息类名称做topic
             if (topics.isEmpty()) {
@@ -191,19 +201,20 @@ open class SubscriberRegistry<T : Any>(private val bus: IBus<T>) {
     protected fun getAnnotatedMethods(clazz: Class<*>): List<Method> {
         var methods = subscriberMethodsCache[clazz]
         if (methods == null)
-            methods = getAnnotatedMethodsNotCached(clazz, Subscribe::class.java)
+            methods = getAnnotatedMethodsNotCached(clazz, Subscribe::class.java, DomainSubscribe::class.java)
         return methods
     }
 
     protected fun getAnnotatedMethodsNotCached(
         clazz: Class<*>,
-        annotationClass: Class<out Annotation>,
+        vararg annotationClasses: Class<out Annotation>,
     ): List<Method> {
         val supertypes = flattenHierarchy(clazz)
         val identifiers = mutableMapOf<MethodIdentifier, Method>()
         for (supertype in supertypes) {
             for (method in supertype.declaredMethods) {
-                if (method.isAnnotationPresent(annotationClass) && !method.isSynthetic) {
+                val isAnnotationPresent = annotationClasses.any { method.isAnnotationPresent(it) }
+                if (isAnnotationPresent && !method.isSynthetic) {
                     val parameterTypes = method.parameterTypes
                     check(parameterTypes.size == 1) {
                         "Method $method has @SubscribeTopic annotation but has ${parameterTypes.size} parameters. Subscriber methods must have exactly 1 parameter."

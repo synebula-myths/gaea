@@ -1,9 +1,13 @@
 package com.synebula.gaea.domain.service
 
+import com.synebula.gaea.bus.IBus
 import com.synebula.gaea.data.message.DataMessage
+import com.synebula.gaea.domain.event.AfterRemoveEvent
+import com.synebula.gaea.domain.event.BeforeRemoveEvent
 import com.synebula.gaea.domain.model.IAggregateRoot
 import com.synebula.gaea.domain.repository.IRepository
 import com.synebula.gaea.log.ILogger
+import javax.annotation.Resource
 
 
 /**
@@ -17,26 +21,32 @@ import com.synebula.gaea.log.ILogger
  * @version 0.1
  * @since 2020-05-17
  */
-open class SimpleService<TAggregateRoot : IAggregateRoot<ID>, ID>(
-    protected open var clazz: Class<TAggregateRoot>,
-    protected open var repository: IRepository<TAggregateRoot, ID>,
+open class SimpleService<TRoot : IAggregateRoot<ID>, ID>(
+    protected open var clazz: Class<TRoot>,
+    protected open var repository: IRepository<TRoot, ID>,
     override var logger: ILogger,
-) : ISimpleService<TAggregateRoot, ID> {
+) : ISimpleService<TRoot, ID> {
+    @Resource
+    protected open var bus: IBus<Any>? = null
 
-    override fun add(root: TAggregateRoot): DataMessage<ID> {
+    override fun add(root: TRoot): DataMessage<ID> {
         val msg = DataMessage<ID>()
         this.repository.add(root)
         msg.data = root.id
         return msg
     }
 
-    override fun update(id: ID, root: TAggregateRoot) {
+    override fun update(id: ID, root: TRoot) {
         root.id = id
         this.repository.update(root)
     }
 
     override fun remove(id: ID) {
+        val beforeRemoveEvent = BeforeRemoveEvent<TRoot, ID>(id)
+        this.bus?.publish(beforeRemoveEvent.topic(this.clazz), beforeRemoveEvent)
         this.repository.remove(id)
+        val afterRemoveEvent = AfterRemoveEvent<TRoot, ID>(id)
+        this.bus?.publish(afterRemoveEvent.topic(this.clazz), afterRemoveEvent)
     }
 
     /**
@@ -44,7 +54,7 @@ open class SimpleService<TAggregateRoot : IAggregateRoot<ID>, ID>(
      *
      * @param roots 增加对象命令列表
      */
-    override fun add(roots: List<TAggregateRoot>) {
+    override fun add(roots: List<TRoot>) {
         this.repository.add(roots)
     }
 
@@ -53,7 +63,7 @@ open class SimpleService<TAggregateRoot : IAggregateRoot<ID>, ID>(
      *
      * @param roots 更新对象命令列表
      */
-    override fun update(roots: List<TAggregateRoot>) {
+    override fun update(roots: List<TRoot>) {
         this.repository.update(roots)
     }
 }

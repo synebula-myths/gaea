@@ -60,7 +60,7 @@ abstract class AppAspect {
             point.proceed()
         } catch (ex: Throwable) {
             val moduleName = this.resolveModuleName(point.`this`)
-            var message = "$moduleName - ${funcName}异常"
+            var message = "${moduleName}-${funcName}异常"
             message = if (ex is NoticeUserException || ex is Error) {
                 "$message: ${ex.message}"
             } else {
@@ -91,10 +91,12 @@ abstract class AppAspect {
             moduleName = module.name
         }
         // 3.尝试找类的name字段作为模块名称
-        val nameField = clazz.fields.find { it.name == "name" }
-        if (nameField != null) {
-            moduleName = nameField.get(obj).toString()
+        try {
+            val nameGetter = clazz.getMethod("getName")
+            moduleName = nameGetter.invoke(obj).toString()
+        } catch (_: NoSuchMethodException) {
         }
+
         return moduleName
     }
 }

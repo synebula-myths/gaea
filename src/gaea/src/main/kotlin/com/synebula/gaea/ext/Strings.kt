@@ -12,7 +12,18 @@ fun String.firstCharLowerCase(): String {
         this
     else
         StringBuilder().append(Character.toLowerCase(this.elementAt(0)))
-                .append(this.substring(1)).toString()
+            .append(this.substring(1)).toString()
+}
+
+/**
+ * 首字母小写
+ */
+fun String.firstCharUpperCase(): String {
+    return if (Character.isLowerCase(this.elementAt(0)))
+        this
+    else
+        StringBuilder().append(Character.toUpperCase(this.elementAt(0)))
+            .append(this.substring(1)).toString()
 }
 
 /**

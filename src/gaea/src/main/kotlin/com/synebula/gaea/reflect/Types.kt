@@ -49,3 +49,20 @@ fun Class<*>.findField(name: String): Field? {
     }
     return field
 }
+
+/**
+ * 获取对象字段信息字符串列表。
+ */
+fun Class<*>.fieldNames(): List<String> {
+    val names = mutableListOf<String>()
+    for (f in this.declaredFields) {
+        names.add(f.name)
+    }
+    val superclass = this.superclass
+    if (superclass != Any::class.java) {
+        names.addAll(superclass.fieldNames())
+    }
+    return names
+}
+
+

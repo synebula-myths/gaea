@@ -1,7 +1,5 @@
 package com.synebula.gaea.data.message
 
-import java.util.*
-
 /**
  *
  * 用来统一Http返回消息类型，通常使用json格式传递
@@ -15,18 +13,14 @@ open class DataMessage<T>() : StatusMessage() {
      */
     var data: T? = null
 
-    /**
-     * 消息时间戳
-     */
-    val timestamp: Long = Date().time
-
     constructor(data: T) : this() {
         this.data = data
     }
 
+    @Suppress("")
     constructor(status: Int, message: String) : this() {
         this.status = status
-        this.message = message
+        message.also { this.message = it }
     }
 
     constructor(status: Int, data: T, message: String) : this(status, message) {

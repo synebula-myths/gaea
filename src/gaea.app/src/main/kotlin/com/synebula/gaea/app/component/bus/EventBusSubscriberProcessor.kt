@@ -1,7 +1,9 @@
 package com.synebula.gaea.app.component.bus
 
+import com.synebula.gaea.bus.DomainSubscribe
 import com.synebula.gaea.bus.IBus
 import com.synebula.gaea.bus.Subscribe
+import com.synebula.gaea.data.message.messageTopic
 import org.springframework.beans.BeansException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.config.BeanPostProcessor
@@ -27,20 +29,19 @@ class EventBusSubscriberProcessor : BeanPostProcessor {
         // for each method in the bean
         val methods: Array<Method> = bean.javaClass.methods
         for (method in methods) {
-            // check the annotations on that method
-            val annotations: Array<Annotation> = method.annotations
-            for (annotation in annotations) {
-                // if it contains Subscribe annotation
-                if (annotation.annotationClass == Subscribe::class) {
-                    // 如果这是一个Guava @Subscribe注解的事件监听器方法，说明所在bean实例
-                    // 对应一个Guava事件监听器类，将该bean实例注册到Guava事件总线
-                    val subscribe = annotation as Subscribe
-                    if (subscribe.topics.isEmpty())
-                        bus?.register(bean, method)
-                    else
-                        bus?.register(subscribe.topics, bean, method)
-                    return bean
-                }
+            if (method.isAnnotationPresent(Subscribe::class.java)) {
+                val subscribe = method.getAnnotation(Subscribe::class.java)
+                if (subscribe.topics.isEmpty())
+                    bus?.register(bean, method)
+                else
+                    bus?.register(subscribe.topics, bean, method)
+            }
+            if (method.isAnnotationPresent(DomainSubscribe::class.java)) {
+                val domainSubscribe = method.getAnnotation(DomainSubscribe::class.java)
+                var topic = messageTopic(domainSubscribe.domain, domainSubscribe.messageClass.java)
+                if (domainSubscribe.domainClass != Nothing::class)
+                    topic = messageTopic(domainSubscribe.domainClass.java, domainSubscribe.messageClass.java)
+                bus?.register(arrayOf(topic), bean, method)
             }
         }
         return bean
