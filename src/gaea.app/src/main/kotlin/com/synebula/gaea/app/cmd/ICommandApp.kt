@@ -3,7 +3,6 @@ package com.synebula.gaea.app.cmd
 import com.synebula.gaea.app.IApplication
 import com.synebula.gaea.data.message.HttpMessage
 import com.synebula.gaea.data.message.Status
-import com.synebula.gaea.data.serialization.json.IJsonSerializer
 import com.synebula.gaea.domain.service.ICommand
 import com.synebula.gaea.domain.service.IService
 import com.synebula.gaea.spring.aop.annotation.Method
@@ -17,27 +16,25 @@ import org.springframework.web.bind.annotation.*
  * @since 2020-05-15
  */
 interface ICommandApp<TCommand : ICommand, ID> : IApplication {
-    var jsonSerializer: IJsonSerializer?
-
     var service: IService<ID>
 
     @PostMapping
     @Method("添加")
     fun add(@RequestBody command: TCommand): HttpMessage {
-        return HttpMessage(service.add(command))
+        return this.httpMessageFactory.create(service.add(command))
     }
 
     @PutMapping("/{id:.+}")
     @Method("更新")
     fun update(@PathVariable id: ID, @RequestBody command: TCommand): HttpMessage {
         this.service.update(id, command)
-        return HttpMessage()
+        return this.httpMessageFactory.create()
     }
 
     @DeleteMapping("/{id:.+}")
     @Method("删除")
     fun remove(@PathVariable id: ID): HttpMessage {
-        val msg = HttpMessage()
+        val msg = this.httpMessageFactory.create()
         try {
             msg.data = this.service.remove(id)
         } catch (ex: IllegalStateException) {

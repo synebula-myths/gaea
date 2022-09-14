@@ -2,6 +2,7 @@ package com.synebula.gaea.app
 
 import com.google.gson.Gson
 import com.synebula.gaea.data.message.HttpMessage
+import com.synebula.gaea.data.message.HttpMessageFactory
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.log.ILogger
 import org.springframework.security.core.context.SecurityContextHolder
@@ -18,12 +19,17 @@ interface IApplication {
      */
     var logger: ILogger
 
+    /**
+     * 日志详细的构造器
+     */
+    var httpMessageFactory: HttpMessageFactory
+
 
     /**
      * 安全执行
      */
     fun safeExecute(error: String, process: ((msg: HttpMessage) -> Unit)): HttpMessage {
-        val msg = HttpMessage()
+        val msg = this.httpMessageFactory.create()
         try {
             process(msg)
             logger.debug(this, "$name business execute success")
@@ -39,7 +45,7 @@ interface IApplication {
      * 可抛出自定义异常信息的安全controller实现了异常捕获和消息组成。
      */
     fun throwExecute(error: String, process: ((msg: HttpMessage) -> Unit)): HttpMessage {
-        val msg = HttpMessage()
+        val msg = this.httpMessageFactory.create()
         try {
             process(msg)
             logger.debug(this, "$name business execute success")
@@ -54,7 +60,7 @@ interface IApplication {
      * 获取用户信息
      * @param clazz 用户信息结构类
      */
-    fun <T> sessionUser(clazz: Class<T>): T? {
+    fun <T> userSession(clazz: Class<T>): T? {
         try {
             val authentication = SecurityContextHolder.getContext().authentication.principal.toString()
             try {

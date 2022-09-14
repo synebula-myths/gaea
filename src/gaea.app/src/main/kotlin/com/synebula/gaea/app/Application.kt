@@ -2,12 +2,12 @@ package com.synebula.gaea.app
 
 import com.synebula.gaea.app.cmd.ICommandApp
 import com.synebula.gaea.app.query.IQueryApp
-import com.synebula.gaea.data.serialization.json.IJsonSerializer
+import com.synebula.gaea.data.message.HttpMessageFactory
 import com.synebula.gaea.domain.service.ICommand
 import com.synebula.gaea.domain.service.IService
 import com.synebula.gaea.log.ILogger
 import com.synebula.gaea.query.IQuery
-import javax.annotation.Resource
+import org.springframework.beans.factory.annotation.Autowired
 
 /**
  * 联合服务，同时实现了ICommandApp和IQueryApp接口
@@ -24,6 +24,6 @@ open class Application<TCommand : ICommand, TView, ID>(
     override var logger: ILogger,
 ) : ICommandApp<TCommand, ID>, IQueryApp<TView, ID> {
 
-    @Resource
-    override var jsonSerializer: IJsonSerializer? = null
+    @Autowired
+    override lateinit var httpMessageFactory: HttpMessageFactory
 }

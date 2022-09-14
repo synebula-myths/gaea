@@ -1,7 +1,7 @@
 package com.synebula.gaea.spring.aop
 
 import com.google.gson.Gson
-import com.synebula.gaea.data.message.HttpMessage
+import com.synebula.gaea.data.message.HttpMessageFactory
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.exception.NoticeUserException
 import com.synebula.gaea.log.ILogger
@@ -24,6 +24,9 @@ abstract class AppAspect {
 
     @Autowired
     lateinit var applicationContext: ApplicationContext
+
+    @Autowired
+    lateinit var httpMessageFactory: HttpMessageFactory
 
     /**
      * 定义切面的方法
@@ -74,7 +77,7 @@ abstract class AppAspect {
                     gson.toJson(point.args)
                 }"
             )
-            return HttpMessage(Status.Error, message)
+            return this.httpMessageFactory.create(Status.Error, message)
         }
     }
 

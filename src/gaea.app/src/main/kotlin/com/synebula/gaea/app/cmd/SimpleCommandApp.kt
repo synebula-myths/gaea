@@ -1,10 +1,10 @@
 package com.synebula.gaea.app.cmd
 
-import com.synebula.gaea.data.serialization.json.IJsonSerializer
+import com.synebula.gaea.data.message.HttpMessageFactory
 import com.synebula.gaea.domain.model.IAggregateRoot
 import com.synebula.gaea.domain.service.ISimpleService
 import com.synebula.gaea.log.ILogger
-import javax.annotation.Resource
+import org.springframework.beans.factory.annotation.Autowired
 
 /**
  * 指令服务，同时实现ICommandApp
@@ -18,6 +18,6 @@ open class SimpleCommandApp<TRoot : IAggregateRoot<ID>, ID>(
     override var service: ISimpleService<TRoot, ID>,
     override var logger: ILogger,
 ) : ISimpleCommandApp<TRoot, ID> {
-    @Resource
-    override var jsonSerializer: IJsonSerializer? = null
+    @Autowired
+    override lateinit var httpMessageFactory: HttpMessageFactory
 }

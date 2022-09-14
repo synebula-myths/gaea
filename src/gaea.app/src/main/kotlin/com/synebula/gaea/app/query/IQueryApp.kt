@@ -19,7 +19,7 @@ interface IQueryApp<TView, ID> : IApplication {
     @GetMapping("/{id:.+}")
     fun get(@PathVariable id: ID): HttpMessage {
         val data = this.query.get(id)
-        val msg = HttpMessage()
+        val msg = this.httpMessageFactory.create()
         msg.data = data
         return msg
     }
@@ -28,7 +28,7 @@ interface IQueryApp<TView, ID> : IApplication {
     @GetMapping
     fun list(@RequestParam params: LinkedHashMap<String, String>): HttpMessage {
         val data = this.query.list(params)
-        return HttpMessage(data)
+        return this.httpMessageFactory.create(data)
     }
 
     @Method("获取分页数据")
@@ -40,6 +40,6 @@ interface IQueryApp<TView, ID> : IApplication {
     ): HttpMessage {
         val params = Params(page, size, parameters)
         val data = this.query.paging(params)
-        return HttpMessage(data)
+        return this.httpMessageFactory.create(data)
     }
 }

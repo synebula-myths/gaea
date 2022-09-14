@@ -2,12 +2,12 @@ package com.synebula.gaea.app
 
 import com.synebula.gaea.app.cmd.ISimpleCommandApp
 import com.synebula.gaea.app.query.IQueryApp
-import com.synebula.gaea.data.serialization.json.IJsonSerializer
+import com.synebula.gaea.data.message.HttpMessageFactory
 import com.synebula.gaea.domain.model.IAggregateRoot
 import com.synebula.gaea.domain.service.ISimpleService
 import com.synebula.gaea.log.ILogger
 import com.synebula.gaea.query.IQuery
-import javax.annotation.Resource
+import org.springframework.beans.factory.annotation.Autowired
 
 /**
  * 简单的服务, 取消了Command对象
@@ -24,6 +24,7 @@ open class SimpleApplication<TRoot : IAggregateRoot<ID>, ID>(
     override var logger: ILogger,
 ) : ISimpleCommandApp<TRoot, ID>, IQueryApp<TRoot, ID> {
 
-    @Resource
-    override var jsonSerializer: IJsonSerializer? = null
+
+    @Autowired
+    override lateinit var httpMessageFactory: HttpMessageFactory
 }
