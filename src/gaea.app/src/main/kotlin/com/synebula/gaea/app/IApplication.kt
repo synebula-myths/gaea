@@ -1,6 +1,6 @@
 package com.synebula.gaea.app
 
-import com.google.gson.Gson
+import com.synebula.gaea.app.component.security.session.UserSession
 import com.synebula.gaea.data.message.HttpMessage
 import com.synebula.gaea.data.message.HttpMessageFactory
 import com.synebula.gaea.data.message.Status
@@ -58,14 +58,12 @@ interface IApplication {
 
     /**
      * 获取用户信息
-     * @param clazz 用户信息结构类
      */
-    fun <T> userSession(clazz: Class<T>): T? {
+    fun userSession(): UserSession? {
         try {
-            val authentication = SecurityContextHolder.getContext().authentication.principal.toString()
+            val authentication = SecurityContextHolder.getContext().authentication.principal
             try {
-                val gson = Gson()
-                return gson.fromJson(authentication, clazz)
+                return authentication as UserSession
             } catch (ex: Exception) {
                 logger.error(this, ex, "[$name]解析用户信息异常！用户信息：$authentication: ${ex.message}")
             }
