@@ -1,4 +1,4 @@
-package com.synebula.gaea.app.component.security.session
+package com.synebula.gaea.app.security.session
 
 /**
  * 登陆用户会话信息
@@ -27,7 +27,7 @@ class UserSession(var uid: String, var user: Any) {
      * 获取指定类型的用户信息
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T> user(): T {
+    fun <T : User> user(): T {
         return user as T
     }
 }

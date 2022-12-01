@@ -1,6 +1,6 @@
-package com.synebula.gaea.app.component.security
+package com.synebula.gaea.app.security
 
-import com.synebula.gaea.app.component.security.session.UserSessionManager
+import com.synebula.gaea.app.security.session.UserSessionManager
 import com.synebula.gaea.data.message.HttpMessageFactory
 import com.synebula.gaea.data.message.Status
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -40,7 +40,9 @@ class WebAuthorization(
         val identity = if (this.storage == "cookie") {
             request.cookies.find { it.name == tokenKey }?.value ?: ""
         } else {
-            request.getHeader(tokenKey) ?: ""
+            var token = request.getHeader(tokenKey) ?: ""
+            if (token.isEmpty()) token = request.getParameter(tokenKey) ?: ""
+            token
         }
         val user = this.userSessionManager.userSession(identity)
         if (user != null) {

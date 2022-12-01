@@ -1,6 +1,5 @@
 package com.synebula.gaea.app.component.poi
 
-import com.synebula.gaea.app.struct.ExcelData
 import com.synebula.gaea.data.date.DateTime
 import com.synebula.gaea.exception.NoticeUserException
 import org.apache.poi.hpsf.Decimal
@@ -40,7 +39,7 @@ object Excel {
         val titleFont = wb.createFont()
         titleFont.bold = true
         titleStyle.setFont(titleFont)
-        setBorderStyle(titleStyle, BorderStyle.THIN)
+        setBorderStyle(titleStyle)
 
         //声明列对象
         // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制
@@ -62,7 +61,7 @@ object Excel {
         val contentStyle = wb.createCellStyle()
         contentStyle.alignment = HorizontalAlignment.LEFT// 创建一个修改居左格式
         contentStyle.verticalAlignment = VerticalAlignment.CENTER
-        setBorderStyle(contentStyle, BorderStyle.THIN)
+        setBorderStyle(contentStyle)
 
         //创建内容
         var col = 0
@@ -146,6 +145,7 @@ object Excel {
                                 this.getCellValue(cell, evaluator).toString().toIntOrNull()
                             }
                         }
+
                         Double::class.java.name -> {
                             if (cell.cellType == CellType.NUMERIC) {
                                 cell.numericCellValue
@@ -153,6 +153,7 @@ object Excel {
                                 this.getCellValue(cell, evaluator).toString().toDoubleOrNull()
                             }
                         }
+
                         Float::class.java.name -> {
                             if (cell.cellType == CellType.NUMERIC) {
                                 cell.numericCellValue.toFloat()
@@ -160,6 +161,7 @@ object Excel {
                                 this.getCellValue(cell, evaluator).toString().toFloatOrNull()
                             }
                         }
+
                         Decimal::class.java.name -> {
                             if (cell.cellType == CellType.NUMERIC) {
                                 cell.numericCellValue.toBigDecimal()
@@ -167,6 +169,7 @@ object Excel {
                                 this.getCellValue(cell, evaluator).toString().toBigDecimalOrNull()
                             }
                         }
+
                         Boolean::class.java.name -> {
                             if (cell.cellType == CellType.BOOLEAN) {
                                 cell.booleanCellValue
@@ -174,11 +177,13 @@ object Excel {
                                 this.getCellValue(cell, evaluator).toString().toBoolean()
                             }
                         }
+
                         Date::class.java.name -> try {
                             cell.dateCellValue
                         } catch (ignored: Exception) {
                             DateTime(cell.stringCellValue).date
                         }
+
                         else -> cell.stringCellValue
                     }
                     rowData[columns[c].first] = value
@@ -278,7 +283,7 @@ object Excel {
     /**
      * 设置cell style的边框
      */
-    private fun setBorderStyle(style: HSSFCellStyle, borderStyle: BorderStyle) {
+    private fun setBorderStyle(style: HSSFCellStyle, borderStyle: BorderStyle = BorderStyle.THIN) {
         style.borderTop = borderStyle
         style.borderRight = borderStyle
         style.borderBottom = borderStyle
@@ -297,6 +302,7 @@ object Excel {
                     numericCellValue
                 }
             }
+
             CellType.STRING -> cell.richStringCellValue.string
             CellType.BLANK -> ""
             CellType.FORMULA -> evaluator.evaluate(cell).toString()

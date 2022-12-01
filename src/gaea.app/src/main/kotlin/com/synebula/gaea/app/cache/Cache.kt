@@ -1,4 +1,4 @@
-package com.synebula.gaea.app.component.cache
+package com.synebula.gaea.app.cache
 
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder

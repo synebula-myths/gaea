@@ -1,6 +1,6 @@
-package com.synebula.gaea.app.cmd
+package com.synebula.gaea.app.controller.cmd
 
-import com.synebula.gaea.app.IApplication
+import com.synebula.gaea.app.controller.IApplication
 import com.synebula.gaea.data.message.HttpMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.domain.service.ICommand

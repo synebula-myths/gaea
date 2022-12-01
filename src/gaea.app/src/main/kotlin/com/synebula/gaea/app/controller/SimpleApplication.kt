@@ -1,7 +1,7 @@
-package com.synebula.gaea.app
+package com.synebula.gaea.app.controller
 
-import com.synebula.gaea.app.cmd.ISimpleCommandApp
-import com.synebula.gaea.app.query.IQueryApp
+import com.synebula.gaea.app.controller.cmd.ISimpleCommandApp
+import com.synebula.gaea.app.controller.query.IQueryApp
 import com.synebula.gaea.data.message.HttpMessageFactory
 import com.synebula.gaea.domain.model.IAggregateRoot
 import com.synebula.gaea.domain.service.ISimpleService

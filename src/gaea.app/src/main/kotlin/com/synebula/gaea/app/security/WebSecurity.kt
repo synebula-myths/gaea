@@ -1,6 +1,6 @@
-package com.synebula.gaea.app.component.security
+package com.synebula.gaea.app.security
 
-import com.synebula.gaea.app.component.security.session.UserSessionManager
+import com.synebula.gaea.app.security.session.UserSessionManager
 import com.synebula.gaea.data.message.HttpMessageFactory
 import com.synebula.gaea.data.message.Status
 import org.springframework.beans.factory.annotation.Autowired

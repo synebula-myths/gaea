@@ -1,6 +1,6 @@
-package com.synebula.gaea.app.component.security.session
+package com.synebula.gaea.app.security.session
 
-import com.synebula.gaea.app.component.cache.Cache
+import com.synebula.gaea.app.cache.Cache
 import com.synebula.gaea.ext.toMd5
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component

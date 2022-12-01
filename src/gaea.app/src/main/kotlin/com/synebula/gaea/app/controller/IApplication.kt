@@ -1,6 +1,6 @@
-package com.synebula.gaea.app
+package com.synebula.gaea.app.controller
 
-import com.synebula.gaea.app.component.security.session.UserSession
+import com.synebula.gaea.app.security.session.UserSession
 import com.synebula.gaea.data.message.HttpMessage
 import com.synebula.gaea.data.message.HttpMessageFactory
 import com.synebula.gaea.data.message.Status

@@ -1,9 +1,9 @@
-package com.synebula.gaea.app.component.security
+package com.synebula.gaea.app.security
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.exceptions.TokenExpiredException
 import com.google.gson.Gson
-import com.synebula.gaea.app.struct.exception.TokenCloseExpireException
 import com.synebula.gaea.log.ILogger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -75,24 +75,38 @@ class TokenManager {
      * 校验token是否正确
      *
      * @param token  密钥
+     * @param func  自定义验证方法
+     */
+    fun verifyTime(token: String, func: (total: Long, remain: Long) -> Unit) {
+        try {
+            val now = Date()
+            val jwt = JWT.decode(token)
+            val total = jwt.expiresAt.time - jwt.issuedAt.time //总时间
+            val remain = jwt.expiresAt.time - now.time //剩余的时间
+            func(total, remain)
+        } catch (ex: Exception) {
+            this.logger.error(this, ex, "解析token出错")
+            throw ex
+        }
+    }
+
+    /**
+     * 校验token是否正确
+     *
+     * @param token  密钥
      * @return 是否正确
      */
     fun <T> verify(token: String, clazz: Class<T>): T? {
-        try {
-            val now = Date()
+        return try {
             val algorithm = Algorithm.HMAC256(secret)
-            val jwt = JWT.decode(token)
-            val remain = jwt.expiresAt.time - now.time //剩余的时间
-            val total = jwt.expiresAt.time - jwt.issuedAt.time //总时间
-            if (remain > 0 && 1.0 * remain / total <= 0.3) //存活时间少于总时间的1/3重新下发
-                throw TokenCloseExpireException("", JWT.decode(token).getClaim("user").asString())
-
             val result = JWT.require(algorithm).build().verify(token)
             val json = result.getClaim(this.payload).asString()
-            return gson.fromJson(json, clazz)
+            gson.fromJson(json, clazz)
+        } catch (ex: TokenExpiredException) {
+            null
         } catch (ex: Exception) {
-            this.logger.debug(this, ex, "解析token出错")
-            throw  ex
+            this.logger.error(this, ex, "解析token出错")
+            throw ex
         }
     }
 
@@ -103,20 +117,15 @@ class TokenManager {
      * @return 是否正确
      */
     fun verify(token: String): String {
-        try {
-            val now = Date()
+        return try {
             val algorithm = Algorithm.HMAC256(secret)
-            val jwt = JWT.decode(token)
-            val remain = jwt.expiresAt.time - now.time //剩余的时间
-            val total = jwt.expiresAt.time - jwt.issuedAt.time //总时间
-            if (remain > 0 && 1.0 * remain / total <= 0.3) //存活时间少于总时间的1/3重新下发
-                throw TokenCloseExpireException("", JWT.decode(token).getClaim("user").asString())
-
             val result = JWT.require(algorithm).build().verify(token)
-            return result.getClaim(payload).asString()
+            result.getClaim(this.payload).asString()
+        } catch (ex: TokenExpiredException) {
+            ""
         } catch (ex: Exception) {
-            this.logger.debug(this, ex, "解析token出错")
-            throw  ex
+            this.logger.error(this, ex, "解析token出错")
+            throw ex
         }
     }
 

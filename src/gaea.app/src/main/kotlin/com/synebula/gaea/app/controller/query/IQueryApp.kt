@@ -1,6 +1,6 @@
-package com.synebula.gaea.app.query
+package com.synebula.gaea.app.controller.query
 
-import com.synebula.gaea.app.IApplication
+import com.synebula.gaea.app.controller.IApplication
 import com.synebula.gaea.data.message.HttpMessage
 import com.synebula.gaea.query.IQuery
 import com.synebula.gaea.query.Params

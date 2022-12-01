@@ -1,8 +1,8 @@
-package com.synebula.gaea.app.cmd
+package com.synebula.gaea.app.controller.cmd
 
 import com.synebula.gaea.data.message.HttpMessageFactory
-import com.synebula.gaea.domain.service.ICommand
-import com.synebula.gaea.domain.service.IService
+import com.synebula.gaea.domain.model.IAggregateRoot
+import com.synebula.gaea.domain.service.ISimpleService
 import com.synebula.gaea.log.ILogger
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -13,11 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired
  * @param service 业务domain服务
  * @param logger 日志组件
  */
-open class CommandApp<TCommand : ICommand, ID>(
+open class SimpleCommandApp<TRoot : IAggregateRoot<ID>, ID>(
     override var name: String,
-    override var service: IService<ID>,
+    override var service: ISimpleService<TRoot, ID>,
     override var logger: ILogger,
-) : ICommandApp<TCommand, ID> {
+) : ISimpleCommandApp<TRoot, ID> {
     @Autowired
     override lateinit var httpMessageFactory: HttpMessageFactory
 }
