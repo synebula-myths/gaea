@@ -5,7 +5,7 @@ ext {
 dependencies {
     api project(":src:gaea")
 
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:$spring_version")
+    api("org.springframework.boot:spring-boot-starter-data-jpa:$spring_version")
     implementation("org.javassist:javassist:$jassist_version")
 }
 
