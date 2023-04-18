@@ -7,7 +7,6 @@ import com.synebula.gaea.domain.event.BeforeRemoveEvent
 import com.synebula.gaea.domain.model.IAggregateRoot
 import com.synebula.gaea.domain.repository.IRepository
 import com.synebula.gaea.log.ILogger
-import javax.annotation.Resource
 
 
 /**
@@ -25,9 +24,8 @@ open class SimpleService<TRoot : IAggregateRoot<ID>, ID>(
     protected open var clazz: Class<TRoot>,
     protected open var repository: IRepository<TRoot, ID>,
     override var logger: ILogger,
-) : ISimpleService<TRoot, ID> {
-    @Resource
     protected open var bus: IBus<Any>? = null
+) : ISimpleService<TRoot, ID> {
 
     override fun add(root: TRoot): DataMessage<ID> {
         val msg = DataMessage<ID>()

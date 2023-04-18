@@ -1,6 +1,7 @@
 package com.synebula.gaea.jpa.proxy
 
 import com.synebula.gaea.jpa.proxy.method.JpaMethodProxy
+import jakarta.persistence.EntityManager
 import javassist.*
 import javassist.bytecode.AnnotationsAttribute
 import javassist.bytecode.MethodInfo
@@ -24,7 +25,6 @@ import org.springframework.data.repository.Repository
 import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
-import javax.persistence.EntityManager
 
 class JpaRepositoryProxy<T : Repository<S, ID>?, S, ID>(
     beanFactory: BeanFactory,

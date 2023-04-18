@@ -3,13 +3,13 @@ package com.synebula.gaea.jpa
 import com.synebula.gaea.data.date.DateTime
 import com.synebula.gaea.query.Operator
 import com.synebula.gaea.query.Where
+import jakarta.persistence.criteria.CriteriaBuilder
+import jakarta.persistence.criteria.CriteriaQuery
+import jakarta.persistence.criteria.Predicate
+import jakarta.persistence.criteria.Root
 import org.springframework.data.jpa.domain.Specification
 import java.lang.reflect.Field
 import java.util.*
-import javax.persistence.criteria.CriteriaBuilder
-import javax.persistence.criteria.CriteriaQuery
-import javax.persistence.criteria.Predicate
-import javax.persistence.criteria.Root
 
 
 /**
@@ -137,7 +137,7 @@ fun Map<String, String>?.toSpecification(clazz: Class<*>): Specification<*> {
                 predicates.add(predicate)
             } catch (e: NoSuchFieldException) {
                 throw Error(
-                    "class [${field.declaringClass.name}] field [${field.name}] can't annotation [@Where(${operator.declaringClass.simpleName}.${operator.name})]",
+                    "class [${field.declaringClass.name}] field [${field.name}] can't annotation [@Where(${operator.declaringJavaClass.simpleName}.${operator.name})]",
                     e
                 )
             }

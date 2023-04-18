@@ -3,8 +3,8 @@ package com.synebula.gaea.jpa
 import com.synebula.gaea.query.IQuery
 import com.synebula.gaea.query.Page
 import com.synebula.gaea.query.Params
+import jakarta.persistence.EntityManager
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
-import javax.persistence.EntityManager
 
 class JpaQuery<TView, ID>(override var clazz: Class<TView>, entityManager: EntityManager) : IQuery<TView, ID> {
     protected var repo: SimpleJpaRepository<TView, ID>

@@ -2,13 +2,13 @@ package com.synebula.gaea.jpa
 
 import com.synebula.gaea.domain.model.IAggregateRoot
 import com.synebula.gaea.domain.repository.IRepository
+import jakarta.persistence.EntityManager
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
-import javax.persistence.EntityManager
 
 
-class JpaRepository<TAggregateRoot : IAggregateRoot<ID>, ID>(
-    override var clazz: Class<TAggregateRoot>,
+open class JpaRepository<TAggregateRoot : IAggregateRoot<ID>, ID>(
+    final override var clazz: Class<TAggregateRoot>,
     entityManager: EntityManager
 ) : IRepository<TAggregateRoot, ID> {
     protected var repo: JpaRepository<TAggregateRoot, ID>? = null

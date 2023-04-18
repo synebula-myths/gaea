@@ -7,7 +7,6 @@ import com.synebula.gaea.domain.event.AfterRemoveEvent
 import com.synebula.gaea.domain.event.BeforeRemoveEvent
 import com.synebula.gaea.domain.model.IAggregateRoot
 import com.synebula.gaea.domain.repository.IRepository
-import javax.annotation.Resource
 
 
 /**
@@ -25,9 +24,8 @@ open class Service<TRoot : IAggregateRoot<ID>, ID>(
     protected open var clazz: Class<TRoot>,
     protected open var repository: IRepository<TRoot, ID>,
     protected open var mapper: IObjectMapper,
-) : IService<ID> {
-    @Resource
     protected open var bus: IBus<Any>? = null
+) : IService<ID> {
 
     /**
      * 增加对象

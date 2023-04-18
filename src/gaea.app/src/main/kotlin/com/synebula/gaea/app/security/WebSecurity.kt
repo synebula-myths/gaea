@@ -40,7 +40,7 @@ class WebSecurity {
             // 设置Session的创建策略为：Spring Security永不创建HttpSession 不使用HttpSession来获取SecurityContext
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             // 除了登录接口其他资源都必须登录访问
-            .and().authorizeRequests().antMatchers(this.signInPath).permitAll().anyRequest().authenticated()
+            .and().authorizeHttpRequests().requestMatchers(this.signInPath).permitAll().anyRequest().authenticated()
             // 添加鉴权拦截器
             .and().addFilterBefore(
                 WebAuthorization(httpMessageFactory, userSessionManager),
@@ -62,7 +62,7 @@ class WebSecurity {
     @Bean
     @Throws(Exception::class)
     fun ignoringCustomizer(): WebSecurityCustomizer {
-        return WebSecurityCustomizer { web -> web.ignoring().antMatchers(this.signInPath) }
+        return WebSecurityCustomizer { web -> web.ignoring().requestMatchers(this.signInPath) }
     }
 
     /**
