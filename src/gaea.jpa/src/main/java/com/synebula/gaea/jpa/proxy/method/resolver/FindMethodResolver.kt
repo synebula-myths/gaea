@@ -10,8 +10,8 @@ class FindMethodResolver(targetMethodName: String, clazz: Class<*>) : AbstractMe
     @Suppress("UNCHECKED_CAST")
     override fun mappingArguments(args: Array<Any>): Array<Any> {
         val params = args[0] as Map<String, String>?
-        val specification = params.toSpecification(entityClazz)
-        return arrayOf(specification)
+        val specification = params?.toSpecification(entityClazz)
+        return if (specification != null) arrayOf(specification) else arrayOf()
     }
 
     override fun mappingResult(result: Any): Any {
