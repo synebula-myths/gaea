@@ -1,8 +1,8 @@
 buildscript {
     ext {
-        jvm_version = '19'
-        kotlin_version = '1.8.20'
-        spring_version = '3.0.5'
+        jvm_version = '21'
+        kotlin_version = '2.0.0'
+        spring_version = '3.3.0'
     }
 
     repositories {

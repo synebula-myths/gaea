@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
@@ -36,24 +37,27 @@ class WebSecurity {
     @Bean
     @Throws(Exception::class)
     fun filterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
-        httpSecurity.cors().and().csrf().disable() // 跨域伪造请求限制无效
+        httpSecurity.cors(Customizer.withDefaults())
+            .csrf { it.disable() } // 跨域伪造请求限制无效
             // 设置Session的创建策略为：Spring Security永不创建HttpSession 不使用HttpSession来获取SecurityContext
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             // 除了登录接口其他资源都必须登录访问
-            .and().authorizeHttpRequests().requestMatchers(this.signInPath).permitAll().anyRequest().authenticated()
+            .authorizeHttpRequests { it.requestMatchers(this.signInPath).permitAll().anyRequest().authenticated() }
             // 添加鉴权拦截器
-            .and().addFilterBefore(
+            .addFilterBefore(
                 WebAuthorization(httpMessageFactory, userSessionManager),
                 UsernamePasswordAuthenticationFilter::class.java
-            ).exceptionHandling().authenticationEntryPoint { _, response, _ ->
-                response.status = Status.Success
-                response.characterEncoding = "utf-8"
-                response.contentType = "text/javascript;charset=utf-8"
-                response.writer.print(
-                    this.httpMessageFactory.create(
-                        Status.Unauthorized, "用户未登录，请重新登录后尝试！"
+            ).exceptionHandling {
+                it.authenticationEntryPoint { _, response, _ ->
+                    response.status = Status.Success
+                    response.characterEncoding = "utf-8"
+                    response.contentType = "text/javascript;charset=utf-8"
+                    response.writer.print(
+                        this.httpMessageFactory.create(
+                            Status.Unauthorized, "用户未登录，请重新登录后尝试！"
+                        )
                     )
-                )
+                }
             }
 
         return httpSecurity.build()
