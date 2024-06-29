@@ -4,7 +4,7 @@ import com.synebula.gaea.app.controller.IApplication
 import com.synebula.gaea.data.message.HttpMessage
 import com.synebula.gaea.data.message.Status
 import com.synebula.gaea.domain.model.IAggregateRoot
-import com.synebula.gaea.domain.service.ISimpleService
+import com.synebula.gaea.record.service.IService
 import com.synebula.gaea.spring.aop.annotation.Method
 import org.springframework.web.bind.annotation.*
 
@@ -16,12 +16,13 @@ import org.springframework.web.bind.annotation.*
  * @since 2020-05-15
  */
 interface ISimpleCommandApp<TRoot : IAggregateRoot<ID>, ID> : IApplication {
-    var service: ISimpleService<TRoot, ID>
+    var service: IService<TRoot, ID>
 
     @PostMapping
     @Method("添加")
     fun add(@RequestBody entity: TRoot): HttpMessage {
-        return this.httpMessageFactory.create(service.add(entity))
+        val id = service.add(entity)
+        return this.httpMessageFactory.create(id!!)
     }
 
     @PutMapping("/{id:.+}")

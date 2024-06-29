@@ -2,8 +2,8 @@ package com.synebula.gaea.app.controller.query
 
 import com.synebula.gaea.app.controller.IApplication
 import com.synebula.gaea.data.message.HttpMessage
-import com.synebula.gaea.query.IQuery
-import com.synebula.gaea.query.Params
+import com.synebula.gaea.db.query.IQuery
+import com.synebula.gaea.db.query.Params
 import com.synebula.gaea.spring.aop.annotation.Method
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

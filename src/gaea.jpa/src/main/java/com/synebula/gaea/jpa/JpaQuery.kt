@@ -1,8 +1,8 @@
 package com.synebula.gaea.jpa
 
-import com.synebula.gaea.query.IQuery
-import com.synebula.gaea.query.Page
-import com.synebula.gaea.query.Params
+import com.synebula.gaea.db.query.IQuery
+import com.synebula.gaea.db.query.Page
+import com.synebula.gaea.db.query.Params
 import jakarta.persistence.EntityManager
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
 
@@ -14,7 +14,7 @@ class JpaQuery<TView, ID>(override var clazz: Class<TView>, entityManager: Entit
     }
 
     override operator fun get(id: ID): TView? {
-        val view = this.repo.findById(id)
+        val view = this.repo.findById(id!!)
         return if (view.isPresent) view.get() else null
     }
 

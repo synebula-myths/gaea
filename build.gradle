@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 buildscript {
     ext {
         jvm_version = '21'
@@ -7,6 +9,7 @@ buildscript {
 
     repositories {
         mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
         maven { url 'https://maven.aliyun.com/repository/central' }
         maven { url 'https://maven.aliyun.com/repository/public' }
         mavenCentral()
@@ -52,10 +55,14 @@ subprojects {
     sourceCompatibility = "$jvm_version"
     targetCompatibility = "$jvm_version"
     compileKotlin {
-        kotlinOptions.jvmTarget = "$jvm_version"
+        compilerOptions {
+            jvmTarget = JvmTarget.valueOf("JVM_$jvm_version")
+        }
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "$jvm_version"
+        compilerOptions {
+            jvmTarget = JvmTarget.valueOf("JVM_$jvm_version")
+        }
     }
 
     publishing {

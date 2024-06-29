@@ -1,8 +1,8 @@
 package com.synebula.gaea.jpa
 
 import com.synebula.gaea.data.date.DateTime
-import com.synebula.gaea.query.Operator
-import com.synebula.gaea.query.Where
+import com.synebula.gaea.db.query.Operator
+import com.synebula.gaea.db.query.Where
 import jakarta.persistence.criteria.*
 import org.springframework.data.jpa.domain.Specification
 import java.lang.reflect.Field

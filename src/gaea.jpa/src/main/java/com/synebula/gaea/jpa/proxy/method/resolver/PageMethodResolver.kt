@@ -1,8 +1,8 @@
 package com.synebula.gaea.jpa.proxy.method.resolver
 
 import com.synebula.gaea.jpa.toSpecification
-import com.synebula.gaea.query.Order
-import com.synebula.gaea.query.Params
+import com.synebula.gaea.db.query.Order
+import com.synebula.gaea.db.query.Params
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Id
 import org.springframework.data.domain.Page
@@ -10,7 +10,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import java.util.*
-import com.synebula.gaea.query.Page as QueryPage
+import com.synebula.gaea.db.query.Page as QueryPage
 
 /**
  * 分页方法参数映射

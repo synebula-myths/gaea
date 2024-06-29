@@ -5,7 +5,7 @@ import com.synebula.gaea.jpa.proxy.method.resolver.AbstractMethodResolver
 import com.synebula.gaea.jpa.proxy.method.resolver.DefaultMethodResolver
 import com.synebula.gaea.jpa.proxy.method.resolver.FindMethodResolver
 import com.synebula.gaea.jpa.proxy.method.resolver.PageMethodResolver
-import com.synebula.gaea.query.Params
+import com.synebula.gaea.db.query.Params
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import java.lang.reflect.InvocationTargetException

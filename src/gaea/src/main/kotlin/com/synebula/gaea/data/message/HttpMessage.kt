@@ -5,7 +5,6 @@ import com.synebula.gaea.data.serialization.json.IJsonSerializer
 
 class HttpMessage(private var serializer: IJsonSerializer) : DataMessage<Any>() {
 
-
     constructor(data: Any, serializer: IJsonSerializer) : this(serializer) {
         this.data = data
     }

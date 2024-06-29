@@ -24,7 +24,7 @@ open class Cache<K, V>(expire: Int) : ICache<K, V> {
     }
 
     override fun add(key: K, value: V) {
-        this.guavaCache.put(key, value)
+        this.guavaCache.put(key!!, value!!)
     }
 
     /**
