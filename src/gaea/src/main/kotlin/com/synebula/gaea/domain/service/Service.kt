@@ -24,8 +24,9 @@ open class Service<TRoot : IAggregateRoot<ID>, ID>(
     protected open var clazz: Class<TRoot>,
     protected open var repository: IRepository<TRoot, ID>,
     protected open var mapper: IObjectMapper,
-    protected open var bus: IBus<Any>? = null
 ) : IService<ID> {
+
+    protected open var bus: IBus<Any>? = null
 
     /**
      * 增加对象

@@ -13,12 +13,3 @@ dependencies {
 
     api("org.springframework.boot:spring-boot-starter-aop:$spring_version")
 }
-
-publishing {
-    publications {
-        publish(MavenPublication) {
-            from components.java
-        }
-    }
-}
-

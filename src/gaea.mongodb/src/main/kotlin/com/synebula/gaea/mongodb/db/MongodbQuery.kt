@@ -1,4 +1,4 @@
-package com.synebula.gaea.mongodb.db.query
+package com.synebula.gaea.mongodb.db
 
 
 import com.synebula.gaea.ext.firstCharLowerCase
@@ -15,19 +15,22 @@ import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 
-open class MongodbQuery<TView, ID>(override var clazz: Class<TView>, var template: MongoTemplate) :
-    IQuery<TView, ID> {
+/**
+ * 实现IQuery的Mongodb查询类
+ * @param template MongodbRepo对象
+ */
+open class MongodbQuery(var template: MongoTemplate) : IQuery {
 
     /**
      * 使用View解析是collection时是否校验存在，默认不校验
      */
     var validViewCollection = false
 
-    override fun get(id: ID): TView? {
+    override fun <TView, ID> get(id: ID, clazz: Class<TView>): TView? {
         return this.template.findOne(whereId(id), clazz, this.collection(clazz))
     }
 
-    override fun list(params: Map<String, String>?): List<TView> {
+    override fun <TView> list(params: Map<String, String>?, clazz: Class<TView>): List<TView> {
         val fields = this.fields(clazz)
         val query = Query()
         query.where(params, clazz)
@@ -35,16 +38,16 @@ open class MongodbQuery<TView, ID>(override var clazz: Class<TView>, var templat
         return this.find(query, clazz)
     }
 
-    override fun count(params: Map<String, String>?): Int {
+    override fun <TView> count(params: Map<String, String>?, clazz: Class<TView>): Long {
         val query = Query()
-        return this.template.count(query.where(params, clazz), this.collection(clazz)).toInt()
+        return this.template.count(query.where(params, clazz), this.collection(clazz))
     }
 
-    override fun paging(params: Params): Page<TView> {
+    override fun <TView> paging(params: Params, clazz: Class<TView>): Page<TView> {
         val query = Query()
         val fields = this.fields(clazz)
         val result = Page<TView>(params.page, params.size)
-        result.total = this.count(params.parameters)
+        result.total = this.count(params.parameters, clazz)
         //如果总数和索引相同，说明该页没有数据，直接跳到上一页
         if (result.total == result.index) {
             params.page -= 1
@@ -58,11 +61,11 @@ open class MongodbQuery<TView, ID>(override var clazz: Class<TView>, var templat
         return result
     }
 
-    override fun range(field: String, params: List<Any>): List<TView> {
+    override fun <TView> range(field: String, params: List<Any>, clazz: Class<TView>): List<TView> {
         return this.find(Query.query(Criteria.where(field).`in`(params)), clazz)
     }
 
-    protected fun find(query: Query, clazz: Class<TView>): List<TView> {
+    protected fun <TView> find(query: Query, clazz: Class<TView>): List<TView> {
         return this.template.find(query, clazz, this.collection(clazz))
     }
 

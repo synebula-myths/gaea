@@ -3,18 +3,20 @@ package com.synebula.gaea.jpa
 import com.synebula.gaea.db.query.IQuery
 import com.synebula.gaea.db.query.Page
 import com.synebula.gaea.db.query.Params
+import com.synebula.gaea.jpa.proxy.method.resolver.PageMethodResolver
 import jakarta.persistence.EntityManager
+import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository
 
-class JpaQuery<TView, ID>(override var clazz: Class<TView>, entityManager: EntityManager) : IQuery<TView, ID> {
-    protected var repo: SimpleJpaRepository<TView, ID>
+@Suppress("UNCHECKED_CAST")
+class JpaQuery(protected var entityManager: EntityManager) : IQuery {
+    protected var repos = mutableMapOf<Class<*>, SimpleJpaRepository<*, *>>()
 
-    init {
-        repo = SimpleJpaRepository<TView, ID>(clazz, entityManager)
-    }
 
-    override operator fun get(id: ID): TView? {
-        val view = this.repo.findById(id!!)
+    override operator fun <TView, ID> get(id: ID, clazz: Class<TView>): TView? {
+        val repo = this.getJpaRepository(clazz)
+        val view = repo.findById(id!!)
         return if (view.isPresent) view.get() else null
     }
 
@@ -25,9 +27,10 @@ class JpaQuery<TView, ID>(override var clazz: Class<TView>, entityManager: Entit
      * @param params 查询条件。
      * @return 视图列表
      */
-    override fun list(params: Map<String, String>?): List<TView> {
-        // method proxy in JpaRepositoryProxy [SimpleJpaRepository]
-        return emptyList()
+    override fun <TView> list(params: Map<String, String>?, clazz: Class<TView>): List<TView> {
+        val repo = this.getJpaRepository(clazz)
+        val spec = params?.toSpecification(clazz) as Specification<TView>
+        return repo.findAll(spec)
     }
 
     /**
@@ -36,9 +39,10 @@ class JpaQuery<TView, ID>(override var clazz: Class<TView>, entityManager: Entit
      * @param params 查询条件。
      * @return 数量
      */
-    override fun count(params: Map<String, String>?): Int {
-        // method proxy in JpaRepositoryProxy [SimpleJpaRepository]
-        return -1
+    override fun <TView> count(params: Map<String, String>?, clazz: Class<TView>): Long {
+        val repo = this.getJpaRepository(clazz)
+        val spec = params?.toSpecification(clazz) as Specification<TView>
+        return repo.count(spec)
     }
 
     /**
@@ -47,9 +51,11 @@ class JpaQuery<TView, ID>(override var clazz: Class<TView>, entityManager: Entit
      * @param params 分页条件
      * @return 分页数据
      */
-    override fun paging(params: Params): Page<TView> {
-        // method proxy in JpaRepositoryProxy [SimpleJpaRepository]
-        return Page()
+    override fun <TView> paging(params: Params, clazz: Class<TView>): Page<TView> {
+        val repo = this.getJpaRepository(clazz)
+        val p = PageMethodResolver("findAll", clazz).mappingArguments(arrayOf(params))
+        val page = repo.findAll(p[0] as Specification<TView>, p[1] as Pageable)
+        return Page(page.number + 1, page.size, page.totalElements, page.content)
     }
 
     /**
@@ -59,9 +65,18 @@ class JpaQuery<TView, ID>(override var clazz: Class<TView>, entityManager: Entit
      *
      * @return 视图列表
      */
-    override fun range(field: String, params: List<Any>): List<TView> {
+    override fun <TView> range(field: String, params: List<Any>, clazz: Class<TView>): List<TView> {
         // method proxy in JpaRepositoryProxy [SimpleJpaRepository]
         return emptyList()
     }
 
+    private fun <TView> getJpaRepository(clazz: Class<TView>): SimpleJpaRepository<TView, in Any> {
+        if (this.repos.isNotEmpty() && this.repos.containsKey(clazz)) {
+            return this.repos[clazz] as SimpleJpaRepository<TView, Any>
+        } else {
+            val r = SimpleJpaRepository<TView, Any>(clazz, entityManager)
+            this.repos[clazz] = r
+            return r
+        }
+    }
 }

@@ -2,7 +2,7 @@ package com.synebula.gaea.mongodb.autoconfig
 
 import com.synebula.gaea.db.context.IDbContext
 import com.synebula.gaea.domain.repository.IRepository
-import com.synebula.gaea.mongodb.db.query.MongodbQuery
+import com.synebula.gaea.mongodb.db.MongodbQuery
 import com.synebula.gaea.mongodb.repository.MongodbRepository
 import com.synebula.gaea.db.query.IQuery
 import com.synebula.gaea.reflect.getGenericInterface

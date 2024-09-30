@@ -1,4 +1,4 @@
-package com.synebula.gaea.mongodb.db.context
+package com.synebula.gaea.mongodb.db
 
 import com.synebula.gaea.db.IEntity
 import com.synebula.gaea.db.context.IDbContext

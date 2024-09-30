@@ -14,7 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired
  */
 open class QueryApp<TView, ID>(
     override var name: String,
-    override var query: IQuery<TView, ID>,
+    override var query: IQuery,
+    override var clazz: Class<TView>,
     override var logger: ILogger,
 ) : IQueryApp<TView, ID> {
 

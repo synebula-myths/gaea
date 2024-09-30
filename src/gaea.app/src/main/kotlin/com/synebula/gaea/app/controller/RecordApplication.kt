@@ -20,7 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired
 open class RecordApplication<TRoot : IAggregateRoot<ID>, ID>(
     override var name: String,
     override var service: IService<TRoot, ID>,
-    override var query: IQuery<TRoot, ID>,
+    override var query: IQuery,
+    override var clazz: Class<TRoot>,
     override var logger: ILogger,
 ) : ISimpleCommandApp<TRoot, ID>, IQueryApp<TRoot, ID> {
 

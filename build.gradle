@@ -22,7 +22,7 @@ buildscript {
 
 subprojects {
     group 'com.synebula'
-    version '1.6.0'
+    version '1.7.0'
 
     buildscript {
         repositories {
@@ -66,16 +66,21 @@ subprojects {
     }
 
     publishing {
-//    repositories {
-//        maven {
-//            allowInsecureProtocol = true
-//            url = "$nexus_url"
-//            credentials {
-//                username = "$nexus_usr"
-//                password = "$nexus_pwd"
-//            }
-//        }
-//    }
+        repositories {
+            maven {
+                name = "Gitea"
+                url = uri("https://git.synebula.com/api/packages/alex/maven")
+
+                credentials(HttpHeaderCredentials) {
+                    name = "Authorization"
+                    value = "token 1b9a13c1c75832c2f82beba8c8db340364eff7b1"
+                }
+
+                authentication {
+                    header(HttpHeaderAuthentication)
+                }
+            }
+        }
 
         publications {
             mavenJava(MavenPublication) {

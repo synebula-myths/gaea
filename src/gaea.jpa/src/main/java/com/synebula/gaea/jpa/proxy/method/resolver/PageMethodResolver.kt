@@ -51,6 +51,6 @@ class PageMethodResolver(targetMethodName: String, clazz: Class<*>) : AbstractMe
         val page = result as Page<*>
 
         // Page 页面从0开始 [com.synebula.gaea.query.Page as QueryPage]
-        return QueryPage(page.number + 1, page.size, page.totalElements.toInt(), page.content)
+        return QueryPage(page.number + 1, page.size, page.totalElements, page.content)
     }
 }

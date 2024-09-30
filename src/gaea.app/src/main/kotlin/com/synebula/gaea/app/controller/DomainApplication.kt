@@ -20,8 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired
 open class DomainApplication<TCommand : ICommand, TView, ID>(
     override var name: String,
     override var service: IService<ID>,
-    override var query: IQuery<TView, ID>,
-    override var logger: ILogger,
+    override var query: IQuery,
+    override var clazz: Class<TView>,
+    override var logger: ILogger
 ) : ICommandApp<TCommand, ID>, IQueryApp<TView, ID> {
 
     @Autowired

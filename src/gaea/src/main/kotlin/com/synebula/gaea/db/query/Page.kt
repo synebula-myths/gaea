@@ -13,13 +13,13 @@ data class Page<T>(var page: Int = 0, var size: Int = 0) {
     /**
      * 总数据量。
      */
-    var total: Int = 0
+    var total: Long = 0
 
     /**
      * 数据索引，从0开始。表示数据在总量的第几条。（index = (page - 1) * size ）
      */
-    val index: Int
-        get() = (page - 1) * size
+    val index: Long
+        get() = (page - 1) * size.toLong()
 
     /**
      * 结果数据。
@@ -36,7 +36,7 @@ data class Page<T>(var page: Int = 0, var size: Int = 0) {
      * @param data 结果数据。
      */
 
-    constructor(page: Int, size: Int, total: Int, data: List<T>) : this(page, size) {
+    constructor(page: Int, size: Int, total: Long, data: List<T>) : this(page, size) {
         this.page = page
         this.size = size
         this.total = total
