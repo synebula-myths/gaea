@@ -59,7 +59,7 @@ interface IApplication {
     /**
      * 获取用户信息
      */
-    fun userSession(): UserSession? {
+    fun session(): UserSession? {
         try {
             val authentication = SecurityContextHolder.getContext().authentication.principal
             try {
