@@ -38,7 +38,7 @@ interface ICommandApp<TCommand : ICommand, ID> : IApplication {
         try {
             msg.data = this.service.remove(id)
         } catch (ex: IllegalStateException) {
-            msg.status = Status.Error
+            msg.status = Status.ERROR
             msg.message = ex.message ?: ""
         }
 

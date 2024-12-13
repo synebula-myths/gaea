@@ -9,13 +9,13 @@ import java.util.*
 @Component
 class UserSessionManager {
 
-    @Value("\${spring.allow-multi-sign}")
+    @Value("\${spring.allow-multi-sign:}")
     private var allowMultiSign = "true"
 
     /**
      * 用户id加盐, (尽量)避免泄漏真是用户id
      */
-    @Value("\${spring.token-salt}")
+    @Value("\${spring.token-salt:}")
     private val salt = "68d84e0d7b9e"
 
     /**

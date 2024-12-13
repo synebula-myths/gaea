@@ -77,7 +77,7 @@ abstract class AppAspect {
                     gson.toJson(point.args)
                 }"
             )
-            return this.httpMessageFactory.create(Status.Error, message)
+            return this.httpMessageFactory.create(Status.ERROR, message)
         }
     }
 

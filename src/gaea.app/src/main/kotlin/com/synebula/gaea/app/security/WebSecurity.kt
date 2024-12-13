@@ -49,12 +49,12 @@ class WebSecurity {
                 UsernamePasswordAuthenticationFilter::class.java
             ).exceptionHandling {
                 it.authenticationEntryPoint { _, response, _ ->
-                    response.status = Status.Success
+                    response.status = Status.SUCCESS
                     response.characterEncoding = "utf-8"
                     response.contentType = "text/javascript;charset=utf-8"
                     response.writer.print(
                         this.httpMessageFactory.create(
-                            Status.Unauthorized, "用户未登录，请重新登录后尝试！"
+                            Status.FORBIDDEN, "权限不足，请重新登录后尝试！"
                         )
                     )
                 }

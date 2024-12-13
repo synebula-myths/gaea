@@ -4,25 +4,30 @@ object Status {
     /**
      * 成功
      */
-    const val Success = 200
+    const val SUCCESS = 200
 
     /**
      * 重新授权
      */
-    const val Reauthorize = 205
+    const val REAUTHORIZE = 205
 
     /**
      * 失败
      */
-    const val Failure = 400
+    const val FAILURE = 400
 
     /**
      * 未授权
      */
-    const val Unauthorized = 401
+    const val UNAUTHORIZED = 401
+
+    /**
+     * 权限不足
+     */
+    const val FORBIDDEN = 403
 
     /**
      * 错误
      */
-    const val Error = 500
+    const val ERROR = 500
 }

@@ -34,7 +34,7 @@ interface IApplication {
             process(msg)
             logger.debug(this, "$name business execute success")
         } catch (ex: Exception) {
-            msg.status = Status.Error
+            msg.status = Status.ERROR
             msg.message = if (error.isEmpty()) ex.message ?: "" else "$error: ${ex.message}"
             logger.error(this, ex, "[$name]$error: ${ex.message}")
         }

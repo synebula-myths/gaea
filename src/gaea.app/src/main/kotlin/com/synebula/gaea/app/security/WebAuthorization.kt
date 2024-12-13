@@ -52,12 +52,12 @@ class WebAuthorization(
             SecurityContextHolder.getContext().authentication = authentication
             chain.doFilter(request, response)
         } else {
-            response.status = Status.Success
+            response.status = Status.SUCCESS
             response.characterEncoding = "utf-8"
             response.contentType = "text/javascript;charset=utf-8"
             response.writer.print(
                 this.httpMessageFactory.create(
-                    Status.Unauthorized,
+                    Status.UNAUTHORIZED,
                     "登录信息失效, 请重新登录"
                 )
             )
