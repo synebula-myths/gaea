@@ -10,12 +10,12 @@ import java.util.*
 abstract class Record<ID> {
 
     //记录增加信息
-    var creator: String? = null
-    var creatorName: String? = null
-    var createTime: Date = Date()
+    var createdBy: String? = null
+    var creatorByName: String? = null
+    var createdAt: Date = Date()
 
     //记录修改信息
-    var modifier: String? = null
-    var modifierName: String? = null
-    var modifyTime: Date = Date()
+    var modifiedBy: String? = null
+    var modifiedByName: String? = null
+    var modifiedAt: Date = Date()
 }
