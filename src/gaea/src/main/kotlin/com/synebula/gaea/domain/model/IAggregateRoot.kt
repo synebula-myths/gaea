@@ -12,5 +12,5 @@ interface IAggregateRoot<ID> : IEntity<ID> {
     /**
      * 实体对象是否有效。
      */
-    var avalible: Boolean
+    var available: Boolean
 }
