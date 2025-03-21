@@ -1,5 +1,6 @@
 package com.synebula.gaea.app.security
 
+import com.synebula.gaea.app.component.Logger
 import com.synebula.gaea.app.security.session.UserSessionManager
 import com.synebula.gaea.data.message.HttpMessageFactory
 import com.synebula.gaea.data.message.Status
@@ -22,6 +23,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableWebSecurity
 class WebSecurity {
+    val logger = Logger()
+
     @Autowired
     lateinit var userSessionManager: UserSessionManager
 
@@ -48,7 +51,8 @@ class WebSecurity {
                 WebAuthorization(httpMessageFactory, userSessionManager),
                 UsernamePasswordAuthenticationFilter::class.java
             ).exceptionHandling {
-                it.authenticationEntryPoint { _, response, _ ->
+                it.authenticationEntryPoint { _, response, ex ->
+                    logger.error(ex, "鉴权失败")
                     response.status = Status.SUCCESS
                     response.characterEncoding = "utf-8"
                     response.contentType = "text/javascript;charset=utf-8"
